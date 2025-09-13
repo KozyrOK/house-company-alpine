@@ -1,96 +1,56 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\CompanyUser;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(): \Illuminate\Database\Eloquent\Collection
     {
+        $this->authorize('viewAny', User::class);
+
         return User::all();
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        return user::create($request);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        return User::findOrFail($id);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $user = User::findOrFail($id);
-        $user->update($request);
-        return $user;
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        User::findOrFail($id)->delete();
-    }
-
-    // second version
-/*
-    public function index()
-    {
-        return User::all(); // Возвращает всех пользователей в JSON
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'role' => 'required|in:superadmin,admin,company_head,user',
-        ]);
-
-        $user = User::create($validated);
-        return response()->json($user, 201);
     }
 
     public function show(User $user)
     {
-        return response()->json($user);
+        $this->authorize('view', $user);
+
+        return $user->load('companies');
     }
 
-    public function update(Request $request, User $user)
+    public function assignToCompany(Request $request, User $user)
     {
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $user->id,
-            'role' => 'sometimes|in:superadmin,admin,company_head,user',
+        $this->authorize('update', $user);
+
+        $data = $request->validate([
+            'company_id' => 'required|exists:companies,id',
+            'role' => 'required|in:superadmin,admin,company_head,user',
         ]);
 
-        $user->update($validated);
-        return response()->json($user);
+        CompanyUser::updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'company_id' => $data['company_id'],
+            ],
+            [
+                'role' => $data['role'],
+            ]
+        );
+
+        return response()->json(['message' => 'User assigned/role updated']);
     }
 
     public function destroy(User $user)
     {
+        $this->authorize('delete', $user);
+
         $user->delete();
+
         return response()->json(null, 204);
     }
-*/
-
 }

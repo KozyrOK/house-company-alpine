@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\CompanyUser;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
@@ -13,40 +14,63 @@ class CompanyController extends Controller
      */
     public function index(): \Illuminate\Database\Eloquent\Collection
     {
+        $this->authorize('viewAny', Company::class);
+
         return Company::all();
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        return Company::create($request);
+        $this->authorize('create', Company::class);
+
+        $company = Company::create($request->validate([
+            'name' => 'required|string|max:255',
+        ]));
+
+        CompanyUser::create([
+            'user_id' => $request->user()->id,
+            'company_id' => $company->id,
+            'role' => 'superadmin',
+        ]);
+
+        return response()->json($company, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Company $company): Company
     {
-        return Company::findOrFail($id);
+        $this->authorize('view', $company);
+
+        return $company;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Company $company): Company
     {
-        $company = Company::findOrFail($id);
-        $company->update($request);
+        $this->authorize('update', $company);
+
+        $company->update($request->validate([
+            'name' => 'required|string|max:255',
+        ]));
         return $company;
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Company $company): \Illuminate\Http\JsonResponse
     {
-        Company::findOrFail($id)->delete();
+        $this->authorize('delete', $company);
+
+        $company->delete();
+
+        return response()->json(null, 204);
     }
 }

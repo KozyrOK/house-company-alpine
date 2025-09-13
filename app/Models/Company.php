@@ -11,9 +11,10 @@ class Company extends Model
         'name', 'address', 'city',
 ];
 
-    public function users(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->hasMany(User::class, 'company_id');
+        return $this->belongsToMany(User::class, 'company_user')
+            ->using(CompanyUser::class)
+            ->withPivot('role');
     }
-
 }
