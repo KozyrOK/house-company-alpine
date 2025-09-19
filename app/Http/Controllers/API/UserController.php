@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-// UserController → работает с пользователями (CRUD, профиль, смена пароля, обновление данных).
+
     public function index(): \Illuminate\Database\Eloquent\Collection
     {
         $this->authorize('viewAny', User::class);
