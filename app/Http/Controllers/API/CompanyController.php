@@ -21,7 +21,7 @@ class CompanyController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     */
+     * */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->authorize('create', Company::class);

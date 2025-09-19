@@ -8,7 +8,14 @@ class Post extends Model
 {
 
     protected $fillable = [
-        'company_id', 'user_id', 'title', 'content', 'status', 'created_by', 'updated_by', 'deleted_by'
+        'company_id',
+        'user_id',
+        'title',
+        'content',
+        'status',
+        'created_by',
+        'updated_by',
+        'deleted_by'
     ];
 
     public function company(): \Illuminate\Database\Eloquent\Relations\BelongsTo

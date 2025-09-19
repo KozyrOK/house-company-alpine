@@ -13,7 +13,7 @@ class PostPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['superadmin','admin','company_head','user']);
+        return $user->hasRole(['superadmin','admin']);
     }
 
     /**
@@ -27,7 +27,7 @@ class PostPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, int $companyId): bool
     {
         return $user->hasRole(['superadmin','admin','company_head'], $post->company_id);
     }

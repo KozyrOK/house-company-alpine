@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Post;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -18,22 +20,33 @@ class PostController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @throws AuthorizationException
      */
-    public function store(Request $request, Company $company): \Illuminate\Http\JsonResponse
+    public function store(Request $request, User $user): \Illuminate\Http\JsonResponse
     {
-        $this->authorize('update', $company);
+        $this->authorize('update', $user);
 
-        $post = $company->posts()->create($request->validate([
-            'title' => 'required|string|max:255',
+        $validated = $request->validate([
+            'title'   => 'required|string|max:255',
             'content' => 'required|string',
-        ]));
+        ]);
+
+        $post = Post::create([
+            'company_id' => auth()->user()->company_id,
+            'user_id' =>
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'status' =>,
+            'created_by' =>,
+            'updated_by' =>,
+            'deleted_by' =>,
+        ]);
 
         return response()->json($post, 201);
     }
 
     /**
-     * Display the specified resource.
+     * @throws AuthorizationException
      */
     public function show(Company $company, Post $post): Post
     {
@@ -44,6 +57,7 @@ class PostController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @throws AuthorizationException
      */
     public function update(Request $request, Company $company, Post $post): Post
     {
@@ -59,6 +73,7 @@ class PostController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * @throws AuthorizationException
      */
     public function destroy(Company $company, Post $post): \Illuminate\Http\JsonResponse
     {

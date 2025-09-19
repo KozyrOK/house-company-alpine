@@ -5,11 +5,14 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\CompanyUser;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-// UserController → работает с пользователями (CRUD, профиль, смена пароля, обновление данных).
+    /**
+     * @throws AuthorizationException
+     */
     public function index(): \Illuminate\Database\Eloquent\Collection
     {
         $this->authorize('viewAny', User::class);
@@ -17,14 +20,20 @@ class UserController extends Controller
         return User::all();
     }
 
-    public function show(User $user)
+    /**
+     * @throws AuthorizationException
+     */
+    public function show(User $user): User
     {
         $this->authorize('view', $user);
 
         return $user->load('companies');
     }
 
-    public function assignToCompany(Request $request, User $user)
+    /**
+     * @throws AuthorizationException
+     */
+    public function assignToCompany(Request $request, User $user): \Illuminate\Http\JsonResponse
     {
         $this->authorize('update', $user);
 
@@ -46,6 +55,9 @@ class UserController extends Controller
         return response()->json(['message' => 'User assigned/role updated']);
     }
 
+    /**
+     * @throws AuthorizationException
+     */
     public function destroy(User $user)
     {
         $this->authorize('delete', $user);
