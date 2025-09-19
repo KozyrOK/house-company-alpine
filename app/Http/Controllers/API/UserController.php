@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+// UserController → работает с пользователями (CRUD, профиль, смена пароля, обновление данных).
     public function index(): \Illuminate\Database\Eloquent\Collection
     {
         $this->authorize('viewAny', User::class);
