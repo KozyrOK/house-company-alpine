@@ -13,11 +13,19 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    protected array $policies = [
-        Post::class => PostPolicy::class,
-        User::class => UserPolicy::class,
-        Company::class => CompanyPolicy::class,
-    ];
+    /**
+     * This service provider is intended for application-wide services and configuration.
+     *
+     * According to the project requirements (see Technical Specification),
+     * possible future functionality for this file may include:
+     *
+     * - Global pagination style (e.g. Bootstrap pagination for posts listing).
+     * - Localization setup (multi-language support, default language selection).
+     * - Service bindings for SOLID architecture (e.g. ChatBotContract -> ChatBotService).
+     * - Global macros or helpers for collections, strings, etc.
+     *
+     */
+
     /**
      * Register any application services.
      */
@@ -32,6 +40,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerPolicies();
+
     }
 }

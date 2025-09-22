@@ -22,27 +22,9 @@ class PostController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function store(Request $request, User $user): \Illuminate\Http\JsonResponse
+    public function store(Request $request, User $user)
     {
-        $this->authorize('update', $user);
 
-        $validated = $request->validate([
-            'title'   => 'required|string|max:255',
-            'content' => 'required|string',
-        ]);
-
-        $post = Post::create([
-            'company_id' => auth()->user()->company_id,
-            'user_id' =>
-            'title' => $validated['title'],
-            'content' => $validated['content'],
-            'status' =>,
-            'created_by' =>,
-            'updated_by' =>,
-            'deleted_by' =>,
-        ]);
-
-        return response()->json($post, 201);
     }
 
     /**

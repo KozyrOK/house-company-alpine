@@ -30,29 +30,41 @@ class User extends Authenticatable
         'remember_token'
     ];
 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
     public function companies(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Company::class, 'company_user')
             ->using(CompanyUser::class)
-            ->withPivot('role');
+            ->withPivot('role')
+            ->withTimestamps();
     }
 
-    public function hasRole(array|string $roles, ?int $companyId = null): bool
+    public function hasRole(array|string $roles, int $companyId): bool
     {
-        $roles = (array) $roles;
+        $   $roles = (array) $roles;
 
-        $query = $this->companies();
-
-        if ($companyId) {
-            $query->where('company_id', $companyId);
+        if (in_array('superadmin', $roles) &&
+            $this->companies()->wherePivot('role', 'superadmin')->exists()) {
+            return true;
         }
 
-        return $query->wherePivotIn('role', $roles)->exists();
+        return $this->companies()
+            ->where('company_id', $companyId)
+            ->wherePivotIn('role', $roles)
+            ->exists();
     }
 
     public function belongsToCompany(int $companyId): bool
     {
         return $this->companies()->where('company_id', $companyId)->exists();
+    }
+
+    public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Post::class);
     }
 
 }
