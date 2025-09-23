@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained('companies');
-            $table->foreignId('user_id');
+            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('title', 255);
             $table->text('content');
             $table->string('image_path', 255)->nullable();
             $table->enum('status', ['draft', 'future', 'pending', 'publish', 'trash'])->default('draft');
             $table->foreignId('created_by')->constrained('users');
-            $table->foreignId('updated_by')->constrained('users');
-            $table->foreignId('deleted_by')->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

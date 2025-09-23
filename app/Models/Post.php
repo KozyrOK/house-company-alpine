@@ -12,10 +12,15 @@ class Post extends Model
         'user_id',
         'title',
         'content',
+        'image_path',
         'status',
         'created_by',
         'updated_by',
         'deleted_by'
+    ];
+
+    protected $casts = [
+        'status' => 'string',
     ];
 
     public function company(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -25,5 +30,20 @@ class Post extends Model
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function deleter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
     }
 }

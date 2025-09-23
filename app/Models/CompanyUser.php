@@ -12,25 +12,20 @@ class CompanyUser extends Pivot
 
     protected $table = 'company_user';
 
-    protected $fillable = ['user_id', 'company_id', 'role'];
+    protected $fillable = [
+        'user_id',
+        'company_id',
+        'role'
+    ];
 
-    public function isSuperAdmin(): bool
+    public static function hasRole(int $userId, int $companyId, array|string $roles): bool
     {
-        return $this->role === 'superadmin';
+        $roles = (array) $roles;
+
+        return self::where('user_id', $userId)
+            ->where('company_id', $companyId)
+            ->whereIn('role', $roles)
+            ->exists();
     }
 
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
-
-    public function isHead(): bool
-    {
-        return $this->role === 'company_head';
-    }
-
-    public function isUser(): bool
-    {
-        return $this->role === 'user';
-    }
 }
