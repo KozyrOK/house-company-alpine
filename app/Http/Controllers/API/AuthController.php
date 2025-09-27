@@ -10,24 +10,36 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+
     public function profile(Request $request): \Illuminate\Http\JsonResponse
     {
         return response()->json($request->user());
     }
 
+    function logout(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Logged out successfully',
+        ]);
+    }
+
     public function register(Request $request): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validate([
-            'name'     => 'required|string|max:255',
+            'first_name'     => 'required|string|max:255',
+            'second_name'      => 'required|string|max:255',
             'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
-            'name'     => $validated['name'],
+            'first_name'     => $validated['first_name'],
+            'second_name'    => $validated['second_name'],
             'email'    => $validated['email'],
-            'password' => bcrypt($validated['password']),
-            'role'     => 'user',
+            'password' => Hash::make($validated['password']),
+            'status_account' => 'pending',
         ]);
 
         $token = $user->createToken('api_token')->plainTextToken;
@@ -39,40 +51,99 @@ class AuthController extends Controller
         ], 201);
     }
 
-    function login(Request $request): \Illuminate\Http\JsonResponse
+    public function login(Request $request): \Illuminate\Http\JsonResponse
     {
-        $validated = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $validated['email'])->first();
+        $user = User::where('email', $credentials['email'])->first();
 
-        if (! $user || ! Hash::check($validated['password'], $user->password)) {
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['Invalid credentials.'],
+                'email' => ['Invalid credentials'],
             ]);
         }
 
-        // удалить старые токены (по желанию)
-        $user->tokens()->delete();
-
-        $token = $user->createToken('api_token')->plainTextToken;
+        $token = $user->createToken('api')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful',
-            'user'    => $user,
-            'token'   => $token,
-        ]);
+            'token' => $token,
+            'user' => $user]);
     }
 
-    function logout(Request $request): \Illuminate\Http\JsonResponse
-    {
-        $request->user()->currentAccessToken()->delete();
+//     for social media must provide Laravel Socialite. Functions googleLogin, facebookLogin and xLogin below:
 
-        return response()->json([
-            'message' => 'Logged out successfully',
-        ]);
-    }
+//    public function googleLogin(Request $request)
+//    {
+//        $googleUser = Socialite::driver('google')->stateless()->user();
+//
+//        $user = User::where('google_id', $googleUser->id)
+//            ->orWhere('email', $googleUser->email)
+//            ->first();
+//
+//        if (! $user) {
+//            $user = User::create([
+//                'first_name'  => $googleUser->user['given_name'] ?? '',
+//                'second_name' => $googleUser->user['family_name'] ?? '',
+//                'email'       => $googleUser->email,
+//                'google_id'   => $googleUser->id,
+//                'image_path'  => $googleUser->avatar,
+//                'status'      => 'pending',
+//            ]);
+//        }
+//
+//        $token = $user->createToken('api')->plainTextToken;
+//
+//        return response()->json(['token' => $token, 'user' => $user]);
+//    }
+//
+//    public function facebookLogin(Request $request)
+//    {
+//        $fbUser = Socialite::driver('facebook')->stateless()->user();
+//
+//        $user = User::where('facebook_id', $fbUser->id)
+//            ->orWhere('email', $fbUser->email)
+//            ->first();
+//
+//        if (! $user) {
+//            $user = User::create([
+//                'first_name'  => $fbUser->name,
+//                'email'       => $fbUser->email,
+//                'facebook_id' => $fbUser->id,
+//                'image_path'  => $fbUser->avatar,
+//                'status'      => 'pending',
+//            ]);
+//        }
+//
+//        $token = $user->createToken('api')->plainTextToken;
+//
+//        return response()->json(['token' => $token, 'user' => $user]);
+//    }
+//
+//    public function xLogin(Request $request)
+//    {
+//        $xUser = Socialite::driver('twitter')->stateless()->user();
+//
+//        $user = User::where('x_id', $xUser->id)
+//            ->orWhere('email', $xUser->email)
+//            ->first();
+//
+//        if (! $user) {
+//            $user = User::create([
+//                'first_name' => $xUser->nickname,
+//                'email'      => $xUser->email,
+//                'x_id'       => $xUser->id,
+//                'image_path' => $xUser->avatar,
+//                'status'     => 'pending',
+//            ]);
+//        }
+//
+//        $token = $user->createToken('api')->plainTextToken;
+//
+//        return response()->json(['token' => $token, 'user' => $user]);
+//    }
 
 }

@@ -13,7 +13,10 @@ class Company extends Model
         'city',
         'description'
 ];
-
+    public function getCompanyId(): int
+    {
+        return $this->id;
+    }
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class, 'company_user')

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('x_id', 45)->nullable();
             $table->string('image_path', 255)->nullable();
             $table->string('phone', 20)->nullable();
+            $table->enum('status_account', ['pending', 'active', 'blocked'])->default('pending');
             $table->rememberToken();
             $table->timestamps();
         });

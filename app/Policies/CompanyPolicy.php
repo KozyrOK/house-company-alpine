@@ -2,66 +2,32 @@
 
 namespace App\Policies;
 
-use App\Models\Company;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CompanyPolicy
 {
-
-    /**
-     * Determine whether the user can view any models.
-     */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['superadmin','admin']);
+        return $user->isSuperAdmin(0);
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user): bool
+    public function view(User $user, int $companyId): bool
     {
-        return $user->hasRole(['superadmin','admin']);
+        return $user->belongsToCompany($companyId) || $user->isSuperAdmin(0);
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
     public function create(User $user): bool
     {
-        return $user->hasRole(['superadmin','admin']);
+        return $user->isSuperAdmin(0);
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Company $company): bool
+    public function update(User $user, int $companyId): bool
     {
-        return $user->hasRole(['superadmin','admin']);
+        return $user->isAdminOrHigher($companyId) || $user->isSuperAdmin(0);
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Company $company): bool
+    public function delete(User $user, int $companyId): bool
     {
-        return $user->hasRole(['superadmin','admin']);
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Company $company): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Company $company): bool
-    {
-        return false;
+        return $user->isSuperAdmin(0);
     }
 }

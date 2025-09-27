@@ -4,54 +4,72 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\CompanyUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-// UserController → работает с пользователями (CRUD, профиль, смена пароля, обновление данных).
-    public function index(): \Illuminate\Database\Eloquent\Collection
+    public function index(int $companyId)
     {
-        $this->authorize('viewAny', User::class);
+        $this->authorize('viewAny', [User::class, $companyId]);
 
-        return User::all();
+        return User::whereHas('companies', fn($q) => $q->where('company_id', $companyId))
+            ->paginate();
     }
 
-    public function show(User $user)
+    public function store(Request $request, int $companyId)
     {
-        $this->authorize('view', $user);
+        $this->authorize('create', [User::class, $companyId]);
 
-        return $user->load('companies');
-    }
-
-    public function assignToCompany(Request $request, User $user)
-    {
-        $this->authorize('update', $user);
-
-        $data = $request->validate([
-            'company_id' => 'required|exists:companies,id',
-            'role' => 'required|in:superadmin,admin,company_head,user',
+        $validated = $request->validate([
+            'first_name'  => 'required|string|max:50',
+            'second_name' => 'required|string|max:50',
+            'email'       => 'required|string|email|unique:users',
+            'password'    => 'required|string|min:6|confirmed',
         ]);
 
-        CompanyUser::updateOrCreate(
-            [
-                'user_id' => $user->id,
-                'company_id' => $data['company_id'],
-            ],
-            [
-                'role' => $data['role'],
-            ]
-        );
+        $user = User::create([
+            'first_name'     => $validated['first_name'],
+            'second_name'    => $validated['second_name'],
+            'email'          => $validated['email'],
+            'password'       => Hash::make($validated['password']),
+            'status_account' => 'active',
+        ]);
 
-        return response()->json(['message' => 'User assigned/role updated']);
+        $user->companies()->attach($companyId, ['role' => 'user']);
+
+        return response()->json($user, 201);
     }
 
-    public function destroy(User $user)
+    public function show(int $companyId, User $user)
     {
-        $this->authorize('delete', $user);
+        $this->authorize('view', [$user, $companyId]);
+        return $user;
+    }
 
+    public function update(Request $request, int $companyId, User $user)
+    {
+        $this->authorize('update', [$user, $companyId]);
+
+        $user->update($request->only('first_name', 'second_name', 'email', 'phone'));
+
+        return $user;
+    }
+
+    public function destroy(int $companyId, User $user)
+    {
+        $this->authorize('delete', [$user, $companyId]);
         $user->delete();
 
-        return response()->json(null, 204);
+        return response()->noContent();
+    }
+
+    public function approve(int $companyId, User $user)
+    {
+        $this->authorize('approve', [$user, $companyId]);
+
+        $user->update(['status_account' => 'active']);
+
+        return response()->json(['message' => 'User approved', 'user' => $user]);
     }
 }

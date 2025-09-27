@@ -9,6 +9,11 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\Company;
 use App\Models\CompanyUser;
 
+/**
+ * @method static create(array $array)
+ * @method static where(string $string, mixed $email)
+ * @mixin IdeHelperUser
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -22,7 +27,8 @@ class User extends Authenticatable
         'facebook_id',
         'x_id',
         'image_path',
-        'phone'
+        'phone',
+        'status_account',
     ];
 
     protected $hidden = [
@@ -56,6 +62,23 @@ class User extends Authenticatable
             ->wherePivotIn('role', $roles)
             ->exists();
     }
+
+    public function isSuperAdmin(int $companyId): bool
+    {
+        return $this->hasRole('superadmin', $companyId);
+    }
+
+    public function isAdminOrHigher(int $companyId): bool
+    {
+        return $this->hasRole(['admin', 'superadmin'], $companyId);
+    }
+
+    public function isCompanyHeadOrHigher(int $companyId): bool
+    {
+        return $this->hasRole(['company_head', 'admin', 'superadmin'], $companyId);
+    }
+
+    // !!! need to implement User::isMember();
 
     public function belongsToCompany(int $companyId): bool
     {

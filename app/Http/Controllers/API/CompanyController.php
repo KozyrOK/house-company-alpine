@@ -4,73 +4,55 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Models\CompanyUser;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(): \Illuminate\Database\Eloquent\Collection
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Company::class);
-
-        return Company::all();
+        return Company::paginate();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * */
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request)
     {
         $this->authorize('create', Company::class);
 
-        $company = Company::create($request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-        ]));
-
-        CompanyUser::create([
-            'user_id' => $request->user()->id,
-            'company_id' => $company->id,
-            'role' => 'superadmin',
         ]);
+
+        $company = Company::create($validated);
 
         return response()->json($company, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Company $company): Company
+    public function show(int $companyId)
     {
-        $this->authorize('view', $company);
+        $company = Company::findOrFail($companyId);
+        $this->authorize('view', $company->id);
 
         return $company;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Company $company): Company
+    public function update(Request $request, int $companyId)
     {
-        $this->authorize('update', $company);
+        $company = Company::findOrFail($companyId);
+        $this->authorize('update', $company->id);
 
-        $company->update($request->validate([
-            'name' => 'required|string|max:255',
-        ]));
+        $company->update($request->only('name'));
+
         return $company;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Company $company): \Illuminate\Http\JsonResponse
+    public function destroy(int $companyId)
     {
-        $this->authorize('delete', $company);
+        $company = Company::findOrFail($companyId);
+        $this->authorize('delete', $company->id);
 
         $company->delete();
 
-        return response()->json(null, 204);
+        return response()->noContent();
     }
 }
+

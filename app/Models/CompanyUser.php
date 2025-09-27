@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property string $role
+ * @mixin IdeHelperCompanyUser
  */
 class CompanyUser extends Pivot
 {
