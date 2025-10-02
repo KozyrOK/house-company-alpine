@@ -1,25 +1,28 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
+@extends('layouts.app')
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@section('title','Forgot Password')
 
-    <form method="POST" action="{{ route('password.email') }}">
-        @csrf
+@section('content')
+    <x-auth-card title="Forgot Password">
+        <p class="mb-4 text-sm text-gray-600">
+            Enter your email and we will send you a password reset link.
+        </p>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        @if (session('status'))
+            <div class="mb-4 text-green-600 text-sm">{{ session('status') }}</div>
+        @endif
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+        <form method="POST" action="{{ route('password.email') }}">
+            @csrf
+            <div class="mb-3">
+                <label for="email" class="block text-sm">Email</label>
+                <input id="email" type="email" name="email" required autofocus
+                       class="w-full border rounded p-2">
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">
+                Send Reset Link
+            </button>
+        </form>
+    </x-auth-card>
+@endsection
