@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
@@ -23,6 +24,11 @@ class CompanyController extends Controller
         ]);
 
         $company = Company::create($validated);
+
+        $superadmins = User::where('is_superadmin', true)->get();
+        foreach ($superadmins as $superadmin) {
+            $company->users()->attach($superadmin->id, ['role' => 'superadmin']);
+        }
 
         return response()->json($company, 201);
     }

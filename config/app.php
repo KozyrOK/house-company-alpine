@@ -123,4 +123,12 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+   |--------------------------------------------------------------------------
+   | Default Super Admin credentials
+   |--------------------------------------------------------------------------
+   */
+    'superadmin_email' => env('SEED_SUPERADMIN_EMAIL', 'admin@housing.local'),
+    'superadmin_password' => env('SEED_SUPERADMIN_PASSWORD', 'password'),
+
 ];
