@@ -1,6 +1,6 @@
 <?php
 
-@extends('layouts.app')
+@extends('_layouts.app')
 
 @section('title','Companies')
 
@@ -31,7 +31,7 @@
                 loading: true,
                 async fetchCompanies() {
                     try {
-                        const res = await fetch('/api/companies', {credentials:'same-origin'})
+                        const res = await fetch('/api/companies', {credentials: 'same-origin'})
                         const data = await res.json()
                         this.companies = data.data ?? data
                     } catch (e) {
