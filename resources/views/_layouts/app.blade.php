@@ -13,7 +13,7 @@
 
 <body class="antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
 
-{{-- ================= HEADER ================= --}}
+{{-- HEADER --}}
 <header class="relative">
     {{-- Background image / pattern --}}
     <div class="h-48 sm:h-64 md:h-80 bg-[url('/images/header-pattern.jpg')] bg-repeat bg-cover"></div>
@@ -79,7 +79,7 @@
     @yield('content')
 </main>
 
-{{--FOOTER--}}
+{{-- FOOTER --}}
 <footer class="border-t py-6 text-center text-sm text-gray-500">
     © {{ date('Y') }} Housing Company
 </footer>
