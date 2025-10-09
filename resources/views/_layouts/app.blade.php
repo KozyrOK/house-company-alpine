@@ -1,102 +1,108 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-      x-data="theme()"
-      x-init="init()"
-      :class="{ 'dark': dark }">
-
+      x-data="{
+    darkMode: localStorage.getItem('darkMode') === 'true',
+    menuOpen: false,
+    toggleDark() {
+        this.darkMode = !this.darkMode;
+        localStorage.setItem('darkMode', this.darkMode);
+        document.documentElement.classList.toggle('dark', this.darkMode);
+    }
+}"
+      x-init="document.documentElement.classList.toggle('dark', darkMode)">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', config('app.name', 'HousingCompany'))</title>
+    <title>@yield('title', 'Housing Company')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+<body class="bg-[#b5d8ce] dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
 
-{{-- HEADER --}}
-<header class="relative">
-    {{-- Background image / pattern --}}
-    <div class="h-48 sm:h-64 md:h-80 bg-[url('/images/header-pattern.jpg')] bg-repeat bg-cover"></div>
-
-    {{-- Top-right controls: login/logout, locale, dark mode --}}
-    <div class="absolute top-4 right-4 flex items-center space-x-3">
-
-        {{-- Locale switch (temporary placeholder) --}}
-        <div class="hidden sm:flex items-center space-x-1">
-            <a href="?lang=en" class="text-sm">EN</a>
-            <span class="text-sm">/</span>
-            <a href="?lang=uk" class="text-sm">UK</a>
-        </div>
-
-        {{-- Dark mode toggle --}}
-        <button @click="toggle()" class="p-2 rounded-md border" title="Toggle theme">
-            <span x-text="dark ? '🌙' : '☀️'"></span>
-        </button>
-
-        {{-- Auth buttons --}}
-        @guest
-            <a href="{{ route('login') }}" class="px-3 py-2 rounded bg-indigo-600 text-white text-sm">Login</a>
-        @else
-            <form method="POST" action="{{ route('logout') }}" class="inline">
-                @csrf
-                <button type="submit" class="px-3 py-2 rounded bg-red-500 text-white text-sm">Logout</button>
-            </form>
-        @endguest
+<!-- Header -->
+<header class="relative w-full">
+    <!-- Background pattern (switches with theme) -->
+    <div
+        class="h-40 bg-cover bg-center transition-all duration-500"
+        :style="darkMode
+                ? 'background-image: url(@/images/header-pattern-dark.png)'
+                : 'background-image: url(@/images/header-pattern.png)'">
     </div>
 
-    {{-- Navigation menu below the header image --}}
-    <nav class="bg-white dark:bg-gray-800 border-t shadow-sm">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex items-center justify-between h-12">
-                <div class="flex items-center space-x-4">
+    <!-- Top controls -->
+    <div class="absolute top-2 right-4 flex items-center space-x-4">
+        @auth
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="text-white font-medium hover:text-[#198666]">Logout</button>
+            </form>
+        @else
+            <a href="{{ route('login') }}" class="text-white font-medium hover:text-[#198666]">Login</a>
+        @endauth
 
-                    {{-- Always visible links --}}
-                    <a href="{{ route('info') }}" class="text-sm font-medium">Info</a>
+        <!-- Locale switch -->
+        <button @click="$dispatch('locale-switch')" class="text-white hover:text-[#198666]">🌐</button>
 
-                    {{-- Authenticated user links --}}
-                    @auth
-                        <a href="{{ route('companies.index') }}" class="text-sm font-medium">Main</a>
-                        <a href="{{ route('forum') }}" class="text-sm font-medium">Forum</a>
-                        <a href="{{ route('chat') }}" class="text-sm font-medium">Chat</a>
+        <!-- Dark mode switch -->
+        <button @click="toggleDark()" class="text-white hover:text-[#198666]">
+            <template x-if="darkMode">🌙</template>
+            <template x-if="!darkMode">☀️</template>
+        </button>
 
-                        {{-- Admin link based on user role --}}
-                        @if(auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="text-sm font-medium text-red-500">
-                                Admin
-                            </a>
-                        @endif
-                    @endauth
-                </div>
+        <!-- Mobile menu button -->
+        <button @click="menuOpen = !menuOpen" class="md:hidden text-white hover:text-[#198666]">
+            ☰
+        </button>
+    </div>
 
-                <div class="text-xs text-gray-500">Housing Company</div>
-            </div>
-        </div>
+    <!-- Navigation -->
+    <nav class="bg-[#0f616d] text-white font-semibold">
+        <ul class="hidden md:flex justify-center space-x-8 py-3">
+            @auth
+                <li><a href="{{ route('companies.index') }}" class="hover:text-[#198666]">Main</a></li>
+                @if(Auth::user()->hasRole(['admin','superadmin']))
+                    <li><a href="{{ route('admin') }}" class="hover:text-[#198666]">Admin</a></li>
+                @endif
+                <li><a href="{{ route('dashboard') }}" class="hover:text-[#198666]">Dashboard</a></li>
+                <li><a href="{{ route('chat') }}" class="hover:text-[#198666]">Chat</a></li>
+                <li><a href="{{ route('forum') }}" class="hover:text-[#198666]">Forum</a></li>
+                <li><a href="{{ route('info') }}" class="hover:text-[#198666]">Info</a></li>
+            @else
+                <li><a href="{{ route('info') }}" class="hover:text-[#198666]">About Project</a></li>
+            @endauth
+        </ul>
+
+        <!-- Mobile menu -->
+        <ul
+            x-show="menuOpen"
+            @click.away="menuOpen = false"
+            x-transition
+            class="md:hidden bg-[#0f616d] flex flex-col items-center py-3 space-y-2">
+            @auth
+                <li><a href="{{ route('companies.index') }}" class="hover:text-[#198666]">Main</a></li>
+                @if(Auth::user()->hasRole(['admin','superadmin']))
+                    <li><a href="{{ route('admin') }}" class="hover:text-[#198666]">Admin</a></li>
+                @endif
+                <li><a href="{{ route('dashboard') }}" class="hover:text-[#198666]">Dashboard</a></li>
+                <li><a href="{{ route('chat') }}" class="hover:text-[#198666]">Chat</a></li>
+                <li><a href="{{ route('forum') }}" class="hover:text-[#198666]">Forum</a></li>
+                <li><a href="{{ route('info') }}" class="hover:text-[#198666]">Info</a></li>
+            @else
+                <li><a href="{{ route('info') }}" class="hover:text-[#198666]">About Project</a></li>
+            @endauth
+        </ul>
     </nav>
 </header>
 
-{{--MAIN CONTENT--}}
-<main class="max-w-7xl mx-auto px-4 py-8">
+<!-- Main Content -->
+<main class="flex-1 py-6 px-4 md:px-10 bg-[#a2ae9c] dark:bg-gray-800 rounded-2xl shadow-inner max-w-7xl mx-auto mt-4 transition-all duration-500">
     @yield('content')
 </main>
 
-{{-- FOOTER --}}
-<footer class="border-t py-6 text-center text-sm text-gray-500">
-    © {{ date('Y') }} Housing Company
+<!-- Footer -->
+<footer class="bg-[#0f616d] text-white text-center py-4 mt-6">
+    <p class="text-sm">&copy; {{ date('Y') }} Housing Company Project</p>
 </footer>
-
-{{-- DARK MODE SCRIPT --}}
-<script>
-    function theme() {
-        return {
-            dark: localStorage.getItem('hc_dark') === '1',
-            init() { this.dark = localStorage.getItem('hc_dark') === '1' },
-            toggle() {
-                this.dark = !this.dark;
-                localStorage.setItem('hc_dark', this.dark ? '1' : '0');
-            }
-        }
-    }
-</script>
 
 </body>
 </html>
