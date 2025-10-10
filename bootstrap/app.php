@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function () {
+        $exceptions->render(function (AuthorizationException $e) {
             return response()->json([
                 'error' => 'This action is unauthorized'
             ], 403);
