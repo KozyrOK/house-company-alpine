@@ -4,7 +4,7 @@
 
 @section('content')
     <section class="max-w-5xl mx-auto">
-        <h1 class="text-2xl font-bold mb-4">Community Forum</h1>
+        <h1 class="text-2xl font-bold mb-4">Forum</h1>
 
         <p class="text-gray-600 mb-6">
             This section will host community discussions and Q&A between users.

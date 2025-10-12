@@ -7,7 +7,7 @@
         <h1 class="text-2xl font-bold mb-4">User Dashboard</h1>
 
         <p class="text-gray-600 mb-6">
-            Welcome back, {{ auth()->user()->name }}!
+            Welcome back, {{ auth()->user()->first_name }}!
         </p>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

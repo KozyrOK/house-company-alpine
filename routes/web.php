@@ -45,10 +45,10 @@ Route::middleware('auth')->group(function () {
     Route::view('/forum', 'header.forum')->name('forum');
     Route::view('/chat', 'header.chat')->name('chat');
 
-    Route::prefix('admin')->group(function () {
+    Route::prefix('superadmin')->group(function () {
 
-        Route::view('/', 'admin.dashboard')
-            ->name('admin.dashboard')
+        Route::view('/', 'header.superadmin')
+            ->name('header.superadmin')
             ->can('viewAny', App\Models\User::class);
 
         Route::get('/users', [UserController::class, 'index'])

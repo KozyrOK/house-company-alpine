@@ -3,6 +3,7 @@ import Alpine from 'alpinejs';
 
 import headerPattern from '@/images/header-pattern.png';
 import headerPatternDark from '@/images/header-pattern-dark.png';
+import mainBackground from '@/images/main-background.jpg';
 
 import themeToggle from './components/themeToggle';
 import localeSwitch from './components/localeSwitch';
@@ -13,6 +14,7 @@ import loadingButton from './components/loadingButton';
 Alpine.store('assets', {
     headerPattern,
     headerPatternDark,
+    mainBackground,
 });
 
 window.Alpine = Alpine;

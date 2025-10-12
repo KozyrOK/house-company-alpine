@@ -63,6 +63,12 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function isSuperAdminForHeader(): bool
+    {
+        if ($this->companies()->wherePivot('role', 'superadmin')->exists()) return true;
+        return false;
+    }
+
     public function isSuperAdmin(int $companyId): bool
     {
         return $this->hasRole('superadmin', $companyId);
