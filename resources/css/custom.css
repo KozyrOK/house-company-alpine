@@ -1,0 +1,71 @@
+/* GLOBAL THEME VARIABLES */
+
+:root {
+
+    --color-bg-body: #b5d8ce;
+    --color-bg-main: #a2ae9c;
+    --color-text-main: #111;
+    --color-accent: #0f616d;
+    --color-accent-hover: #198666;
+    --color-footer-bg: #0f616d;
+    --header-bg-color: #b5d8ce;
+}
+
+.dark {
+    --color-bg-body: #1e293b;
+    --color-bg-main: #374151;
+    --color-text-main: #f3f4f6;
+    --color-accent: #198666;
+    --color-accent-hover: #0f616d;
+    --color-footer-bg: #198666;
+    --header-bg-color: #1e293b;
+}
+
+/* BASE LAYOUT */
+
+body {
+    @apply flex flex-col min-h-screen transition-colors duration-500;
+    background-color: var(--color-bg-body);
+    color: var(--color-text-main);
+}
+
+.page-container {
+    @apply flex-1 py-6 px-4 md:px-10 rounded-2xl shadow-inner max-w-7xl mx-auto mt-6 transition-all duration-500;
+    background-color: var(--color-bg-main);
+}
+
+/* HEADER & NAVIGATION */
+
+.header-wrapper {
+    @apply relative w-full overflow-hidden;
+    background-color: var(--header-bg-color);
+}
+
+.header-pattern {
+    @apply h-48 bg-top bg-repeat transition-all duration-500;
+}
+
+.header-topbar {
+    @apply absolute top-2 right-4 flex items-center space-x-4;
+}
+
+.navbar {
+    @apply bg-[var(--color-accent)] text-white font-semibold shadow-md;
+}
+
+.navbar a {
+    @apply transition-colors duration-300;
+    color: white;
+}
+
+.navbar a:hover {
+    color: var(--color-accent-hover);
+}
+
+/* FOOTER */
+
+.footer {
+    @apply text-center py-4 mt-6 text-sm text-white;
+    background-color: var(--color-footer-bg);
+}
+

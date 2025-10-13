@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('superadmin')->group(function () {
 
         Route::view('/', 'header.superadmin')
-            ->name('header.superadmin')
+            ->name('main_component.superadmin')
             ->can('viewAny', App\Models\User::class);
 
         Route::get('/users', [UserController::class, 'index'])

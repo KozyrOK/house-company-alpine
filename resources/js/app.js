@@ -10,6 +10,7 @@ import localeSwitch from './components/localeSwitch';
 import mobileMenu from './components/mobileMenu';
 import confirmModal from './components/confirmModal';
 import loadingButton from './components/loadingButton';
+import headerBackground from './components/headerBackground';
 
 Alpine.store('assets', {
     headerPattern,
@@ -23,5 +24,6 @@ Alpine.data('localeSwitch', localeSwitch);
 Alpine.data('mobileMenu', mobileMenu);
 Alpine.data('confirmModal', confirmModal);
 Alpine.data('loadingButton', loadingButton);
+Alpine.data('headerBackground', headerBackground);
 
 Alpine.start();
