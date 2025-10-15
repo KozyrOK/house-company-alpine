@@ -1,9 +1,9 @@
-<nav class="navbar">
-    <ul class="hidden md:flex justify-center space-x-8 py-3">
+<nav class="navbar-header">
+    <ul class="hidden md:flex justify-end space-x-8 py-3">
         @auth
             <li><a href="{{ route('companies.index') }}">Main</a></li>
             @if(Auth::user()->isSuperAdminForHeader())
-                <li><a href="{{ route('main_component.superadmin') }}" class="hover:text-[#198666] px-4 py-2 rounded {{ request()->routeIs('main_component.superadmin') ? 'bg-[#198666] text-white' : '' }}">Admin</a></li>
+                <li><a href="{{ route('main-component.superadmin') }}">Admin</a></li>
             @endif
             <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
             <li><a href="{{ route('chat') }}">Chat</a></li>

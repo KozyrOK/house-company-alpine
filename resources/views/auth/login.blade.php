@@ -3,7 +3,7 @@
 @section('title','Login')
 
 @section('content')
-    <x-auth-card title="Login">
+    <div title="Login">
         <form method="POST" action="{{ route('login') }}">
             @csrf
             <!-- Email -->
@@ -38,7 +38,7 @@
                 </a>
             @endif
         </div>
-    </x-auth-card>
+    </div>
 
 {{--    @guest--}}
 {{--        <div class="mt-6">--}}

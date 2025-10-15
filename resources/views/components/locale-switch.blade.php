@@ -1,5 +1,6 @@
-<div x-data="localeSwitch">
-    <button @click="toggleLocale" class="text-white hover:text-[var(--color-accent-hover)]">
-        🌐 <span x-text="locale.toUpperCase()"></span>
+<div x-data="localeSwitch" x-init="init()" class="locale-switch">
+    <button @click="toggleLocale" class="locale-switch-button">
+        <span>🌐</span>
+        <span x-text="locale.toUpperCase()"></span>
     </button>
 </div>

@@ -5,7 +5,7 @@ import headerPattern from '@/images/header-pattern.png';
 import headerPatternDark from '@/images/header-pattern-dark.png';
 import mainBackground from '@/images/main-background.jpg';
 
-import themeToggle from './components/themeToggle';
+import themeToggle from './components/themeToggle.js';
 import localeSwitch from './components/localeSwitch';
 import mobileMenu from './components/mobileMenu';
 import confirmModal from './components/confirmModal';

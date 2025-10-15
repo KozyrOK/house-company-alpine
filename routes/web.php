@@ -13,7 +13,7 @@ Route::get('/', function () {
 });
 
 // Public pages
-Route::view('/info', 'header.info')->name('info');
+Route::view('/info', 'components.info')->name('info');
 
 // Authenticated users
 Route::middleware('auth')->group(function () {
@@ -42,14 +42,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 
-    Route::view('/forum', 'header.forum')->name('forum');
-    Route::view('/chat', 'header.chat')->name('chat');
+    Route::view('/forum', 'components.forum')->name('forum');
+    Route::view('/chat', 'components.chat')->name('chat');
 
     Route::prefix('superadmin')->group(function () {
 
-        Route::view('/', 'header.superadmin')
-            ->name('main_component.superadmin')
-            ->can('viewAny', App\Models\User::class);
+        Route::view('/', 'components.superadmin')
+            ->name('main-component.superadmin');
 
         Route::get('/users', [UserController::class, 'index'])
             ->name('admin.users.index')
