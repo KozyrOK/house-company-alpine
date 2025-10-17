@@ -10,6 +10,7 @@ use App\Policies\CompanyPolicy;
 use App\Policies\PostPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,6 +41,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
+        //View::share('isDark', request()->cookie('darkMode') === 'true');
     }
 }

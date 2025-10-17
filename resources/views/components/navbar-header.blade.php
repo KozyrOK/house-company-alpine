@@ -1,16 +1,19 @@
 <nav class="navbar-header">
-    <ul class="hidden md:flex justify-end space-x-8 py-3">
+    <ul>
         @auth
-            <li><a href="{{ route('companies.index') }}">Main</a></li>
+            <li><a href="{{ route('companies.index') }}" class="{{ request()->routeIs('companies.index') ? 'active' : '' }}">Main</a></li>
+
             @if(Auth::user()->isSuperAdminForHeader())
-                <li><a href="{{ route('main-component.superadmin') }}">Admin</a></li>
+                <li><a href="{{ route('main-component.superadmin') }}" class="{{ request()->routeIs('main-component.superadmin') ? 'active' : '' }}">Admin</a></li>
             @endif
-            <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
-            <li><a href="{{ route('chat') }}">Chat</a></li>
-            <li><a href="{{ route('forum') }}">Forum</a></li>
-            <li><a href="{{ route('info') }}">Info</a></li>
+
+            <li><a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a></li>
+            <li><a href="{{ route('chat') }}" class="{{ request()->routeIs('chat') ? 'active' : '' }}">Chat</a></li>
+            <li><a href="{{ route('forum') }}" class="{{ request()->routeIs('forum') ? 'active' : '' }}">Forum</a></li>
+            <li><a href="{{ route('info') }}" class="{{ request()->routeIs('info') ? 'active' : '' }}">Info</a></li>
         @else
-            <li><a href="{{ route('info') }}">About Project</a></li>
+            <li><a href="{{ route('info') }}" class="{{ request()->routeIs('info') ? 'active' : '' }}">Info</a></li>
         @endauth
     </ul>
 </nav>
+

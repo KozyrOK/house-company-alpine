@@ -35,12 +35,12 @@ Route::middleware('auth')->group(function () {
         ->name('companies.posts.show')
         ->can('view', 'post');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
+    Route::get('/dashboard', [ProfileController::class, 'edit'])
+        ->name('dashboard');
+    Route::patch('/dashboard/update', [ProfileController::class, 'update'])
+        ->name('dashboard.update');
+    Route::delete('/dashboard/destroy', [ProfileController::class, 'destroy'])
+        ->name('dashboard.destroy');
 
     Route::view('/forum', 'components.forum')->name('forum');
     Route::view('/chat', 'components.chat')->name('chat');

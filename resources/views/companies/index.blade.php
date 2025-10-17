@@ -1,5 +1,3 @@
-<?php
-
 @extends('_layouts.app')
 
 @section('title','Companies')

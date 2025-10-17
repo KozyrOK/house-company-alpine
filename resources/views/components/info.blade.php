@@ -1,6 +1,6 @@
 @extends('_layouts.app')
 
-@section('title', 'About Project')
+@section('title', 'info')
 
 @section('content')
     <section class="prose max-w-3xl mx-auto">

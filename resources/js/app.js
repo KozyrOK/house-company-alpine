@@ -1,3 +1,7 @@
+if (localStorage.getItem('darkMode') === 'true') {
+    document.documentElement.classList.add('dark');
+}
+
 import './bootstrap';
 import Alpine from 'alpinejs';
 

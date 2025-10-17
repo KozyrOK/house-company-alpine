@@ -1,4 +1,4 @@
-<div x-data="themeToggle" x-init="init()" class="theme-toggle-button-group">
+<div x-data="themeToggle" class="theme-toggle-button-group">
     <button
         @click="toggleDark"
         type="button"
@@ -11,14 +11,22 @@
         ></span>
     </button>
 
-    <div class="theme-toggle-button-text" :class="darkMode ? 'theme-toggle-button-text-dark' : 'theme-toggle-button-text-light'">
-        <template x-if="darkMode">
-            <div><span>🌙</span><span> Dark Mode</span></div>
-        </template>
-        <template x-if="!darkMode">
-            <div><span>☀️</span><span> Light Mode</span></div>
-        </template>
+    <div class="theme-toggle-button-text"
+         :class="darkMode ? 'theme-toggle-button-text-dark' : 'theme-toggle-button-text-light'">
+        <div class="relative w-28 h-5 flex items-center justify-start overflow-hidden">
+            <div
+                x-show="!darkMode"
+                x-transition.opacity
+                class="absolute inset-0 flex items-center space-x-1">
+                <span>☀️</span><span>Light Mode</span>
+            </div>
+            <div
+                x-show="darkMode"
+                x-transition.opacity
+                class="absolute inset-0 flex items-center space-x-1">
+                <span>🌙</span><span>Dark Mode</span>
+            </div>
+        </div>
     </div>
 </div>
-
 
