@@ -13,11 +13,11 @@ body {
 
 .header-background {
     @apply h-28 bg-top bg-repeat-x transition-all duration-500;
-    background-image: url('/resources/images/header-pattern.png');
+    background-image: url('@/images/header-pattern.png');
 }
 
 .dark .header-background {
-    background-image: url('/resources/images/header-pattern-dark.png');
+    background-image: url('@/images/header-pattern-dark.png');
 }
 
 /* TOPBAR */
@@ -33,7 +33,7 @@ body {
 }
 
 .login-topbar-button {
-    @apply text-white font-medium bg-transparent px-3 py-1 rounded-md
+    @apply text-white font-medium bg-blue-500 px-3 py-1 rounded-md
     transition-colors duration-200 hover:bg-white/20 cursor-pointer;
 }
 
@@ -70,7 +70,7 @@ body {
 }
 
 .theme-toggle-button-text {
-    @apply flex items-center space-x-1 text-sm select-none justify-start overflow-hidden w-28 h-5 relative;
+    @apply flex items-center space-x-1 text-sm select-none justify-start w-28 h-5 relative;
 }
 
 .theme-toggle-button-text-light {
@@ -81,15 +81,30 @@ body {
     @apply text-gray-200;
 }
 
+/* navbar-header-wrapper */
+
+.navbar-header-wrapper {
+    @apply relative w-full bg-[#198666] dark:bg-[#0f616d]
+    flex items-end justify-end shadow-md h-12;
+}
+
 /* IMAGE-COMPANY */
 
+.company-image-container {
+    @apply absolute bottom-4;
+    left: 20%;
+    z-index: 30;
+}
 
-
+.company-image {
+    @apply w-28 h-28 rounded-2xl border-4
+    dark:border-[#198666] border-[#0f616d];
+}
 
 /* NAVBAR-HEADER */
 
 .navbar-header {
-    @apply w-full bg-[#198666] dark:bg-[#0f616d];
+     @apply flex justify-end w-full bg-transparent;
 }
 
 .navbar-header ul {
@@ -102,7 +117,7 @@ body {
 }
 
 .navbar-header a.active {
-    border-bottom-color: white;
+    border-bottom-color: yellow;
 }
 
 /* MAIN */
@@ -111,16 +126,14 @@ body {
     @apply relative flex flex-col flex-1 justify-start items-center overflow-hidden;
 }
 
-/* Фон */
 .content-background {
     @apply absolute inset-0 left-1/2 -translate-x-1/2 w-[80vw] h-full
     bg-cover bg-center opacity-20 pointer-events-none transition-opacity duration-500;
     z-index: 0;
 }
 
-.content-container {
-    @apply relative z-10 flex-1 flex flex-col justify-start py-6 px-4 md:px-10
-    rounded-2xl shadow-inner max-w-7xl w-full transition-all duration-500 overflow-hidden;
+.main-container {
+    @apply relative z-10 justify-start transition-all duration-500 overflow-hidden;
 }
 
 .content-inner {

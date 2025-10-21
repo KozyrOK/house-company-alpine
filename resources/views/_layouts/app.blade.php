@@ -16,7 +16,10 @@
 
 <x-header/>
 
-<x-navbar-header/>
+<div class="navbar-header-wrapper">
+    <x-company-image/>
+    <x-navbar-header/>
+</div>
 
 <main class="main-wrapper">
     <div
@@ -25,7 +28,7 @@
         class="content-background">
     </div>
 
-    <div class="content-container">
+    <div class="main-container">
         <div class="content-inner">
             @yield('content')
         </div>

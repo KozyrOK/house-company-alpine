@@ -15,6 +15,7 @@ class Company extends Model
         'name',
         'address',
         'city',
+        'logo_path',
         'description'
 ];
     public function getCompanyId(): int
@@ -31,5 +32,12 @@ class Company extends Model
     public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function getLogoUrlAttribute(): string
+    {
+        return $this->logo_path
+            ? asset('storage/' . $this->logo_path)
+            : asset('images/default-image-company.jpg');
     }
 }
