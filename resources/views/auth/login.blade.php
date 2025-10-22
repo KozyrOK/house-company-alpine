@@ -3,7 +3,11 @@
 @section('title','Login')
 
 @section('content')
+
+    <h1>Login</h1>
+
     <div title="Login">
+
         <form method="POST" action="{{ route('login') }}">
             @csrf
             <!-- Email -->
@@ -39,15 +43,5 @@
             @endif
         </div>
     </div>
-
-{{--    @guest--}}
-{{--        <div class="mt-6">--}}
-{{--            <a href="{{ route('login') }}" class="px-4 py-2 bg-indigo-600 text-white rounded">Log in</a>--}}
-{{--            @if (Route::has('register'))--}}
-{{--                <a href="{{ route('register') }}" class="ml-3 px-4 py-2 border rounded">Register</a>--}}
-{{--            @endif--}}
-{{--        </div>--}}
-{{--    @endguest--}}
-
 
 @endsection
