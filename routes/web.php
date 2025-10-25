@@ -13,7 +13,7 @@ Route::get('/', function () {
 });
 
 // Public pages
-Route::view('/info', 'components.info')->name('info');
+Route::view('/info', 'pages.info')->name('info');
 
 // Authenticated users
 Route::middleware('auth')->group(function () {
@@ -42,12 +42,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/dashboard/destroy', [ProfileController::class, 'destroy'])
         ->name('dashboard.destroy');
 
-    Route::view('/forum', 'components.forum')->name('forum');
-    Route::view('/chat', 'components.chat')->name('chat');
+    Route::view('/forum', 'pages.forum')->name('forum');
+    Route::view('/chat', 'pages.chat')->name('chat');
 
     Route::prefix('superadmin')->group(function () {
 
-        Route::view('/', 'components.superadmin')
+        Route::view('/', 'pages.superadmin')
             ->name('main-component.superadmin');
 
         Route::get('/users', [UserController::class, 'index'])

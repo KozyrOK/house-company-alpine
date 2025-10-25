@@ -5,9 +5,9 @@
     </div>
 
     <div class="header-topbar">
-        <x-login/>
-        <x-locale-switch/>
-        <x-theme-toggle/>
+        <x-auth.login-button-topbar/>
+        <x-header.locale-switch/>
+        <x-header.theme-toggle/>
     </div>
 
 </header>

@@ -14,11 +14,11 @@
 
 <body>
 
-<x-header/>
+<x-layouts::header/>
 
 <div class="navbar-header-wrapper">
-    <x-company-image/>
-    <x-navbar-header/>
+    <x-header.company-image/>
+    <x-layouts::navbar-header/>
 </div>
 
 <main class="main-wrapper">
@@ -35,7 +35,7 @@
     </div>
 </main>
 
-<x-footer/>
+<x-layouts::footer/>
 
 </body>
 </html>

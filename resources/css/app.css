@@ -1,4 +1,4 @@
- /* #region reset.css */
+ /* reset.css */
 
 *, *::before, *::after {
     box-sizing: border-box;
@@ -195,8 +195,6 @@ progress {
     background: rgba(0, 0, 0, 0.3);
 }
 
- /* #endregion */
-
 /* Tailwind core */
 
 @tailwind base;
@@ -241,8 +239,8 @@ body {
 }
 
 .login-topbar-button {
-    @apply text-white font-medium bg-blue-500 px-3 py-1 rounded-md
-    transition-colors duration-200 hover:bg-white/20 cursor-pointer;
+    @apply text-black dark:text-white font-medium bg-[#0f616d] dark:bg-[#198666] px-3 py-1 rounded-md
+    transition-colors duration-200 hover:bg-white/20 hover:dark:bg-white/30 cursor-pointer;
 }
 
 .locale-switch {
@@ -312,21 +310,20 @@ body {
 /* NAVBAR-HEADER */
 
 .navbar-header {
-    @apply flex justify-end w-full bg-transparent;
+    @apply flex justify-end w-full bg-transparent h-14;
 }
 
 .navbar-header ul {
     @apply flex justify-center md:justify-end space-x-14 py-4 px-8;
 }
 
-.navbar-header a {
-    @apply text-white uppercase tracking-wide font-medium relative transition-all duration-300 pb-2;
-    border-bottom: 5px solid transparent;
-}
+ .navbar-header a {
+     @apply text-white uppercase tracking-wide font-medium relative transition-all duration-300 pb-2 border-b-0 border-transparent;
+ }
 
-.navbar-header a.active {
-    border-bottom-color: yellow;
-}
+ .navbar-header a.active {
+     @apply border-b-4 border-amber-500;
+ }
 
 /* MAIN */
 
@@ -349,16 +346,55 @@ body {
 }
 
 h1 {
-    @apply text-3xl font-semibold text-center mt-3;
+    @apply text-2xl font-semibold text-center mt-3 mb-3;
 }
 
+p {
+    @apply mt-3 mb-2;
+}
 
 /* FOOTER */
 
 .footer {
-    @apply text-center py-4 text-sm text-white bg-[#198666] dark:bg-[#0f616d] mt-auto;
+    @apply text-center py-4 text-sm text-white bg-[#198666] dark:bg-[#0f616d] h-12;
 }
 
-/* LOGIN */
+.footer-text {
+    @apply mt-0 mb-0;
+}
 
+/* AUTH */
+
+
+.window-wrapper-auth {
+    @apply relative flex flex-col bg-[#198666] dark:bg-[#0f616d] border-4 border-[#0f616d] dark:border-[#198666] text-black dark:text-white rounded m-4 p-4;
+}
+
+ .close-button-auth {
+     @apply absolute top-4 right-4 text-black dark:text-white hover:text-gray-500 hover:dark:text-gray-300 focus:outline-none text-3xl;
+ }
+
+ .field-auth {
+     @apply mt-3;
+ }
+
+.label-field-auth {
+    @apply text-black dark:text-white;
+}
+
+.input-field-auth {
+    @apply bg-[#b5d8ce] dark:bg-[#1e293b] text-black dark:text-white w-full border border-[#0f616d] dark:border-[#198666] rounded p-2;
+}
+
+ .button-submit-auth {
+     @apply w-full bg-[#0f616d] dark:bg-[#198666] hover:bg-white/20 hover:dark:bg-white/30 p-2 rounded mt-5;
+ }
+
+ .link-text-wrapper-auth {
+     @apply mt-4 flex justify-between;
+ }
+
+.link-text-auth {
+    @apply hover:underline;
+}
 

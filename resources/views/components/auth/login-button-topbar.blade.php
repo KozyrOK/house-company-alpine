@@ -1,4 +1,5 @@
-<div class="login-topbar">
+<section class="login-topbar">
+
     @auth
         <form method="POST" action="{{ route('logout') }}">
             @csrf
@@ -7,4 +8,5 @@
     @else
         <a href="{{ route('login') }}" class="login-topbar-button inline-block">Login</a>
     @endauth
-</div>
+
+</section>

@@ -3,11 +3,12 @@
 @section('title','Register')
 
 @section('content')
-    <x-auth-card title="Register">
+
+    <section class="window-wrapper-auth">
         <form method="POST" action="{{ route('register') }}">
             @csrf
             <!-- Name -->
-            <div class="mb-3">
+            <div class="input-field-auth">
                 <label for="name" class="block text-sm">Name</label>
                 <input id="name" type="text" name="name" required autofocus
                        class="w-full border rounded p-2">
@@ -38,5 +39,5 @@
                 Register
             </button>
         </form>
-    </x-auth-card>
+    </section>
 @endsection
