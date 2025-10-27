@@ -5,39 +5,68 @@
 @section('content')
 
     <section class="window-wrapper-auth">
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
-            <!-- Name -->
-            <div class="input-field-auth">
-                <label for="name" class="block text-sm">Name</label>
-                <input id="name" type="text" name="name" required autofocus
-                       class="w-full border rounded p-2">
-            </div>
 
-            <!-- Email -->
-            <div class="mb-3">
-                <label for="email" class="block text-sm">Email</label>
-                <input id="email" type="email" name="email" required
-                       class="w-full border rounded p-2">
-            </div>
+        <x-auth.close-button-auth/>
 
-            <!-- Password -->
-            <div class="mb-3">
-                <label for="password" class="block text-sm">Password</label>
-                <input id="password" type="password" name="password" required
-                       class="w-full border rounded p-2">
-            </div>
+        <h1>Login</h1>
 
-            <!-- Confirm Password -->
-            <div class="mb-3">
-                <label for="password_confirmation" class="block text-sm">Confirm Password</label>
-                <input id="password_confirmation" type="password" name="password_confirmation" required
-                       class="w-full border rounded p-2">
-            </div>
+        <div title="Login">
 
-            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">
-                Register
-            </button>
-        </form>
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+
+                <x-auth.input-field-auth
+                    name="first_name"
+                    text="First name"
+                    type="text"
+                    required autofocus
+                />
+
+                <x-auth.input-field-auth
+                    name="second_name"
+                    text="Second name"
+                    type="text"
+                    required autofocus
+                />
+
+                <x-auth.input-field-auth
+                    name="email"
+                    text="Email"
+                    type="email"
+                    required autofocus
+                />
+
+                <x-auth.input-field-auth
+                    name="password"
+                    text="Password"
+                    type="password"
+                    required
+                />
+
+                <x-auth.input-field-auth
+                    name="confirm_password"
+                    text="Confirm Password"
+                    type="password"
+                    required
+                />
+
+                <x-auth.input-field-auth
+                    name="phone"
+                    text="Phone"
+                    type="text"
+                    required
+                />
+
+                <x-button
+                    text="Register"
+                    type="submit"
+                    class="button-submit-auth"
+                />
+
+            </form>
+
+        </div>
+
     </section>
+
 @endsection

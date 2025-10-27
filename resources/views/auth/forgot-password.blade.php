@@ -3,26 +3,43 @@
 @section('title','Forgot Password')
 
 @section('content')
-    <x-auth-card title="Forgot Password">
-        <p class="mb-4 text-sm text-gray-600">
-            Enter your email and we will send you a password reset link.
-        </p>
 
-        @if (session('status'))
-            <div class="mb-4 text-green-600 text-sm">{{ session('status') }}</div>
-        @endif
+    <section class="window-wrapper-auth">
 
-        <form method="POST" action="{{ route('password.email') }}">
-            @csrf
-            <div class="mb-3">
-                <label for="email" class="block text-sm">Email</label>
-                <input id="email" type="email" name="email" required autofocus
-                       class="w-full border rounded p-2">
-            </div>
+        <x-auth.close-button-auth/>
 
-            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded">
-                Send Reset Link
-            </button>
-        </form>
-    </x-auth-card>
+        <h1>Forgot Password?</h1>
+
+        <div title="Forgot Password">
+            <p>
+                Enter your email and
+                we will send you a password reset link.
+            </p>
+
+            @if (session('status'))
+                <div>{{ session('status') }}</div>
+            @endif
+
+            <form method="POST" action="{{ route('password.email') }}">
+                 @csrf
+
+                <x-auth.input-field-auth
+                name="email"
+                text="Email"
+                type="email"
+                required autofocus
+                />
+
+                <x-button
+                text="Send Reset Link"
+                type="submit"
+                class="button-submit-auth"
+                />
+
+            </form>
+
+        </div>
+
+    </section>
+
 @endsection
