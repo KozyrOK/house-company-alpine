@@ -1,9 +1,21 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 @props([
     'text',
-    'type',
-    'class',
+    'type' => 'button',
+    'class' => '',
 ])
 
+@php
+    $key = "app.buttons." . Str::slug($text, '_');
+    $translated_text = __($key);
+    if ($translated_text === $key) {
+        $translated_text = $text;
+    }
+@endphp
+
 <button type="{{ $type }}" class="{{ $class }}">
-    {{ $text }}
+    {{ $translated_text }}
 </button>

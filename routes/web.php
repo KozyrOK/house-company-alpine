@@ -6,6 +6,17 @@ use App\Http\Controllers\Web\PostController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\ProfileController;
 
+Route::get('/locale/{locale}', function ($locale) {
+    if (! in_array($locale, ['en', 'uk'])) {
+        $locale = 'en';
+    }
+
+    Session::put('locale', $locale);
+    App::setLocale($locale);
+
+    return redirect()->back();
+})->name('locale.switch');
+
 Route::get('/', function () {
     return auth()->check()
         ? redirect()->route('companies.index')

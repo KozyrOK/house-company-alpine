@@ -6,7 +6,7 @@ export default () => ({
         localStorage.setItem('locale', next);
         document.documentElement.lang = next;
 
-        fetch(`/locale/${next}`, { method: 'POST' })
+        fetch(`/locale/${next}`)
             .then(() => location.reload())
             .catch(console.error);
     },

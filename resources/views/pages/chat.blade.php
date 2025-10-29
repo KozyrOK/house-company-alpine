@@ -6,11 +6,10 @@
 
     <section>
 
-        <h1>Chat</h1>
+        <h1>__('app.pages.chat')</h1>
 
         <p>
-            Real-time chat will be available here for company members.
-            (Chat module is under development)
+            __('app.pages.chat_text1')
         </p>
 
     </section>

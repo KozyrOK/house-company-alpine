@@ -3,8 +3,10 @@
 @section('title','Companies')
 
 @section('content')
+
     <div x-data="companiesList()" x-init="fetchCompanies()">
-        <h2 class="text-2xl font-bold mb-4">My Companies</h2>
+
+        <h1>__('app.companies.my_companies')</h1>
 
         <!-- Loading -->
         <div x-show="loading" class="text-gray-500">Loading...</div>

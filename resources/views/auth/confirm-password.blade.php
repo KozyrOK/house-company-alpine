@@ -4,10 +4,10 @@
 
 @section('content')
 
-    <div title="Confirm Password">
+    <div title="__('app.auth.confirm_password')">
 
         <p>
-            This is a secure area. Please confirm your password before continuing.
+            __('app.auth.confirm_password_text')
         </p>
 
         <form method="POST" action="{{ route('password.confirm') }}">

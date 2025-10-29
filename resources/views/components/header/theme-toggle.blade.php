@@ -18,13 +18,13 @@
                 x-show="!darkMode"
                 x-transition.opacity
                 class="absolute inset-0 flex items-center space-x-1">
-                <span>☀️</span><span>Light Mode</span>
+                <span>☀️</span><span>__('app.components.light_mode')</span>
             </div>
             <div
                 x-show="darkMode"
                 x-transition.opacity
                 class="absolute inset-0 flex items-center space-x-1">
-                <span>🌙</span><span>Dark Mode</span>
+                <span>🌙</span><span>__('app.components.dark_mode')</span>
             </div>
         </div>
     </div>

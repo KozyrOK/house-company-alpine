@@ -9,13 +9,12 @@
     <div title="Verify Email">
 
         <p>
-            Thanks for signing up! Please check your email for a verification link.
-            If you didn’t receive it, you can request another.
+            __('app.auth.reset_verify_email_text1')
         </p>
 
         @if (session('status') == 'verification-link-sent')
             <div>
-                A new verification link has been sent to your email.
+                __('app.auth.reset_verify_email_text2')
             </div>
         @endif
 

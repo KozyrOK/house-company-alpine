@@ -6,11 +6,11 @@
 
     <section>
 
-        <h1>Forum</h1>
+        <h1>__('app.pages.forum')</h1>
 
         <p>
-            This section will host community discussions and Q&A between users
-            (the page is under development)
+            __('app.pages.forum_text1')
+
         </p>
 
     </section>

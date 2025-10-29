@@ -8,10 +8,11 @@
 
         <x-auth.close-button-auth/>
 
-        <h1>Forgot Password?</h1>
+        <h1>__('app.auth.forgot_password')</h1>
 
         <div title="Forgot Password">
             <p>
+                __('app.auth.forgot_password_text2')
                 Enter your email and
                 we will send you a password reset link.
             </p>

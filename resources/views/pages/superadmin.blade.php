@@ -3,8 +3,8 @@
 @section('title', 'Admin Panel')
 
 @section('content')
-    <section class="max-w-5xl mx-auto">
-        <h1 class="text-2xl font-bold mb-4">Administration</h1>
+    <section>
+        <h1>__('app.auth.reset_admin_panel')</h1>
 
         <p class="text-gray-600 mb-6">
             Here you can manage users, companies, and posts.

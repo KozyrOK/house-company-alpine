@@ -15,7 +15,7 @@ class ProfileController extends Controller
      */
     public function edit()
     {
-        return view('components.dashboard');
+        return view('pages.dashboard');
     }
 
     /**

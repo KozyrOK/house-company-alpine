@@ -8,7 +8,7 @@
 
         <x-auth.close-button-auth/>
 
-        <h1>Login</h1>
+        <h1>__('app.auth.login')</h1>
 
         <div title="Login">
 
@@ -40,13 +40,13 @@
             <div class="link-text-wrapper-auth">
                 @if (Route::has('password.request'))
                     <a class="link-text-auth" href="{{ route('password.request') }}">
-                        Forgot your password?
+                        __('app.auth.forgot_password')
                     </a>
                 @endif
 
                 @if (Route::has('register'))
                         <a class="link-text-auth" href="{{ route('register') }}">
-                            Register
+                            __('app.auth.register')
                         </a>
                     @endif
             </div>

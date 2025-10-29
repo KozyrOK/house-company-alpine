@@ -8,7 +8,7 @@
 
         <x-auth.close-button-auth/>
 
-        <h1>Reset Password</h1>
+        <h1>__('app.auth.reset_password')</h1>
 
         <div title="Reset Password">
 

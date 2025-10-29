@@ -6,12 +6,10 @@
 
 <section>
 
-    <h1>About the Housing Company Project</h1>
+    <h1>__('app.pages.text1')</h1>
 
     <p>
-        This is a PET project for managing condominium associations.
-        The project allows residents and administrators to manage posts,
-        users, and company information in one place.
+        __('app.pages.text2')
     </p>
 
 </section>
