@@ -13,18 +13,18 @@
 
     <div class="theme-toggle-button-text"
          :class="darkMode ? 'theme-toggle-button-text-dark' : 'theme-toggle-button-text-light'">
-        <div class="relative w-28 h-5 flex items-center justify-start overflow-hidden">
+        <div class="theme-toggle-group-wrapper">
             <div
                 x-show="!darkMode"
                 x-transition.opacity
-                class="absolute inset-0 flex items-center space-x-1">
-                <span>☀️</span><span>__('app.components.light_mode')</span>
+                class="theme-toggle-item">
+                <span>☀️</span><span>{{ __('app.components.light_mode') }}</span>
             </div>
             <div
                 x-show="darkMode"
                 x-transition.opacity
-                class="absolute inset-0 flex items-center space-x-1">
-                <span>🌙</span><span>__('app.components.dark_mode')</span>
+                class="theme-toggle-item">
+                <span>🌙</span><span>{{ __('app.components.dark_mode') }}</span>
             </div>
         </div>
     </div>

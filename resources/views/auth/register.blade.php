@@ -8,7 +8,7 @@
 
         <x-auth.close-button-auth/>
 
-        <h1>__('app.auth.register')</h1>
+        <h1>{{__('app.auth.register')}}</h1>
 
         <div title="Login">
 

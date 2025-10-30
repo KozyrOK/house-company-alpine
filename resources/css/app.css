@@ -287,6 +287,14 @@ body {
     @apply text-gray-200;
 }
 
+ .theme-toggle-group-wrapper {
+    @apply relative w-28 h-5 flex items-center justify-start overflow-hidden;
+ }
+
+ .theme-toggle-item {
+     @apply absolute inset-0 flex items-center space-x-1;
+ }
+
 /* navbar-header-wrapper */
 
 .navbar-header-wrapper {

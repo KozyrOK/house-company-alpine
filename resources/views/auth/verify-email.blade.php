@@ -9,12 +9,12 @@
     <div title="Verify Email">
 
         <p>
-            __('app.auth.reset_verify_email_text1')
+            {{__('app.auth.reset_verify_email_text1')}}
         </p>
 
         @if (session('status') == 'verification-link-sent')
             <div>
-                __('app.auth.reset_verify_email_text2')
+                {{__('app.auth.reset_verify_email_text2')}}
             </div>
         @endif
 

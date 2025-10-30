@@ -4,7 +4,7 @@ return [
 
     'layouts' => [
 
-        'hc' => 'Housing Company!',
+        'hc' => 'Housing Company',
         'main' => 'Main',
         'admin' => 'Admin',
         'dashboard' => 'Dashboard',
@@ -59,12 +59,12 @@ return [
 
     'pages' => [
         'chat' => 'Chat',
-        'chat_text1' => 'Real-time chat will be available here for company members.\n(Chat module is under development)',
+        'chat_text1' => "Real-time chat will be available here for company members.\n(Chat module is under development)",
         'user_dashboard' => 'User Dashboard',
         'forum' => 'Forum',
-        'forum_text1' => 'This section will host community discussions and Q&A between users\n(the page is under development)',
+        'forum_text1' => "This section will host community discussions and Q&A between users\n(the page is under development)",
         'info_text1' => 'About the Housing Company Project',
-        'info_text2' => 'This is a PET project for managing condominium associations.\nThe project allows residents and administrators to manage posts,\nusers, and company information in one place.',
+        'info_text2' => "This is a PET project for managing condominium associations.\n The project allows residents and administrators to manage posts,\n users, and company information in one place.",
         'admin_panel' => 'Admin Panel',
     ],
 

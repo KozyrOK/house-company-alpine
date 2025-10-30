@@ -6,10 +6,10 @@
 
     <section>
 
-        <h1>__('app.pages.chat')</h1>
+        <h1>{{ __('app.pages.chat') }}</h1>
 
         <p>
-            __('app.pages.chat_text1')
+            {!! nl2br(__('app.pages.chat_text1')) !!}
         </p>
 
     </section>

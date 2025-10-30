@@ -6,10 +6,10 @@
 
 <section>
 
-    <h1>__('app.pages.text1')</h1>
+    <h1>{{ __('app.pages.info_text1') }}</h1>
 
     <p>
-        __('app.pages.text2')
+        {!! nl2br(__('app.pages.info_text2')) !!}
     </p>
 
 </section>

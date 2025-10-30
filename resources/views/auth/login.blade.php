@@ -8,9 +8,9 @@
 
         <x-auth.close-button-auth/>
 
-        <h1>__('app.auth.login')</h1>
+        <h1>{{__('app.auth.login')}}</h1>
 
-        <div title="Login">
+        <div title="{{__('app.auth.login')}}">
 
             <form method="POST" action="{{ route('login') }}">
                 @csrf
@@ -40,13 +40,13 @@
             <div class="link-text-wrapper-auth">
                 @if (Route::has('password.request'))
                     <a class="link-text-auth" href="{{ route('password.request') }}">
-                        __('app.auth.forgot_password')
+                        {{__('app.auth.forgot_password')}}
                     </a>
                 @endif
 
                 @if (Route::has('register'))
                         <a class="link-text-auth" href="{{ route('register') }}">
-                            __('app.auth.register')
+                            {{__('app.auth.register')}}
                         </a>
                     @endif
             </div>

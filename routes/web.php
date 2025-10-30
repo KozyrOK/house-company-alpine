@@ -1,20 +1,25 @@
 <?php
 
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\CompanyController;
 use App\Http\Controllers\Web\PostController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\ProfileController;
 
-Route::get('/locale/{locale}', function ($locale) {
-    if (! in_array($locale, ['en', 'uk'])) {
+Route::post('/locale/{locale}', function ($locale) {
+    $available = ['en', 'uk', 'ru'];
+
+    if (!in_array($locale, $available)) {
         $locale = 'en';
     }
 
     Session::put('locale', $locale);
     App::setLocale($locale);
 
-    return redirect()->back();
+    return Response::noContent();
 })->name('locale.switch');
 
 Route::get('/', function () {

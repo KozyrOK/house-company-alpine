@@ -4,10 +4,10 @@
 
 @section('content')
 
-    <div title="__('app.auth.confirm_password')">
+    <div title="{{__('app.auth.confirm_password')}}">
 
         <p>
-            __('app.auth.confirm_password_text')
+            {{__('app.auth.confirm_password_text')}}
         </p>
 
         <form method="POST" action="{{ route('password.confirm') }}">

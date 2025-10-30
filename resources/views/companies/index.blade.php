@@ -6,7 +6,7 @@
 
     <div x-data="companiesList()" x-init="fetchCompanies()">
 
-        <h1>__('app.companies.my_companies')</h1>
+        <h1>{{__('app.companies.my_companies')}}</h1>
 
         <!-- Loading -->
         <div x-show="loading" class="text-gray-500">Loading...</div>

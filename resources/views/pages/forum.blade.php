@@ -6,11 +6,10 @@
 
     <section>
 
-        <h1>__('app.pages.forum')</h1>
+        <h1>{{ __('app.pages.forum') }}</h1>
 
         <p>
-            __('app.pages.forum_text1')
-
+            {!! nl2br(__('app.pages.forum_text1')) !!}
         </p>
 
     </section>

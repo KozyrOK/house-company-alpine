@@ -4,7 +4,7 @@
 
 @section('content')
     <section>
-        <h1>__('app.auth.reset_admin_panel')</h1>
+        <h1>{{ __('app.pages.admin_panel') }}</h1>
 
         <p class="text-gray-600 mb-6">
             Here you can manage users, companies, and posts.
