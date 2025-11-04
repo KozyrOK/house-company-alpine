@@ -22,6 +22,10 @@ Route::post('/locale/{locale}', function ($locale) {
     return Response::noContent();
 })->name('locale.switch');
 
+Route::get('/sanctum/csrf-cookie', function () {
+    return response()->noContent();
+});
+
 Route::get('/', function () {
     return auth()->check()
         ? redirect()->route('companies.index')

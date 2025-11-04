@@ -10,6 +10,10 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->only(['profile', 'logout']);
+    }
 
     public function profile(Request $request): \Illuminate\Http\JsonResponse
     {

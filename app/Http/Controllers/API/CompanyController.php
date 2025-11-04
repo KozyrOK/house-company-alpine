@@ -11,8 +11,15 @@ class CompanyController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Company::class);
-        return Company::paginate();
+        $user = $request->user();
+
+        if ($user->isSuperAdmin()) {
+            $companies = Company::paginate(10);
+        } else {
+            $companies = $user->companies()->paginate(10);
+        }
+
+        return response()->json($companies);
     }
 
     public function store(Request $request)

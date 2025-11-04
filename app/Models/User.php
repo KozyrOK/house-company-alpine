@@ -69,9 +69,21 @@ class User extends Authenticatable
         return false;
     }
 
-    public function isSuperAdmin(int $companyId): bool
+    public function isSuperAdmin(?int $companyId = null): bool
     {
-        return $this->hasRole('superadmin', $companyId);
+        $hasGlobalSuper = $this->companies()
+            ->wherePivot('role', 'superadmin')
+            ->exists();
+
+        if ($hasGlobalSuper) {
+            return true;
+        }
+
+        if ($companyId !== null) {
+            return $this->hasRole('superadmin', $companyId);
+        }
+
+        return false;
     }
 
     public function isAdminOrHigher(int $companyId): bool

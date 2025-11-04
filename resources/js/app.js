@@ -13,6 +13,7 @@ import confirmModal from './components/confirmModal';
 import loadingButton from './components/loadingButton';
 import headerBackground from './components/headerBackground';
 import companyImageComponent from './components/companyImage.js';
+import allCompaniesList from './components/allCompaniesList.js';
 
 Alpine.store('assets', {
     headerPattern,
@@ -29,5 +30,6 @@ Alpine.data('confirmModal', confirmModal);
 Alpine.data('loadingButton', loadingButton);
 Alpine.data('headerBackground', headerBackground);
 Alpine.data('companyImage', companyImageComponent);
+Alpine.data('allCompaniesList', allCompaniesList);
 
 Alpine.start();

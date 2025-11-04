@@ -357,6 +357,10 @@ h1 {
     @apply text-2xl font-semibold text-center mt-3 mb-3;
 }
 
+ h2 {
+     @apply text-lg font-semibold text-center mt-3 mb-3;
+ }
+
 p {
     @apply mt-3 mb-2;
 }
@@ -405,4 +409,15 @@ p {
 .link-text-auth {
     @apply hover:underline;
 }
+
+ /* CONTENT WINDOW */
+
+ .content-items-box-wrapper {
+     @apply grid grid-cols-1 sm:grid-cols-3 gap-6;
+ }
+
+ .content-items-box {
+     @apply block p-4 border rounded bg-[#b5d8ce] dark:bg-gray-800 hover:bg-gray-50 hover:dark:bg-gray-600;
+ }
+
 
