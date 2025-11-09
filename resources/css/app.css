@@ -312,7 +312,8 @@ progress {
  .company-image {
      @apply w-28 h-28 rounded-2xl border-4
      dark:border-[#198666] border-[#0f616d]
-     transition-opacity duration-300 ease-in-out;
+     transition-opacity duration-300 ease-in-out
+     object-cover block bg-[#0f616d];
  }
 
 /* NAVBAR-HEADER */
@@ -427,4 +428,18 @@ p {
 
  .content-item-box-wrapper {
      @apply flex flex-col items-center justify-center text-center space-y-4;
+ }
+
+ /* CONTENT LIST */
+
+ .content-cell {
+     @apply p-4 border rounded bg-[#b5d8ce] dark:bg-gray-800;
+ }
+
+ .content-cell-center {
+     @apply p-4 border rounded bg-[#b5d8ce] dark:bg-gray-800 text-center;
+ }
+
+ .button-list {
+     @apply w-full bg-[#198666] hover:bg-white/60 hover:dark:bg-white/30 p-2 rounded;
  }

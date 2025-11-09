@@ -15,18 +15,22 @@
         <table x-show="!loading" >
             <thead>
             <tr>
-                <th class="p-2 border">#</th>
-                <th class="p-2 border">{{ __('app.companies.name') }}</th>
-                <th class="p-2 border">{{ __('app.companies.actions') }}</th>
+                <th class="content-cell-center">#</th>
+                <th class="content-cell-center">{{ __('app.companies.name') }}</th>
+                <th class="content-cell-center">{{ __('app.companies.actions') }}</th>
             </tr>
             </thead>
             <tbody>
             <template x-for="(c, index) in companies" :key="c.id">
                 <tr>
-                    <td class="p-2 border text-center" x-text="index + 1"></td>
-                    <td class="p-2 border" x-text="c.name"></td>
-                    <td class="p-2 border text-center">
-                        <a :href="`/companies/${c.id}`" class="text-blue-600 hover:underline">Detail</a>
+                    <td class="content-cell-center" x-text="index + 1"></td>
+                    <td class="content-cell" x-text="c.name"></td>
+                    <td class="content-cell-center">
+                        <x-button
+                            text="Detail"
+                            href="`/companies/${c.id}`"
+                            class="button-list"
+                        />
                     </td>
                 </tr>
             </template>

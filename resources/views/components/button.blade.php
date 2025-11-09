@@ -4,6 +4,7 @@
 
 @props([
     'text',
+    'href' => null,
     'type' => 'button',
     'class' => '',
 ])
