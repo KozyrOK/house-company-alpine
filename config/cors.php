@@ -2,9 +2,9 @@
 
 return [
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout', 'locale/*'],
     'allowed_methods' => ['*'],
-    'allowed_origins' => ['http://localhost:8080'],
+    'allowed_origins' => ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:8080'],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
     'max_age' => 0,

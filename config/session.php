@@ -17,7 +17,7 @@ return [
         'SESSION_COOKIE',
         Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
     ),
-    'path' => env('SESSION_PATH', 'localhost'),
+    'path' => '/',
     'domain' => env('SESSION_DOMAIN', null),
     'secure' => env('SESSION_SECURE_COOKIE', false),
     'http_only' => env('SESSION_HTTP_ONLY', true),

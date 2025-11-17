@@ -16,4 +16,3 @@
         @endauth
     </ul>
 </nav>
-

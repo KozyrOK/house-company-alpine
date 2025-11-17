@@ -24,8 +24,8 @@
 
 <main class="main-wrapper">
     <div
-        x-data
-        x-init="$el.style.backgroundImage = `url(${Alpine.store('assets').mainBackground})`"
+        x-data="defaultContentBackground"
+        x-init="init"
         class="content-background">
     </div>
 

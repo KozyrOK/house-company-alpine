@@ -55,6 +55,8 @@ return [
 
     'companies' => [
         'my_companies' => 'My Companies',
+        'name' => 'Companies name',
+        'actions' => 'Actions by companies',
     ],
 
     'pages' => [

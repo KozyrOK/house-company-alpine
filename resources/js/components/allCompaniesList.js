@@ -3,7 +3,6 @@ export default function allCompaniesList() {
         companies: [],
         loading: true,
         async fetchCompanies() {
-            console.log('✅ fetchCompanies() called');
 
             try {
 
@@ -26,9 +25,7 @@ export default function allCompaniesList() {
                     },
                 });
 
-                console.log('Response status:', res.status);
                 const data = await res.json();
-                console.log('Data:', data);
 
                 if (res.ok) {
                     this.companies = data.data ?? data;

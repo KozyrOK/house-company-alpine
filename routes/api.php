@@ -15,6 +15,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 //    Route::post('/logout-all', [AuthController::class, 'logoutAll']); logout from all devices
 
+    Route::get('company/{companyId?}/logo', [CompanyController::class, 'logo']);
     Route::apiResource('companies', CompanyController::class);
 
     Route::apiResource('companies.users', UserController::class);

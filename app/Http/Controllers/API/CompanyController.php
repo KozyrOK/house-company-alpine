@@ -9,6 +9,36 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+
+    public function logo(Request $request, ?int $companyId = null)
+    {
+        $user = $request->user();
+
+        if ($user->isSuperAdmin()) {
+            return response()->json([
+                'logo_url' => asset('images/default-image-company.jpg'),
+            ]);
+        }
+
+        if ($companyId) {
+            $company = Company::find($companyId);
+
+            if (!$company || !$user->belongsToCompany($companyId)) {
+                return response()->json([
+                    'logo_url' => asset('images/default-image-company.jpg'),
+                ]);
+            }
+
+            return response()->json([
+                'logo_url' => $company->logo_url,
+            ]);
+        }
+
+        return response()->json([
+            'logo_url' => asset('images/default-image-company.jpg'),
+        ]);
+    }
+
     public function index(Request $request)
     {
         $user = $request->user();
@@ -68,4 +98,3 @@ class CompanyController extends Controller
         return response()->noContent();
     }
 }
-
