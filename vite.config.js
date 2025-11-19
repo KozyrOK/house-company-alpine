@@ -12,11 +12,29 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+
     resolve: {
         alias: {
             '@': resolve(__dirname, 'resources'),
         },
     },
+
+    server: {
+        host: '0.0.0.0',
+        port: 5173,
+        strictPort: true,
+        hmr: {
+            host: '127.0.0.1',
+            protocol: 'ws',
+            port: 5173,
+            clientPort: 5173,
+        },
+        cors: {
+            origin: '*',
+            credentials: true,
+        },
+    },
+
     build: {
         outDir: 'public/build',
         assetsDir: 'assets',

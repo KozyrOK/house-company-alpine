@@ -3,7 +3,9 @@
 @section('title', 'Admin Panel')
 
 @section('content')
+
     <section>
+
         <h1>{{ __('app.pages.admin_panel') }}</h1>
 
         <div class="content-box-wrapper">
@@ -34,6 +36,9 @@
                     <p>Moderate and approve company posts</p>
                 </div>
             </a>
+
         </div>
+
     </section>
+
 @endsection

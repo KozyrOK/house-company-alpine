@@ -12,17 +12,18 @@ export default () => ({
         document.documentElement.lang = next;
 
         try {
-
-            const csrfToken = document
-                .querySelector('meta[name="csrf-token"]')
-                .getAttribute('content');
+            const xsrf = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('XSRF-TOKEN='))
+                ?.split('=')[1];
 
             const res = await fetch(`/locale/${next}`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
+                    'X-XSRF-TOKEN': decodeURIComponent(xsrf),
                 },
             });
 
@@ -39,7 +40,6 @@ export default () => ({
 
     init() {
         const saved = localStorage.getItem('locale');
-
         if (saved) {
             this.locale = saved;
             document.documentElement.lang = saved;

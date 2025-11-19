@@ -6,22 +6,12 @@ export default function allCompaniesList() {
 
             try {
 
-                await fetch('/sanctum/csrf-cookie', {
-                    credentials: 'include',
-                });
-
-                const xsrfToken = document.cookie
-                    .split('; ')
-                    .find(row => row.startsWith('XSRF-TOKEN='))
-                    ?.split('=')[1];
-
                 const res = await fetch('/api/companies', {
                     method: 'GET',
                     credentials: 'include',
                     headers: {
                         'Accept': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest',
-                        'X-XSRF-TOKEN': decodeURIComponent(xsrfToken),
                     },
                 });
 

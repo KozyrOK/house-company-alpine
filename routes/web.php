@@ -8,9 +8,6 @@ use App\Http\Controllers\Web\CompanyController;
 use App\Http\Controllers\Web\PostController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\ProfileController;
-use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
-
-Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 Route::post('/locale/{locale}', function ($locale) {
     $available = ['en', 'uk', 'ru'];

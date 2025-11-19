@@ -6,8 +6,6 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
 use App\Http\Middleware\SetLocale;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,15 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->api(append: [
             HandleCors::class,
-            EnsureFrontendRequestsAreStateful::class,
         ]);
 
         $middleware->web(append: [
-            EnsureFrontendRequestsAreStateful::class,
-            VerifyCsrfToken::class,
             SetLocale::class,
         ]);
-
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (AuthorizationException $e) {
