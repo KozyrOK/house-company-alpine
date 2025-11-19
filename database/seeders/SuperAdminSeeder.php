@@ -19,7 +19,7 @@ class SuperAdminSeeder extends Seeder
             [
                 'first_name' => 'Super',
                 'second_name' => 'Admin',
-                'email' => 'admin@housing.local',
+                'email' => 'superadmin@housing.local',
                 'password' => Hash::make('password'),
                 'status_account' => 'active',
                 'remember_token' => Str::random(10),

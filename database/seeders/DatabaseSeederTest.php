@@ -13,18 +13,30 @@ class DatabaseSeederTest extends Seeder
     {
         $this->call([
             SuperAdminSeeder::class,
+            TestUsersSeeder::class,
         ]);
 
         $superadmin = User::where('email', 'admin@housing.local')->first();
 
         $companies = Company::factory(2)->create();
 
-        $companies->each(function ($company) use ($superadmin) {
-            $users = User::factory(3)->create();
+        $users = User::whereIn('email', [
+            'user@housing.local',
+            'head@housing.local',
+            'admin@housingtest.local',
+        ])->get();
 
-            foreach ($users as $i => $user) {
-                $role = $i === 0 ? 'company_head' : 'user';
-                $user->companies()->attach($company->id, ['role' => $role]);
+        $companies->each(function ($company) use ($superadmin, $users) {
+
+            foreach ($users as $user) {
+
+                $role =
+                    $user->email === 'admin@housingtest.local' ? 'admin' :
+                        ($user->email === 'head@housing.local' ? 'company_head' : 'user');
+
+                $user->companies()->syncWithoutDetaching([
+                    $company->id => ['role' => $role]
+                ]);
             }
 
             if ($superadmin) {
