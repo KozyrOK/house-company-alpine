@@ -40,16 +40,13 @@ Route::middleware('auth')->group(function () {
         ->name('companies.index');
 
     Route::get('/companies/{company}', [CompanyController::class, 'show'])
-        ->name('companies.show')
-        ->can('view', 'company');
+        ->name('companies.show');
 
     Route::get('/companies/{company}/posts', [PostController::class, 'index'])
-        ->name('companies.posts.index')
-        ->can('view', 'company');
+        ->name('companies.posts.index');
 
     Route::get('/companies/{company}/posts/{post}', [PostController::class, 'show'])
-        ->name('companies.posts.show')
-        ->can('view', 'post');
+        ->name('companies.posts.show');
 
     Route::get('/dashboard', [ProfileController::class, 'edit'])
         ->name('dashboard');
@@ -67,20 +64,16 @@ Route::middleware('auth')->group(function () {
             ->name('main-component.superadmin');
 
         Route::get('/users', [UserController::class, 'index'])
-            ->name('admin.users.index')
-            ->can('viewAny', App\Models\User::class);
+            ->name('admin.users.index');
 
         Route::get('/users/{user}', [UserController::class, 'show'])
-            ->name('admin.users.show')
-            ->can('view', 'user');
+            ->name('admin.users.show');
 
         Route::get('/companies', [CompanyController::class, 'index'])
-            ->name('admin.companies.index')
-            ->can('viewAny', App\Models\Company::class);
+            ->name('admin.companies.index');
 
         Route::get('/posts', [PostController::class, 'index'])
-            ->name('admin.posts.index')
-            ->can('viewAny', App\Models\Post::class);
+            ->name('admin.posts.index');
     });
 });
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AuthorizeApiResource;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -22,6 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             SetLocale::class,
+        ]);
+
+        $middleware->alias([
+            'api.can' => AuthorizeApiResource::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
