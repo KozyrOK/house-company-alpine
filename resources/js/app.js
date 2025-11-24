@@ -17,6 +17,9 @@ import headerBackground from './components/headerBackground';
 import companyImageComponent from './components/companyImage.js';
 import allCompaniesList from './components/allCompaniesList.js';
 import defaultContentBackground from "./components/defaultContentBackground.js";
+import adminUsersList from './components/adminUsersList.js';
+import adminCompaniesList from './components/adminCompaniesList.js';
+import adminPostsList from './components/adminPostsList.js';
 
 Alpine.store('assets', {
     headerPattern,
@@ -34,5 +37,8 @@ Alpine.data('headerBackground', headerBackground);
 Alpine.data('companyImage', companyImageComponent);
 Alpine.data('allCompaniesList', allCompaniesList);
 Alpine.data('defaultContentBackground', defaultContentBackground);
+Alpine.data('adminUsersList', adminUsersList);
+Alpine.data('adminCompaniesList', adminCompaniesList);
+Alpine.data('adminPostsList', adminPostsList);
 
 Alpine.start();

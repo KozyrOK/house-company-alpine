@@ -50,7 +50,7 @@ class User extends Authenticatable
 
     public function hasRole(array|string $roles, int $companyId): bool
     {
-        $   $roles = (array) $roles;
+        $roles = (array) $roles;
 
         if (in_array('superadmin', $roles) &&
             $this->companies()->wherePivot('role', 'superadmin')->exists()) {
