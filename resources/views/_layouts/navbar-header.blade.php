@@ -1,7 +1,7 @@
 <nav class="navbar-header">
     <ul>
         @auth
-            <li><a href="{{ route('companies.index') }}" class="{{ request()->routeIs('companies.index') ? 'active' : '' }}">{{__('app.layouts.main')}}</a></li>
+            <li><a href="{{ route('main.index') }}" class="{{ request()->routeIs('main.index') ? 'active' : '' }}">{{__('app.layouts.main')}}</a></li>
 
             @if(Auth::user()->isSuperAdminForHeader())
                 <li><a href="{{ route('main-component.superadmin') }}" class="{{ request()->routeIs('main-component.superadmin') ? 'active' : '' }}">{{__('app.layouts.admin')}}</a></li>

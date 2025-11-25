@@ -14,7 +14,7 @@ class PostController extends Controller
      */
     public function index($companyId)
     {
-        // Posts will be loaded from /api/companies/{id}/posts
+        // Posts will be loaded from /api/main/{id}/posts
         return view('posts.index', compact('companyId'));
     }
 
@@ -23,7 +23,7 @@ class PostController extends Controller
      */
     public function show($companyId, $postId)
     {
-        // Post data fetched via API: /api/companies/{id}/posts/{postId}
+        // Post data fetched via API: /api/main/{id}/posts/{postId}
         return view('posts.show', compact('companyId', 'postId'));
     }
 }

@@ -12,6 +12,7 @@ class CompanyController extends Controller
 
     public function logo(Request $request, ?int $companyId = null)
     {
+
         $user = $request->user();
 
         if ($user->isSuperAdmin()) {
@@ -44,57 +45,43 @@ class CompanyController extends Controller
         $user = $request->user();
 
         if ($user->isSuperAdmin()) {
-            $companies = Company::paginate(10);
-        } else {
-            $companies = $user->companies()->paginate(10);
+            return Company::paginate(10);
         }
 
-        return response()->json($companies);
+        return $user->companies()->paginate(10);
     }
 
     public function store(Request $request)
     {
-        $this->authorize('create', Company::class);
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
         $company = Company::create($validated);
 
-        $superadmins = User::where('is_superadmin', true)->get();
-        foreach ($superadmins as $superadmin) {
-            $company->users()->attach($superadmin->id, ['role' => 'superadmin']);
+        $superadmins = User::whereHas('companies', fn($q) => $q->where('role','superadmin'))->get();
+        foreach ($superadmins as $sa) {
+            $company->users()->attach($sa->id, ['role' => 'superadmin']);
         }
 
         return response()->json($company, 201);
     }
 
-    public function show(int $companyId)
+    public function show(Company $company)
     {
-        $company = Company::findOrFail($companyId);
-        $this->authorize('view', $company->id);
-
         return $company;
     }
 
-    public function update(Request $request, int $companyId)
+    public function update(Request $request, Company $company)
     {
-        $company = Company::findOrFail($companyId);
-        $this->authorize('update', $company->id);
-
         $company->update($request->only('name'));
-
         return $company;
     }
 
-    public function destroy(int $companyId)
+    public function destroy(Company $company)
     {
-        $company = Company::findOrFail($companyId);
-        $this->authorize('delete', $company->id);
-
         $company->delete();
-
         return response()->noContent();
     }
+
 }

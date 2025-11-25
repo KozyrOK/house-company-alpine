@@ -6,7 +6,7 @@
 
     <div x-data="allCompaniesList()" x-init="fetchCompanies()">
 
-        <h1>{{ __('app.companies.my_companies') }}</h1>
+        <h1>{{ __('app.main.my_companies') }}</h1>
 
         <!-- Loading -->
         <div x-show="loading">Loading...</div>
@@ -16,8 +16,8 @@
             <thead>
             <tr>
                 <th class="content-cell-center">#</th>
-                <th class="content-cell-center">{{ __('app.companies.name') }}</th>
-                <th class="content-cell-center">{{ __('app.companies.actions') }}</th>
+                <th class="content-cell-center">{{ __('app.main.name') }}</th>
+                <th class="content-cell-center">{{ __('app.main.actions') }}</th>
             </tr>
             </thead>
             <tbody>

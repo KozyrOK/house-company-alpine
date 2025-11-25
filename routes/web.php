@@ -24,7 +24,7 @@ Route::post('/locale/{locale}', function ($locale) {
 
 Route::get('/', function () {
     return auth()->check()
-        ? redirect()->route('companies.index')
+        ? redirect()->route('main.index')
         : redirect()->route('info');
 });
 
@@ -34,17 +34,26 @@ Route::view('/info', 'pages.info')->name('info');
 // Authenticated users
 Route::middleware('auth')->group(function () {
 
+    Route::get('/main', fn() => redirect()->route('main.index'))->name('main');
     Route::get('/main', fn() => redirect()->route('companies.index'))->name('main');
 
+    Route::get('/main', [CompanyController::class, 'index'])
+        ->name('main.index');
     Route::get('/companies', [CompanyController::class, 'index'])
         ->name('companies.index');
 
+    Route::get('/main/{company}', [CompanyController::class, 'show'])
+        ->name('main.show');
     Route::get('/companies/{company}', [CompanyController::class, 'show'])
         ->name('companies.show');
 
+    Route::get('/main/{company}/posts', [PostController::class, 'index'])
+        ->name('main.posts.index');
     Route::get('/companies/{company}/posts', [PostController::class, 'index'])
         ->name('companies.posts.index');
 
+    Route::get('/main/{company}/posts/{post}', [PostController::class, 'show'])
+        ->name('main.posts.show');
     Route::get('/companies/{company}/posts/{post}', [PostController::class, 'show'])
         ->name('companies.posts.show');
 
@@ -68,9 +77,6 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/users/{user}', [UserController::class, 'show'])
             ->name('admin.users.show');
-
-        Route::get('/companies', [CompanyController::class, 'index'])
-            ->name('admin.companies.index');
 
         Route::get('/posts', [PostController::class, 'index'])
             ->name('admin.posts.index');

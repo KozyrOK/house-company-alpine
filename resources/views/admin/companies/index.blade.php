@@ -29,7 +29,7 @@
                     <td class="content-cell-center">
                         <x-button
                             text="Edit"
-                            :href="'/superadmin/companies/' + c.id"
+{{--                            :href="'/superadmin/main/' + c.id"--}}
                             class="button-list"
                         />
                         <x-button

@@ -2,32 +2,43 @@
 
 namespace App\Policies;
 
+use App\Models\Company;
 use App\Models\User;
 
 class CompanyPolicy
 {
-    public function viewAny(User $user): bool
+    public function before(User $user): ?bool
     {
-        return $user->isSuperAdmin();
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+        return null;
     }
 
-    public function view(User $user, int $companyId): bool
+    public function viewAny(User $user, string $model): bool
     {
-        return $user->belongsToCompany($companyId) || $user->isSuperAdmin($companyId);
+        return $user->companies()->exists();
+    }
+
+    public function view(User $user, Company|int $company): bool
+    {
+        $id = $company instanceof Company ? $company->id : $company;
+        return $user->belongsToCompany($id);
     }
 
     public function create(User $user): bool
     {
-        return $user->isSuperAdmin();
+        return false;
     }
 
-    public function update(User $user, int $companyId): bool
+    public function update(User $user, Company|int $company): bool
     {
-        return $user->isAdminOrHigher($companyId) || $user->isSuperAdmin($companyId);
+        $id = $company instanceof Company ? $company->id : $company;
+        return $user->isAdminOrHigher($id);
     }
 
-    public function delete(User $user, int $companyId): bool
+    public function delete(User $user, Company|int $company): bool
     {
-        return $user->isSuperAdmin($companyId);
+        return false;
     }
 }

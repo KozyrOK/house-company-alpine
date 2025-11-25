@@ -52,7 +52,7 @@ return [
         'dark_mode' => 'Темна тема',
     ],
 
-    'companies' => [
+    'main' => [
         'my_companies' => 'Мої компанії',
     ],
 

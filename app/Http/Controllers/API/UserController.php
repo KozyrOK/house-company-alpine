@@ -3,24 +3,20 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index(int $companyId)
+    public function index(Company $company)
     {
-        $this->authorize('viewAny', [User::class, $companyId]);
-
-        return User::whereHas('companies', fn($q) => $q->where('company_id', $companyId))
-            ->paginate();
+        return User::whereHas('companies', fn($q) => $q->where('company_id', $company->id))->paginate();
     }
 
-    public function store(Request $request, int $companyId)
+    public function store(Request $request, Company $company)
     {
-        $this->authorize('create', [User::class, $companyId]);
-
         $validated = $request->validate([
             'first_name'  => 'required|string|max:50',
             'second_name' => 'required|string|max:50',
@@ -36,40 +32,31 @@ class UserController extends Controller
             'status_account' => 'active',
         ]);
 
-        $user->companies()->attach($companyId, ['role' => 'user']);
+        $user->companies()->attach($company->id, ['role' => 'user']);
 
         return response()->json($user, 201);
     }
 
     public function show(int $companyId, User $user)
     {
-        $this->authorize('view', [$user, $companyId]);
         return $user;
     }
 
-    public function update(Request $request, int $companyId, User $user)
+    public function update(Request $request, Company $company, User $user)
     {
-        $this->authorize('update', [$user, $companyId]);
-
         $user->update($request->only('first_name', 'second_name', 'email', 'phone'));
-
         return $user;
     }
 
-    public function destroy(int $companyId, User $user)
+    public function destroy(Company $company, User $user)
     {
-        $this->authorize('delete', [$user, $companyId]);
         $user->delete();
-
         return response()->noContent();
     }
 
-    public function approve(int $companyId, User $user)
+    public function approve(Company $company, User $user)
     {
-        $this->authorize('approve', [$user, $companyId]);
-
         $user->update(['status_account' => 'active']);
-
         return response()->json(['message' => 'User approved', 'user' => $user]);
     }
 }

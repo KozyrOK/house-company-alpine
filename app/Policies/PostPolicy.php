@@ -7,9 +7,9 @@ use App\Models\Post;
 
 class PostPolicy
 {
-    public function viewAny(User $user, int $companyId): bool
+    public function viewAny(User $user): bool
     {
-        return $user->belongsToCompany($companyId);
+        return $user->isSuperAdmin();
     }
 
     public function view(User $user, Post $post, int $companyId): bool

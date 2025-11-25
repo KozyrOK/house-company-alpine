@@ -2,58 +2,54 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index(int $companyId)
+    public function index(Company $company)
     {
-        $this->authorize('viewAny', [Post::class, $companyId]);
-        return Post::where('company_id', $companyId)->paginate();
+        return Post::where('company_id', $company->id)->paginate();
     }
 
-    public function store(Request $request, int $companyId)
+    public function store(Request $request, Company $company)
     {
-        $this->authorize('create', [Post::class, $companyId]);
-
         $validated = $request->validate([
             'title'   => 'required|string|max:255',
             'content' => 'required|string',
         ]);
 
-        return Post::create([
-            'company_id' => $companyId,
+        $post = Post::create([
+            'company_id' => $company->id,
             'user_id'    => $request->user()->id,
             'title'      => $validated['title'],
             'content'    => $validated['content'],
             'status'     => 'pending',
         ]);
+
+        return response()->json($post, 201);
     }
 
-    public function show(int $companyId, Post $post)
+    public function show(Company $company, Post $post)
     {
-        $this->authorize('view', [$post, $companyId]);
         return $post;
     }
 
-    public function update(Request $request, int $companyId, Post $post)
+    public function update(Request $request, Company $company, Post $post)
     {
-        $this->authorize('update', [$post, $companyId]);
-        $post->update($request->only('title', 'content'));
+        $post->update($request->only('title','content'));
         return $post;
     }
 
-    public function destroy(int $companyId, Post $post)
+    public function destroy(Company $company, Post $post)
     {
-        $this->authorize('delete', [$post, $companyId]);
         $post->delete();
         return response()->noContent();
     }
 
-    public function approve(int $companyId, Post $post)
+    public function approve(Company $company, Post $post)
     {
-        $this->authorize('approve', [$post, $companyId]);
         $post->update(['status' => 'publish']);
         return $post;
     }
