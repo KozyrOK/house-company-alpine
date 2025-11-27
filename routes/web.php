@@ -9,6 +9,8 @@ use App\Http\Controllers\Web\PostController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\ProfileController;
 
+// LOCALE SWITCHER
+
 Route::post('/locale/{locale}', function ($locale) {
     $available = ['en', 'uk', 'ru'];
 
@@ -22,64 +24,79 @@ Route::post('/locale/{locale}', function ($locale) {
     return Response::noContent();
 })->name('locale.switch');
 
+// START PAGE REDIRECT
+
 Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('main.index')
-        : redirect()->route('info');
+    if (!auth()->check()) {
+        return redirect()->route('info');
+    }
+
+    return auth()->user()->isSuperAdmin()
+        ? redirect()->route('admin.index')
+        : redirect()->route('main.index');
 });
 
-// Public pages
+// PUBLIC PAGE
 Route::view('/info', 'pages.info')->name('info');
 
-// Authenticated users
+// AUTHENTICATED
 Route::middleware('auth')->group(function () {
 
-    Route::get('/main', fn() => redirect()->route('main.index'))->name('main');
-    Route::get('/main', fn() => redirect()->route('companies.index'))->name('main');
+    // MAIN
 
     Route::get('/main', [CompanyController::class, 'index'])
         ->name('main.index');
-    Route::get('/companies', [CompanyController::class, 'index'])
-        ->name('companies.index');
 
     Route::get('/main/{company}', [CompanyController::class, 'show'])
         ->name('main.show');
-    Route::get('/companies/{company}', [CompanyController::class, 'show'])
-        ->name('companies.show');
 
     Route::get('/main/{company}/posts', [PostController::class, 'index'])
         ->name('main.posts.index');
-    Route::get('/companies/{company}/posts', [PostController::class, 'index'])
-        ->name('companies.posts.index');
 
     Route::get('/main/{company}/posts/{post}', [PostController::class, 'show'])
         ->name('main.posts.show');
-    Route::get('/companies/{company}/posts/{post}', [PostController::class, 'show'])
-        ->name('companies.posts.show');
+
+    // PROFILE
 
     Route::get('/dashboard', [ProfileController::class, 'edit'])
         ->name('dashboard');
+
     Route::patch('/dashboard/update', [ProfileController::class, 'update'])
         ->name('dashboard.update');
+
     Route::delete('/dashboard/destroy', [ProfileController::class, 'destroy'])
         ->name('dashboard.destroy');
 
+    // OTHER PAGES
+
     Route::view('/forum', 'pages.forum')->name('forum');
+
     Route::view('/chat', 'pages.chat')->name('chat');
 
-    Route::prefix('superadmin')->group(function () {
+    // SUPERADMIN
 
-        Route::view('/', 'pages.superadmin')
-            ->name('main-component.superadmin');
+    Route::prefix('admin')->middleware(['superadmin'])->group(function () {
 
+        Route::view('/', 'pages.admin')
+            ->name('admin.index');
+
+        // USERS
         Route::get('/users', [UserController::class, 'index'])
             ->name('admin.users.index');
 
         Route::get('/users/{user}', [UserController::class, 'show'])
             ->name('admin.users.show');
 
+        // POSTS
         Route::get('/posts', [PostController::class, 'index'])
             ->name('admin.posts.index');
+
+        Route::get('/companies', [CompanyController::class, 'index'])
+            ->name('admin.companies.index');
+
+        Route::get('/companies/{company}', [CompanyController::class, 'show'])
+            ->name('admin.companies.show');
+
     });
 });
 

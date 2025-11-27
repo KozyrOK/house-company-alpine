@@ -9,18 +9,11 @@ use App\Http\Controllers\Controller;
  */
 class PostController extends Controller
 {
-    /**
-     * Show list of posts for a company.
-     */
-    public function index($companyId)
+    public function index()
     {
-        // Posts will be loaded from /api/main/{id}/posts
-        return view('posts.index', compact('companyId'));
+        return view('admin.posts.index');
     }
 
-    /**
-     * Show a single post page.
-     */
     public function show($companyId, $postId)
     {
         // Post data fetched via API: /api/main/{id}/posts/{postId}
