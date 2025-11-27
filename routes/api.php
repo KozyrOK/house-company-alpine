@@ -21,9 +21,6 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
 
     // COMPANIES
 
-    Route::get('/companies', [CompanyController::class, 'index'])
-        ->middleware('api.can:viewAny,' . Company::class);
-
     Route::get('/companies/{company}', [CompanyController::class, 'show'])
         ->middleware('api.can:view,' . Company::class);
 
@@ -78,13 +75,13 @@ Route::prefix('admin')->middleware(['web', 'auth:sanctum'])->group(function () {
     Route::post('/', [CompanyController::class, 'store'])
         ->middleware('api.can:create,' . Company::class);
 
-    Route::get('/admin/{company}', [CompanyController::class, 'show'])
+    Route::get('/{company}', [CompanyController::class, 'show'])
         ->middleware('api.can:view,' . Company::class);
 
-    Route::patch('/admin/{company}', [CompanyController::class, 'update'])
+    Route::patch('/{company}', [CompanyController::class, 'update'])
         ->middleware('api.can:update,' . Company::class);
 
-    Route::delete('/admin/{company}', [CompanyController::class, 'destroy'])
+    Route::delete('/{company}', [CompanyController::class, 'destroy'])
         ->middleware('api.can:delete,' . Company::class);
 
     Route::get('/users', [UserController::class, 'index'])

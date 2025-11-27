@@ -5,7 +5,7 @@ export default function adminCompaniesList() {
         async fetchCompanies(page = 1) {
 
             try {
-                const res = await fetch(`/api/superadmin/companies`, {
+                const res = await fetch(`/api/admin`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: {

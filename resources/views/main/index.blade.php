@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div x-data="allCompaniesList()" x-init="fetchCompanies()">
+    <div x-data="" x-init="">
 
         <h1>{{ __('app.main.my_companies') }}</h1>
 

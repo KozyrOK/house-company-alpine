@@ -3,6 +3,7 @@
 @section('title','Admin - Companies')
 
 @section('content')
+
     <div x-data="adminCompaniesList()" x-init="fetchCompanies()">
 
         <h1>Companies</h1>
@@ -29,7 +30,7 @@
                     <td class="content-cell-center">
                         <x-button
                             text="Edit"
-{{--                            :href="'/superadmin/main/' + c.id"--}}
+{{--                            :href="'/admin/main/' + c.id"--}}
                             class="button-list"
                         />
                         <x-button
