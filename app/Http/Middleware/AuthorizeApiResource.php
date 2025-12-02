@@ -12,18 +12,37 @@ class AuthorizeApiResource
     {
         $user = $request->user();
 
-        if ($request->route('company')) {
-            $companyId = (int) $request->route('company');
+        $routeParams = $request->route()->parameters();
 
-            if (!$user->can($ability, [$model, $companyId])) {
-                return response()->json(['error' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
+        $resourceParam = null;
+
+        foreach ($routeParams as $key => $value) {
+
+            if (strtolower($key) === strtolower(class_basename($model))) {
+                $resourceParam = $value;
+                break;
+            }
+        }
+
+        if ($resourceParam !== null) {
+
+            if (is_object($resourceParam)) {
+                $instance = $resourceParam;
+            }
+
+            else {
+                $instance = $model::findOrFail($resourceParam);
+            }
+
+            if (!$user->can($ability, $instance)) {
+                return response()->json(['error' => 'Unauthorized'], 403);
             }
 
             return $next($request);
         }
 
         if (!$user->can($ability, $model)) {
-            return response()->json(['error' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         return $next($request);

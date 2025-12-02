@@ -11,13 +11,9 @@ class CompanyController extends Controller
     {
         return view('admin.companies.index');
     }
-    /**
-     * Show a single company page.
-     */
+
     public function show($companyId)
     {
-        // Company data is fetched from API (/api/main/{id})
-        return view('main.show', compact('companyId'));
+        return view('admin.companies.show', compact('companyId'));
     }
 }
-

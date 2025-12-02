@@ -8,7 +8,7 @@
 
         <h1>{{ __('app.pages.admin_panel') }}</h1>
 
-        <div class="content-box-wrapper">
+        <div class="admin-panel-content-box-wrapper">
 
             <a href="{{ route('admin.users.index') }}"
                class="content-items-box">

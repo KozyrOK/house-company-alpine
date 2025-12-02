@@ -9,16 +9,17 @@ import mainBackground from '@/images/main-background.jpg';
 import companyImage from '@/images/default-image-company.jpg';
 
 import themeToggle from './components/themeToggle.js';
-import localeSwitch from './components/localeSwitch';
-import mobileMenu from './components/mobileMenu';
-import confirmModal from './components/confirmModal';
-import loadingButton from './components/loadingButton';
-import headerBackground from './components/headerBackground';
+import localeSwitch from './components/localeSwitch.js';
+import mobileMenu from './components/mobileMenu.js';
+import confirmModal from './components/confirmModal.js';
+import loadingButton from './components/loadingButton.js';
+import headerBackground from './components/headerBackground.js';
 import companyImageComponent from './components/companyImage.js';
 import defaultContentBackground from "./components/defaultContentBackground.js";
 import adminUsersList from './components/adminUsersList.js';
 import adminCompaniesList from './components/adminCompaniesList.js';
 import adminPostsList from './components/adminPostsList.js';
+import showCompany from './components/showCompany.js';
 
 Alpine.store('assets', {
     headerPattern,
@@ -38,5 +39,6 @@ Alpine.data('defaultContentBackground', defaultContentBackground);
 Alpine.data('adminUsersList', adminUsersList);
 Alpine.data('adminCompaniesList', adminCompaniesList);
 Alpine.data('adminPostsList', adminPostsList);
+Alpine.data('showCompany', showCompany);
 
 Alpine.start();

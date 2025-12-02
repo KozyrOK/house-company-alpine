@@ -305,11 +305,11 @@ progress {
 
 /* IMAGE-COMPANY */
 
-.company-image-container {
+.company-image-header-container {
     @apply absolute bottom-4 left-[20%] z-[30];
 }
 
- .company-image {
+ .company-image-header {
      @apply w-28 h-28 rounded-2xl border-4
      dark:border-[#198666] border-[#0f616d]
      transition-opacity duration-300 ease-in-out
@@ -418,8 +418,16 @@ p {
 
  /* CONTENT WINDOW */
 
- .content-box-wrapper {
+ .admin-panel-content-box-wrapper {
      @apply grid grid-cols-1 sm:grid-cols-3 gap-6;
+ }
+
+ .top-crud-wrapper {
+     @apply grid grid-cols-3 gap-3 py-4;
+ }
+
+ .bottom-crud-wrapper {
+     @apply grid grid-cols-2 gap-3 pt-4;
  }
 
  .content-items-box {
@@ -430,16 +438,63 @@ p {
      @apply flex flex-col items-center justify-center text-center space-y-4;
  }
 
- /* CONTENT LIST */
+ /* BUTTON ELEMENTS */
 
- .content-cell {
-     @apply p-4 border rounded bg-[#b5d8ce] dark:bg-gray-800;
- }
-
- .content-cell-center {
-     @apply p-4 border rounded bg-[#b5d8ce] dark:bg-gray-800 text-center;
+ .button-base {
+     @apply text-center hover:bg-white/60 hover:dark:bg-white/30 p-3 rounded my-3 mx-1 w-40;
  }
 
  .button-list {
-     @apply w-full bg-[#198666] hover:bg-white/60 hover:dark:bg-white/30 p-2 rounded;
+     @apply button-base bg-[#198666];
+ }
+
+ .button-link {
+     @apply button-base bg-blue-500;
+ }
+
+ .button-edit {
+     @apply button-base bg-yellow-600;
+ }
+
+ .button-delete {
+     @apply button-base bg-red-500;
+ }
+
+ .button-wrapper {
+     @apply py-4 px-2;
+ }
+
+ /* DATA TABLE */
+
+ table {
+     border-collapse: separate;
+     border-spacing: 0;
+ }
+ th, td {
+     border-bottom: 1px solid #666;
+     border-right: 1px solid #666;
+ }
+
+ tr > *:last-child {
+     border-right: none;
+ }
+
+ .content-item-wrapper {
+     @apply p-4 m-4 rounded bg-[#b5d8ce] dark:bg-gray-800;
+ }
+
+ .company-image {
+     @apply w-28 h-28 rounded-2xl border-4 mx-auto;
+ }
+
+ .key-content-item-center {
+     @apply text-center py-2 pr-4 font-semibold;
+ }
+
+ .key-content-item {
+     @apply text-left py-2 pr-4 font-semibold;
+ }
+
+ .value-content-item {
+     @apply text-left p-4 overflow-y-scroll;
  }

@@ -8,39 +8,46 @@
 
         <h1>Companies</h1>
 
-        <div x-show="loading">Loading...</div>
+            <div x-show="loading">Loading...</div>
 
-        <table x-show="!loading">
-            <thead>
-            <tr>
-                <th class="content-cell-center">#</th>
-                <th class="content-cell-center">Name</th>
-                <th class="content-cell-center">City</th>
-                <th class="content-cell-center">Actions</th>
-            </tr>
-            </thead>
+                <div x-show="!loading">
 
-            <tbody>
-            <template x-for="(c, index) in companies" :key="c.id">
-                <tr>
-                    <td class="content-cell-center" x-text="index + 1"></td>
-                    <td class="content-cell" x-text="c.name"></td>
-                    <td class="content-cell" x-text="c.city"></td>
+                    <table class="content-item-wrapper">
 
-                    <td class="content-cell-center">
-                        <x-button
-                            text="Edit"
-{{--                            :href="'/admin/main/' + c.id"--}}
-                            class="button-list"
-                        />
-                        <x-button
-                            text="Delete"
-                            class="button-list bg-red-600"
-                        />
-                    </td>
-                </tr>
-            </template>
-            </tbody>
-        </table>
+                        <thead>
+                            <tr>
+                                <th class="key-content-item-center pr-2">#</th>
+                                <th class="key-content-item-center">Name</th>
+                                <th class="key-content-item-center">City</th>
+                                <th class="key-content-item-center pl-2">Actions</th>
+                            </tr>
+                        </thead>
+
+                    <tbody>
+
+                    <template x-for="(c, index) in companies" :key="c.id">
+
+                        <tr>
+                            <td class="value-content-item-center" x-text="index + 1"></td>
+                            <td class="value-content-item" x-text="c.name"></td>
+                            <td class="value-content-item" x-text="c.city"></td>
+
+                            <td>
+                                <x-button
+                                    text="Detail"
+                                    href=':href="`/admin/companies/${c.id}`"'
+                                    class="button-list"
+                                />
+                            </td>
+                        </tr>
+
+                    </template>
+
+                    </tbody>
+
+                </table>
+        </div>
+
     </div>
+
 @endsection
