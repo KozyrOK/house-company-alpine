@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CompanyController extends Controller
 {
@@ -82,6 +84,50 @@ class CompanyController extends Controller
     {
         $company->delete();
         return response()->noContent();
+    }
+
+    public function uploadLogo(Request $request, Company $company)
+    {
+
+        $validated = $request->validate([
+            'logo' => 'required|image|mimes:jpeg,png,jpg,webp,avif|max:5120',
+        ]);
+
+        $file = $request->file('logo');
+
+        $filename = 'company_' . $company->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+        $path = $file->storeAs('company_logos', $filename, 'public');
+
+        if ($company->logo_path && Storage::disk('public')->exists($company->logo_path)) {
+            Storage::disk('public')->delete($company->logo_path);
+        }
+
+        $company->logo_path = $path;
+        $company->save();
+
+        return response()->json([
+            'message' => 'Logo uploaded',
+            'logo_url' => $company->logo_url,
+            'company' => $company,
+        ], 200);
+    }
+
+    public function deleteLogo(Request $request, Company $company)
+    {
+
+        if ($company->logo_path && Storage::disk('public')->exists($company->logo_path)) {
+            Storage::disk('public')->delete($company->logo_path);
+        }
+
+        $company->logo_path = null;
+        $company->save();
+
+        return response()->json([
+            'message' => 'Logo deleted',
+            'logo_url' => $company->logo_url,
+            'company' => $company,
+        ], 200);
     }
 
 }

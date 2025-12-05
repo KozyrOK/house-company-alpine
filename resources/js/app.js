@@ -20,6 +20,8 @@ import adminUsersList from './components/adminUsersList.js';
 import adminCompaniesList from './components/adminCompaniesList.js';
 import adminPostsList from './components/adminPostsList.js';
 import showCompany from './components/showCompany.js';
+import companyLogoUploader from './components/companyLogoUploader.js';
+import editCompany from "@/js/components/editCompany.js";
 
 Alpine.store('assets', {
     headerPattern,
@@ -40,5 +42,7 @@ Alpine.data('adminUsersList', adminUsersList);
 Alpine.data('adminCompaniesList', adminCompaniesList);
 Alpine.data('adminPostsList', adminPostsList);
 Alpine.data('showCompany', showCompany);
+Alpine.data('companyLogoUploader', companyLogoUploader);
+Alpine.data('editCompany', editCompany);
 
 Alpine.start();

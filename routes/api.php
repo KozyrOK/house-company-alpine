@@ -104,4 +104,10 @@ Route::prefix('admin')->middleware(['web', 'auth:sanctum'])->group(function () {
 
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])
         ->middleware('api.can:delete,' . Post::class);
+
+    Route::post('/{company}/logo', [CompanyController::class, 'uploadLogo'])
+        ->middleware('api.can:update,' . Company::class);
+
+    Route::delete('/{company}/logo', [CompanyController::class, 'deleteLogo'])
+        ->middleware('api.can:update,' . Company::class);
 });

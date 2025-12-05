@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @method static factory(int $int)
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 class Company extends Model
 {
     use HasFactory;
+
+    public mixed $logo_path;
     protected $fillable = [
         'name',
         'address',
@@ -36,8 +39,9 @@ class Company extends Model
 
     public function getLogoUrlAttribute(): string
     {
-        return $this->logo_path
-            ? asset('storage/' . $this->logo_path)
-            : asset('images/default-image-company.jpg');
+        if ($this->logo_path && Storage::disk('public')->exists($this->logo_path)) {
+            return Storage::disk('public')->url($this->logo_path);
+        }
+        return asset('images/default-image-company.jpg');
     }
 }

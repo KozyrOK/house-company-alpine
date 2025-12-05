@@ -37,9 +37,11 @@ Route::get('/', function () {
 });
 
 // PUBLIC PAGE
+
 Route::view('/info', 'pages.info')->name('info');
 
 // AUTHENTICATED
+
 Route::middleware('auth')->group(function () {
 
     // MAIN
@@ -81,6 +83,7 @@ Route::middleware('auth')->group(function () {
             ->name('admin.index');
 
         // USERS
+
         Route::get('/users', [UserController::class, 'index'])
             ->name('admin.users.index');
 
@@ -88,14 +91,23 @@ Route::middleware('auth')->group(function () {
             ->name('admin.users.show');
 
         // POSTS
+
         Route::get('/posts', [PostController::class, 'index'])
             ->name('admin.posts.index');
+
+        // COMPANIES
 
         Route::get('/companies', [CompanyController::class, 'index'])
             ->name('admin.companies.index');
 
         Route::get('/companies/{company}', [CompanyController::class, 'show'])
             ->name('admin.companies.show');
+
+        Route::get('/companies/{company}/edit', [CompanyController::class, 'edit'])
+            ->name('admin.companies.edit');
+
+        Route::get('/companies/{company}/logo', [CompanyController::class, 'logo'])
+            ->name('admin.companies.logo');
 
     });
 });

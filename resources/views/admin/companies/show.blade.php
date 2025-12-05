@@ -26,10 +26,9 @@
 
                             <div>
                                 <img
-                                    alt=""
-                                    :src="company.logo_path
-                                ? `/api/company/${company.id}/logo`
-                                : '/images/default-image-company.jpg'"
+                                    alt="logo"
+                                    :src="company.logo_path ? `/admin/companies/${company.id}/logo` : '/images/default-image-company.jpg'"
+                                    @@error="event.target.src='/images/default-image-company.jpg'"
                                     class="company-image"
                                 >
                             </div>
