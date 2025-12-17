@@ -19,7 +19,7 @@
                             <div class="button-wrapper">
                                 <x-button
                                     text="← Back to list"
-                                    href=':href="`/admin/companies`"'
+                                    href=":`{{ route('admin.companies.index') }}`"
                                     class="button-list"
                                 />
                             </div>
@@ -36,7 +36,7 @@
                             <div class="button-wrapper">
                                 <x-button
                                     text="Admin Menu"
-                                    href=':href="`/admin`"'
+                                    href="{{ route('admin.index') }}"
                                     class="button-list"
                                 />
                             </div>
@@ -79,7 +79,7 @@
                             <div class="flex justify-start">
                                 <x-button
                                     text="Company Users"
-                                    href=':href="`/admin/companies/${company.id}/users`"'
+                                    href=":`/admin/companies/${company.id}/users`"
                                     class="button-link"
                                 />
                             </div>
@@ -89,7 +89,7 @@
                             <div class="flex justify-end">
                                 <x-button
                                     text="Company Posts"
-                                    href=':href="`/admin/companies/${company.id}/posts`"'
+                                    href=":`/admin/companies/${company.id}/posts`"
                                     class="button-link"
                                 />
                             </div>
@@ -101,7 +101,7 @@
                             <div class="flex justify-start">
                                 <x-button
                                     text="Edit Company"
-                                    href=':href="`/admin/companies/${company.id}/edit`"'
+                                    href=":`/admin/companies/${company.id}/edit`"
                                     class="button-edit"
                                 />
                             </div>
@@ -111,8 +111,8 @@
                             <div class="flex justify-end">
                                 <x-button
                                    text="Delete Company"
-                                   href=':href="`/admin/companies/${company.id}/delete`"'
-                                  class="button-delete"
+                                   href=":`/admin/companies/${company.id}/delete`"
+                                   class="button-delete"
                                 />
                             </div>
                         </td>

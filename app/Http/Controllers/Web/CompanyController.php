@@ -25,6 +25,21 @@ class CompanyController extends Controller
         return view('admin.companies.edit', compact('companyId'));
     }
 
+    public function create()
+    {
+        return view('admin.companies.create');
+    }
+
+    public function store()
+    {
+
+    }
+
+    public function update(Request $request, Company $company)
+    {
+
+    }
+
     public function logo(Company $company): BinaryFileResponse
     {
         $default = public_path('images/default-image-company.jpg');
@@ -40,4 +55,5 @@ class CompanyController extends Controller
 
         return response()->file($path);
     }
+
 }

@@ -1,4 +1,4 @@
-export default function editCompany(companyId) {
+export default function adminEditCompany(companyId) {
     return {
         companyId,
         company: {},

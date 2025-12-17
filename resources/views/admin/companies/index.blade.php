@@ -8,9 +8,32 @@
 
         <h1>Companies</h1>
 
+        <div class="top-crud-wrapper">
+
+            <div class="button-wrapper">
+                <x-button
+                    text="← Back to Admin Panel"
+                    href="{{ route('admin.index') }}"
+                    class="button-list"
+                />
+            </div>
+
+            <div></div>
+
+            <div class="button-wrapper">
+                <x-button
+                    text="Create New Company"
+                    href="{{ route('admin.companies.create') }}"
+                    class="button-edit"
+                />
+            </div>
+
+        </div>
+
             <div x-show="loading">Loading...</div>
 
                 <div x-show="!loading">
+
 
                     <table class="content-item-wrapper">
 
@@ -35,7 +58,7 @@
                             <td>
                                 <x-button
                                     text="Detail"
-                                    href=':href="`/admin/companies/${c.id}`"'
+                                    href=":`/admin/companies/${c.id}`"
                                     class="button-list"
                                 />
                             </td>

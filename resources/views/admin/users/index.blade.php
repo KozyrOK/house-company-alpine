@@ -27,7 +27,7 @@
                     <td class="content-cell-center">
                         <x-button
                             text="Edit"
-                            :href="'/superadmin/users/' + u.id"
+                            :href="'/admin/users/' + u.id"
                             class="button-list"
                         />
                         <x-button

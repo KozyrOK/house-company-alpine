@@ -75,14 +75,20 @@ Route::prefix('admin')->middleware(['web', 'auth:sanctum'])->group(function () {
     Route::post('/', [CompanyController::class, 'store'])
         ->middleware('api.can:create,' . Company::class);
 
-    Route::get('/{company}', [CompanyController::class, 'show'])
-        ->middleware('api.can:view,' . Company::class);
+    Route::post('/{company}/logo', [CompanyController::class, 'uploadLogo'])
+        ->middleware('api.can:update,' . Company::class);
+
+    Route::delete('/{company}/logo', [CompanyController::class, 'deleteLogo'])
+        ->middleware('api.can:update,' . Company::class);
 
     Route::patch('/{company}', [CompanyController::class, 'update'])
         ->middleware('api.can:update,' . Company::class);
 
     Route::delete('/{company}', [CompanyController::class, 'destroy'])
         ->middleware('api.can:delete,' . Company::class);
+
+    Route::get('/{company}', [CompanyController::class, 'show'])
+        ->middleware('api.can:view,' . Company::class);
 
     Route::get('/users', [UserController::class, 'index'])
         ->middleware('api.can:viewAny,' . User::class);
@@ -105,9 +111,4 @@ Route::prefix('admin')->middleware(['web', 'auth:sanctum'])->group(function () {
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])
         ->middleware('api.can:delete,' . Post::class);
 
-    Route::post('/{company}/logo', [CompanyController::class, 'uploadLogo'])
-        ->middleware('api.can:update,' . Company::class);
-
-    Route::delete('/{company}/logo', [CompanyController::class, 'deleteLogo'])
-        ->middleware('api.can:update,' . Company::class);
 });

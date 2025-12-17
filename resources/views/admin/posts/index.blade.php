@@ -31,7 +31,7 @@
                     <td class="content-cell-center">
                         <x-button
                             text="Edit"
-                            :href="'/superadmin/posts/' + p.id"
+                            :href="'/admin/posts/' + p.id"
                             class="button-list"
                         />
                         <x-button

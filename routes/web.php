@@ -46,28 +46,28 @@ Route::middleware('auth')->group(function () {
 
     // MAIN
 
-    Route::get('/main', [CompanyController::class, 'index'])
-        ->name('main.index');
-
-    Route::get('/main/{company}', [CompanyController::class, 'show'])
-        ->name('main.show');
-
     Route::get('/main/{company}/posts', [PostController::class, 'index'])
         ->name('main.posts.index');
 
     Route::get('/main/{company}/posts/{post}', [PostController::class, 'show'])
         ->name('main.posts.show');
 
-    // PROFILE
+    Route::get('/main/{company}', [CompanyController::class, 'show'])
+        ->name('main.show');
 
-    Route::get('/dashboard', [ProfileController::class, 'edit'])
-        ->name('dashboard');
+    Route::get('/main', [CompanyController::class, 'index'])
+        ->name('main.index');
+
+    // PROFILE
 
     Route::patch('/dashboard/update', [ProfileController::class, 'update'])
         ->name('dashboard.update');
 
     Route::delete('/dashboard/destroy', [ProfileController::class, 'destroy'])
         ->name('dashboard.destroy');
+
+    Route::get('/dashboard', [ProfileController::class, 'edit'])
+        ->name('dashboard');
 
     // OTHER PAGES
 
@@ -83,12 +83,11 @@ Route::middleware('auth')->group(function () {
             ->name('admin.index');
 
         // USERS
+        Route::get('/users/{user}', [UserController::class, 'show'])
+            ->name('admin.users.show');
 
         Route::get('/users', [UserController::class, 'index'])
             ->name('admin.users.index');
-
-        Route::get('/users/{user}', [UserController::class, 'show'])
-            ->name('admin.users.show');
 
         // POSTS
 
@@ -100,14 +99,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/companies', [CompanyController::class, 'index'])
             ->name('admin.companies.index');
 
-        Route::get('/companies/{company}', [CompanyController::class, 'show'])
-            ->name('admin.companies.show');
+        Route::get('/companies/create', [CompanyController::class, 'create'])
+            ->name('admin.companies.create');
+
+        Route::post('/companies', [CompanyController::class, 'store'])
+            ->name('admin.companies.store');
 
         Route::get('/companies/{company}/edit', [CompanyController::class, 'edit'])
             ->name('admin.companies.edit');
 
         Route::get('/companies/{company}/logo', [CompanyController::class, 'logo'])
             ->name('admin.companies.logo');
+
+        Route::get('/companies/{company}', [CompanyController::class, 'show'])
+            ->name('admin.companies.show');
 
     });
 });

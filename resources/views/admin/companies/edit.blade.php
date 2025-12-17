@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div x-data="editCompany({{ $companyId }})" x-init="init()">
+    <div x-data="adminEditCompany({{ $companyId }})" x-init="init()">
 
         <h1>Edit Company</h1>
 
@@ -19,7 +19,7 @@
                     <div class="button-wrapper">
                         <x-button
                             text="← Back to detail"
-                            href=':href="`/admin/companies/${company.id}`"'
+                            href=":`/admin/companies/${company.id}`"
                             class="button-list"
                         />
                     </div>
@@ -39,14 +39,14 @@
                     <div class="button-wrapper">
                         <x-button
                             text="Admin Menu"
-                            href="/admin"
+                            href="{{ route('admin.index') }}"
                             class="button-list"
                         />
                     </div>
 
                 </div>
 
-                <form @submit.prevent="save" class="space-y-6 mt-6">
+                <form @@submit.prevent="save" class="space-y-6 mt-6">
 
                     <table>
 
@@ -89,7 +89,7 @@
                                     <button
                                         type="button"
                                         class="button-edit"
-                                        @click="removeLogo()"
+                                        @@click="removeLogo()"
                                     >
                                         Remove Logo
                                     </button>
@@ -123,7 +123,7 @@
                         <div class="flex justify-end">
                             <x-button
                                 text="Cancel"
-                                href=':href="`/admin/companies/${company.id}`"'
+                                href=":`/admin/companies/${company.id}`"
                                 class="button-delete"
                             />
                         </div>

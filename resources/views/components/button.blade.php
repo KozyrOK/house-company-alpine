@@ -16,8 +16,13 @@
     'class' => '',
 ])
 
-@if($href && str_starts_with($href, ':'))
-    <a {!! $href !!} class="{{ $class }}">
+@if($href && Str::startsWith($href, ':'))
+
+    @php
+        $expression = substr($href, 1);
+    @endphp
+
+    <a x-bind:href="{{ $expression }}" class="{{ $class }}">
         {{ $translated_text }}
     </a>
 

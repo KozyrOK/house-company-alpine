@@ -46,7 +46,6 @@ export default function companyLogoUploader(companyId) {
                     body: fd,
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        // Do NOT set Content-Type — browser sets boundary
                     },
                 });
 
