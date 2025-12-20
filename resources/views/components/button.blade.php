@@ -1,11 +1,11 @@
 @php
     use Illuminate\Support\Str;
 
-    $key = "app.buttons." . Str::slug($text, '_');
-    $translated_text = __($key);
+    $key = 'app.buttons.' . Str::slug($text, '_');
+    $translated = __($key);
 
-    if ($translated_text === $key) {
-        $translated_text = $text;
+    if ($translated === $key) {
+        $translated = $text;
     }
 @endphp
 
@@ -16,23 +16,12 @@
     'class' => '',
 ])
 
-@if($href && Str::startsWith($href, ':'))
-
-    @php
-        $expression = substr($href, 1);
-    @endphp
-
-    <a x-bind:href="{{ $expression }}" class="{{ $class }}">
-        {{ $translated_text }}
-    </a>
-
-@elseif($href)
+@if($href)
     <a href="{{ $href }}" class="{{ $class }}">
-        {{ $translated_text }}
+        {{ $translated }}
     </a>
-
 @else
     <button type="{{ $type }}" class="{{ $class }}">
-        {{ $translated_text }}
+        {{ $translated }}
     </button>
 @endif

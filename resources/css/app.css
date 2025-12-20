@@ -401,7 +401,8 @@ p {
 }
 
 .input-field-auth {
-    @apply bg-[#b5d8ce] dark:bg-[#1e293b] text-black dark:text-white w-full border border-[#0f616d] dark:border-[#198666] rounded p-2;
+    @apply bg-[#b5d8ce] dark:bg-[#1e293b] text-black dark:text-white w-full rounded p-2
+    focus:outline-none focus:border-[#1fbf8a] focus:ring-2 focus:ring-[#1fbf8a] dark:focus:border-[#198666] dark:focus:ring-[#198666];
 }
 
  .button-submit-auth {
@@ -497,4 +498,9 @@ p {
 
  .value-content-item {
      @apply text-left p-4 overflow-y-scroll;
+ }
+
+ .input-field {
+     @apply bg-[#cffaee] dark:bg-[#506fa1] text-black dark:text-white w-full rounded
+     focus:outline-none focus:border-[#1fbf8a] focus:ring-2 focus:ring-[#1fbf8a] dark:focus:border-[#198666] dark:focus:ring-[#198666];
  }

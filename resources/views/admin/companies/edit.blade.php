@@ -53,28 +53,28 @@
                         <tr>
                             <th class="key-content-item">Name</th>
                             <td colspan="2" class="value-content-item">
-                                <input type="text" x-model="form.name" class="input-text" />
+                                <input type="text" x-model="form.name" class="input-field" />
                             </td>
                         </tr>
 
                         <tr>
                             <th class="key-content-item">Address</th>
                             <td colspan="2" class="value-content-item">
-                                <input type="text" x-model="form.address" class="input-text" />
+                                <input type="text" x-model="form.address" class="input-field" />
                             </td>
                         </tr>
 
                         <tr>
                             <th class="key-content-item">City</th>
                             <td colspan="2" class="value-content-item">
-                                <input type="text" x-model="form.city" class="input-text" />
+                                <input type="text" x-model="form.city" class="input-field" />
                             </td>
                         </tr>
 
                         <tr>
                             <th class="key-content-item">Description</th>
                             <td colspan="2" class="value-content-item">
-                                <textarea x-model="form.description" class="input-textarea"></textarea>
+                                <textarea x-model="form.description" class="input-field"></textarea>
                             </td>
                         </tr>
 

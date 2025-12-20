@@ -89,10 +89,28 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [UserController::class, 'index'])
             ->name('admin.users.index');
 
+        Route::get('/users/create', [UserController::class, 'create'])
+            ->name('admin.users.create');
+
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])
+            ->name('admin.users.edit');
+
         // POSTS
 
         Route::get('/posts', [PostController::class, 'index'])
             ->name('admin.posts.index');
+
+        Route::get('/posts/create', function () {
+            return view('admin.posts.create');
+        })->name('admin.posts.create');
+
+        Route::get('/posts/{post}', function (\App\Models\Post $post) {
+            return view('admin.posts.show', compact('post'));
+        })->name('admin.posts.show');
+
+        Route::get('/posts/{post}/edit', function (\App\Models\Post $post) {
+            return view('admin.posts.edit', compact('post'));
+        })->name('admin.posts.edit');
 
         // COMPANIES
 

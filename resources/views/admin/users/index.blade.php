@@ -3,41 +3,74 @@
 @section('title','Admin - Users')
 
 @section('content')
+
     <div x-data="adminUsersList()" x-init="fetchUsers()">
+
         <h1>Users</h1>
+
+        <div class="top-crud-wrapper">
+
+            <div class="button-wrapper">
+                <x-button
+                    text="← Back to Admin Panel"
+                    href="{{ route('admin.index') }}"
+                    class="button-list"
+                />
+            </div>
+
+            <div></div>
+
+            <div class="button-wrapper">
+                <x-button
+                    text="Create new user"
+                    href="{{ route('admin.users.create') }}"
+                    class="button-edit"
+                />
+            </div>
+
+        </div>
 
         <div x-show="loading">Loading...</div>
 
-        <table x-show="!loading">
-            <thead>
-            <tr>
-                <th class="content-cell-center">#</th>
-                <th class="content-cell-center">Name</th>
-                <th class="content-cell-center">Email</th>
-                <th class="content-cell-center">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <template x-for="(u, index) in users" :key="u.id">
-                <tr>
-                    <td class="content-cell-center" x-text="index + 1"></td>
-                    <td class="content-cell" x-text="u.first_name + ' ' + u.second_name"></td>
-                    <td class="content-cell" x-text="u.email"></td>
+        <div x-show="!loading">
 
-                    <td class="content-cell-center">
-                        <x-button
-                            text="Edit"
-                            :href="'/admin/users/' + u.id"
-                            class="button-list"
-                        />
-                        <x-button
-                            text="Delete"
-                            class="button-list bg-red-600"
-                        />
-                    </td>
+
+            <table class="content-item-wrapper">
+
+                <thead>
+                <tr>
+                    <th class="key-content-item-center">#</th>
+                    <th class="key-content-item-center">Name</th>
+                    <th class="key-content-item-center">Email</th>
+                    <th class="key-content-item-center p-2">Actions</th>
                 </tr>
-            </template>
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+
+                <template x-for="(u, index) in users" :key="u.id">
+
+                    <tr>
+                        <td class="key-content-item" x-text="index + 1"></td>
+                        <td class="value-content-item" x-text="u.first_name + ' ' + u.second_name"></td>
+                        <td class="value-content-item" x-text="u.email"></td>
+
+                        <td class="value-content-item">
+                            <x-link
+                                text="Detail"
+                                class="button-list"
+                                x-bind:href="`/admin/users/${u.id}`"
+                            />
+                        </td>
+                    </tr>
+
+                </template>
+
+                </tbody>
+
+            </table>
+        </div>
+
     </div>
+
 @endsection

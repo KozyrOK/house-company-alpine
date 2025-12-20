@@ -5,7 +5,7 @@ export default function adminPostsList() {
         async fetchPosts(page = 1) {
 
             try {
-                const res = await fetch(`/api/superadmin/posts?page=${page}`, {
+                const res = await fetch(`/api/admin/posts?page=${page}`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: {

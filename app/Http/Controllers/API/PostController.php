@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index(Company $company)
+    public function index()
     {
-        return Post::where('company_id', $company->id)->paginate();
+        return Post::paginate();
     }
 
     public function store(Request $request, Company $company)

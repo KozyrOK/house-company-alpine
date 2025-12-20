@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index(Company $company)
+    public function index()
     {
-        return User::whereHas('companies', fn($q) => $q->where('company_id', $company->id))->paginate();
+        return User::query()
+            ->orderBy('id', 'desc')
+            ->paginate(15);
     }
 
     public function store(Request $request, Company $company)

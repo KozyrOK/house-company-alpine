@@ -6,7 +6,7 @@ export default function adminUsersList() {
             this.loading = true;
 
             try {
-                const res = await fetch(`/api/superadmin/users?page=${page}`, {
+                const res = await fetch(`/api/admin/users?page=${page}`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: {

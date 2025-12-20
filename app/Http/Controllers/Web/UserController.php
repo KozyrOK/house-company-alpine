@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 
 /**
  * Handles frontend user management pages (admin view).
@@ -23,6 +24,16 @@ class UserController extends Controller
      */
     public function show($userId)
     {
-        return view('users.show', compact('userId'));
+        return view('admin.users.show', compact('userId'));
+    }
+
+    public function create()
+    {
+        return view('admin.users.create');
+    }
+
+    public function edit(User $user)
+    {
+        return view('admin.users.edit', compact('user'));
     }
 }

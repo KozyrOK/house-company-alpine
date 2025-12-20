@@ -59,28 +59,28 @@
                 <tr>
                     <th class="key-content-item">Name</th>
                     <td class="value-content-item" colspan="2">
-                        <input type="text" name="name" class="form-input" required>
+                        <input type="text" name="name" class="input-field" required>
                     </td>
                 </tr>
 
                 <tr>
                     <th class="key-content-item">Address</th>
                     <td class="value-content-item" colspan="2">
-                        <input type="text" name="address" class="form-input">
+                        <input type="text" name="address" class="input-field">
                     </td>
                 </tr>
 
                 <tr>
                     <th class="key-content-item">City</th>
                     <td class="value-content-item" colspan="2">
-                        <input type="text" name="city" class="form-input">
+                        <input type="text" name="city" class="input-field">
                     </td>
                 </tr>
 
                 <tr>
                     <th class="key-content-item">Description</th>
                     <td class="value-content-item" colspan="2">
-                        <textarea name="description" class="form-input" rows="4"></textarea>
+                        <textarea name="description" class="input-field" rows="4"></textarea>
                     </td>
                 </tr>
 

@@ -51,15 +51,15 @@
                     <template x-for="(c, index) in companies" :key="c.id">
 
                         <tr>
-                            <td class="value-content-item-center" x-text="index + 1"></td>
+                            <td class="key-content-item" x-text="index + 1"></td>
                             <td class="value-content-item" x-text="c.name"></td>
                             <td class="value-content-item" x-text="c.city"></td>
 
                             <td>
-                                <x-button
+                                <x-link
                                     text="Detail"
-                                    href=":`/admin/companies/${c.id}`"
                                     class="button-list"
+                                    x-bind:href="`/admin/companies/${c.id}`"
                                 />
                             </td>
                         </tr>
