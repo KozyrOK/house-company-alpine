@@ -39,24 +39,24 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
-    public function show(int $companyId, User $user)
+    public function show(User $user)
     {
         return $user;
     }
 
-    public function update(Request $request, Company $company, User $user)
+    public function update(Request $request, User $user)
     {
         $user->update($request->only('first_name', 'second_name', 'email', 'phone'));
         return $user;
     }
 
-    public function destroy(Company $company, User $user)
+    public function destroy(User $user)
     {
         $user->delete();
         return response()->noContent();
     }
 
-    public function approve(Company $company, User $user)
+    public function approve(User $user)
     {
         $user->update(['status_account' => 'active']);
         return response()->json(['message' => 'User approved', 'user' => $user]);

@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Company $company)
     {
-        return Post::paginate();
+        return $company->posts()->latest()->paginate(15);
     }
 
     public function store(Request $request, Company $company)
@@ -33,6 +33,10 @@ class PostController extends Controller
 
     public function show(Company $company, Post $post)
     {
+        if ($post->company_id !== $company->id) {
+            abort(404);
+        }
+
         return $post;
     }
 

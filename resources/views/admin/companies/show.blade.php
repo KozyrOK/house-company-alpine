@@ -17,7 +17,7 @@
                 <div class="top-crud-wrapper">
 
                             <div class="button-wrapper">
-                                <x-button
+                                <x-link
                                     text="← Back to list"
                                     href=":`{{ route('admin.companies.index') }}`"
                                     class="button-list"
@@ -34,7 +34,7 @@
                             </div>
 
                             <div class="button-wrapper">
-                                <x-button
+                                <x-link
                                     text="Admin Menu"
                                     href="{{ route('admin.index') }}"
                                     class="button-list"
@@ -77,9 +77,9 @@
                     <tr class="border-none">
                         <td class="border-none">
                             <div class="flex justify-start">
-                                <x-button
+                                <x-link
                                     text="Company Users"
-                                    href=":`/admin/companies/${company.id}/users`"
+                                    x-bind:href=":`/admin/companies/${company.id}/users`"
                                     class="button-link"
                                 />
                             </div>
@@ -87,9 +87,9 @@
 
                         <td class="border-none">
                             <div class="flex justify-end">
-                                <x-button
+                                <x-link
                                     text="Company Posts"
-                                    href=":`/admin/companies/${company.id}/posts`"
+                                    x-bind:href=":`/admin/companies/${company.id}/posts`"
                                     class="button-link"
                                 />
                             </div>
@@ -99,9 +99,9 @@
                     <tr class="border-none">
                         <td class="border-none">
                             <div class="flex justify-start">
-                                <x-button
+                                <x-link
                                     text="Edit Company"
-                                    href=":`/admin/companies/${company.id}/edit`"
+                                    x-bind:href=":`/admin/companies/${company.id}/edit`"
                                     class="button-edit"
                                 />
                             </div>
@@ -109,9 +109,9 @@
 
                         <td class="border-none">
                             <div class="flex justify-end">
-                                <x-button
+                                <x-link
                                    text="Delete Company"
-                                   href=":`/admin/companies/${company.id}/delete`"
+                                   x-bind:href=":`/admin/companies/${company.id}/delete`"
                                    class="button-delete"
                                 />
                             </div>

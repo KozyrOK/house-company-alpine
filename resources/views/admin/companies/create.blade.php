@@ -26,7 +26,7 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-button
+                <x-link
                     text="← Back to list"
                     href="{{ route('admin.companies.index') }}"
                     class="button-list"
@@ -42,7 +42,7 @@
             </div>
 
             <div class="button-wrapper">
-                <x-button
+                <x-link
                     text="Admin Menu"
                     href="{{ route('admin.index') }}"
                     class="button-list"

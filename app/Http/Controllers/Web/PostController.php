@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
 
-/**
- * Handles frontend (Blade) post pages inside a company.
- */
 class PostController extends Controller
 {
     public function index()
@@ -14,10 +12,18 @@ class PostController extends Controller
         return view('admin.posts.index');
     }
 
-    public function show($companyId, $postId)
+    public function show(Post $post)
     {
-        // Post data fetched via API: /api/main/{id}/posts/{postId}
-        return view('posts.show', compact('companyId', 'postId'));
+        return view('admin.posts.show', compact('post'));
+    }
+
+    public function edit(Post $post)
+    {
+        return view('admin.posts.edit', compact('post'));
+    }
+
+    public function store()
+    {
+        return redirect()->route('admin.posts.index');
     }
 }
-

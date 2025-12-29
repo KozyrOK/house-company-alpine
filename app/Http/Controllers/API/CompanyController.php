@@ -61,7 +61,8 @@ class CompanyController extends Controller
 
         $company = Company::create($validated);
 
-        $superadmins = User::whereHas('companies', fn($q) => $q->where('role','superadmin'))->get();
+        $superadmins = User::where('is_superadmin', true)->get();
+
         foreach ($superadmins as $sa) {
             $company->users()->attach($sa->id, ['role' => 'superadmin']);
         }

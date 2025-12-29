@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -32,12 +33,12 @@ class CompanyController extends Controller
 
     public function store()
     {
-
+        return redirect()->route('admin.companies.index');
     }
 
     public function update(Request $request, Company $company)
     {
-
+        return redirect()->route('admin.companies.show', $company);
     }
 
     public function logo(Company $company): BinaryFileResponse

@@ -17,9 +17,9 @@
                 <div class="top-crud-wrapper">
 
                     <div class="button-wrapper">
-                        <x-button
+                        <x-link
                             text="← Back to detail"
-                            href=":`/admin/companies/${company.id}`"
+                            href="{{ route('admin.companies.show', $companyId) }}"
                             class="button-list"
                         />
                     </div>
@@ -37,7 +37,7 @@
                     </div>
 
                     <div class="button-wrapper">
-                        <x-button
+                        <x-link
                             text="Admin Menu"
                             href="{{ route('admin.index') }}"
                             class="button-list"
@@ -121,9 +121,9 @@
                         </div>
 
                         <div class="flex justify-end">
-                            <x-button
+                            <x-link
                                 text="Cancel"
-                                href=":`/admin/companies/${company.id}`"
+                                href="{{ route('admin.companies.show', $companyId) }}"
                                 class="button-delete"
                             />
                         </div>

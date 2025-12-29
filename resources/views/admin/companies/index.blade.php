@@ -11,7 +11,7 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-button
+                <x-link
                     text="← Back to Admin Panel"
                     href="{{ route('admin.index') }}"
                     class="button-list"
@@ -21,7 +21,7 @@
             <div></div>
 
             <div class="button-wrapper">
-                <x-button
+                <x-link
                     text="Create New Company"
                     href="{{ route('admin.companies.create') }}"
                     class="button-edit"

@@ -83,14 +83,15 @@ Route::middleware('auth')->group(function () {
             ->name('admin.index');
 
         // USERS
-        Route::get('/users/{user}', [UserController::class, 'show'])
-            ->name('admin.users.show');
 
         Route::get('/users', [UserController::class, 'index'])
             ->name('admin.users.index');
 
         Route::get('/users/create', [UserController::class, 'create'])
             ->name('admin.users.create');
+
+        Route::get('/users/{user}', [UserController::class, 'show'])
+            ->name('admin.users.show');
 
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])
             ->name('admin.users.edit');
@@ -100,17 +101,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/posts', [PostController::class, 'index'])
             ->name('admin.posts.index');
 
-        Route::get('/posts/create', function () {
-            return view('admin.posts.create');
-        })->name('admin.posts.create');
+        Route::post('/posts', [PostController::class, 'store'])
+            ->name('admin.posts.store');
 
-        Route::get('/posts/{post}', function (\App\Models\Post $post) {
-            return view('admin.posts.show', compact('post'));
-        })->name('admin.posts.show');
+        Route::get('/posts/{post}', [PostController::class, 'show'])
+            ->name('admin.posts.show');
 
-        Route::get('/posts/{post}/edit', function (\App\Models\Post $post) {
-            return view('admin.posts.edit', compact('post'));
-        })->name('admin.posts.edit');
+        Route::get('/posts/{post}/edit', [PostController::class, 'edit'])
+            ->name('admin.posts.edit');
 
         // COMPANIES
 
