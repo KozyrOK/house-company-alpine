@@ -1,8 +1,9 @@
-<p align="center">
-  <a href="./README.en.md">🇬🇧 English</a> |
-  <a href="./README.ru.md">🇷🇺 Русский</a>
-</p>
+# Housing Company - PET project 
 
----
+#
 
-# Housing Company
+### Description: <a href="./README.en.md">🇬🇧 English</a> | <a href="./README.ru.md">🇺🇦 Русский</a>
+
+#
+
+![Housing Company](./resources/images/default-image-company.jpg)
