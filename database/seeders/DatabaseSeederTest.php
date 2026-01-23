@@ -45,5 +45,8 @@ class DatabaseSeederTest extends Seeder
                 ]);
             }
         });
+
+        $this->call(PostSeeder::class);
     }
+
 }
