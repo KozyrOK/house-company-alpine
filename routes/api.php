@@ -27,42 +27,42 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
     // USERS
 
     Route::get('/companies/{company}/users', [UserController::class, 'index'])
-        ->middleware('api.can:viewAny,' . User::class);
+        ->middleware('api.can:viewAny,' . User::class . ',company');
 
     Route::post('/companies/{company}/users', [UserController::class, 'store'])
-        ->middleware('api.can:create,' . User::class);
+        ->middleware('api.can:create,' . User::class . ',company');
 
     Route::get('/companies/{company}/users/{user}', [UserController::class, 'show'])
-        ->middleware('api.can:view,' . User::class);
+        ->middleware('api.can:view,' . User::class . ',company,user');
 
     Route::patch('/companies/{company}/users/{user}', [UserController::class, 'update'])
-        ->middleware('api.can:update,' . User::class);
+        ->middleware('api.can:update,' . User::class . ',company,user');
 
     Route::delete('/companies/{company}/users/{user}', [UserController::class, 'destroy'])
-        ->middleware('api.can:delete,' . User::class);
+        ->middleware('api.can:delete,' . User::class . ',user');
 
     Route::patch('/companies/{company}/users/{user}/approve', [UserController::class, 'approve'])
-        ->middleware('api.can:approve,' . User::class);
+        ->middleware('api.can:approve,' . User::class . ',company,user');
 
     // POSTS
 
     Route::get('/companies/{company}/posts', [PostController::class, 'index'])
-        ->middleware('api.can:viewAny,' . Post::class);
+        ->middleware('api.can:viewAny,' . Post::class . ',company');
 
     Route::post('/companies/{company}/posts', [PostController::class, 'store'])
-        ->middleware('api.can:create,' . Post::class);
+        ->middleware('api.can:create,' . Post::class . ',company');
 
     Route::get('/companies/{company}/posts/{post}', [PostController::class, 'show'])
-        ->middleware('api.can:view,' . Post::class);
+        ->middleware('api.can:view,' . Post::class . ',post');
 
     Route::patch('/companies/{company}/posts/{post}', [PostController::class, 'update'])
-        ->middleware('api.can:update,' . Post::class);
+        ->middleware('api.can:update,' . Post::class . ',post');
 
     Route::patch('/companies/{company}/posts/{post}/approve', [PostController::class, 'approve'])
-        ->middleware('api.can:approve,' . Post::class);
+        ->middleware('api.can:approve,' . Post::class . ',post');
 
     Route::delete('/companies/{company}/posts/{post}', [PostController::class, 'destroy'])
-        ->middleware('api.can:delete,' . Post::class);
+        ->middleware('api.can:delete,' . Post::class . ',post');
 });
 
     // SUPERADMIN
