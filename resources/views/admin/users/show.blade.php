@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <div x-data="showUser({{ $userId }})" x-init="fetchUser()">
+    <div x-data="adminEditUser({{ $userId }})">
 
         <h1>User</h1>
 
@@ -28,7 +28,7 @@
                         <img
                             class="company-image"
                             :src="user.image_path ?? '/images/default-image-company.jpg'"
-                        @error="event.target.src='/images/default-image-company.jpg'"
+                        @@error="event.target.src='/images/default-image-company.jpg'"
                         >
                     </div>
 

@@ -19,7 +19,7 @@
             </div>
 
             <div>
-                <img alt="userpic preview">
+                <img alt="user pic preview" src="#">
             </div>
 
             <div class="button-wrapper">

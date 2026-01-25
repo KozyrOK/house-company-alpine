@@ -21,7 +21,7 @@ export default function adminEditUser(userId) {
 
         async fetchUser() {
             try {
-                const res = await fetch(`/api/users/${this.userId}`, {
+                const res = await fetch(`/api/admin/users/${this.userId}`, {
                     credentials: 'include',
                 });
 
@@ -45,7 +45,7 @@ export default function adminEditUser(userId) {
 
         async save() {
             try {
-                const res = await fetch(`/api/users/${this.userId}`, {
+                const res = await fetch(`/api/admin/users/${this.userId}`, {
                     method: 'PATCH',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },

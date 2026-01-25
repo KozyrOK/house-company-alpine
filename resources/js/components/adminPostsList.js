@@ -1,8 +1,12 @@
 export default function adminPostsList() {
     return {
         posts: [],
-        loading: true,
+        loading: false,
+        page: 1,
+
         async fetchPosts(page = 1) {
+            this.loading = true;
+            this.page = page;
 
             try {
                 const res = await fetch(`/api/admin/posts?page=${page}`, {
@@ -14,11 +18,14 @@ export default function adminPostsList() {
                     },
                 });
 
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
                 const data = await res.json();
 
-                if (res.ok) {
-                    this.posts = data.data ?? data;
-                }
+                this.posts = data.data ?? data;
+
             } catch (e) {
                 console.error('❌ Error loading posts:', e);
             } finally {

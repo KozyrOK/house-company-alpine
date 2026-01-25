@@ -31,13 +31,7 @@
                 />
             </div>
 
-            <div>
-                <img
-                    alt="post image preview"
-                    :src="preview ?? '/images/default-image-company.jpg'"
-                    class="company-image"
-                >
-            </div>
+            <div></div>
 
             <div class="button-wrapper">
                 <x-link
@@ -63,7 +57,10 @@
                     <td colspan="2" class="value-content-item">
                         <select name="company_id" class="input-field" required>
                             @foreach($companies as $company)
-                                <option value="{{ $company->id }}">
+                                <option
+                                    value="{{ $company->id }}"
+                                    @selected(old('company_id') == $company->id)
+                                >
                                     {{ $company->name }}
                                 </option>
                             @endforeach
@@ -113,7 +110,7 @@
                             type="file"
                             name="image"
                             accept="image/*"
-                            @change="updatePreview"
+                            @@change="updatePreview"
                         >
                     </td>
                 </tr>
