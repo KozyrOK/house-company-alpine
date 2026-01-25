@@ -96,8 +96,6 @@ class User extends Authenticatable
         return $this->hasRole(['company_head', 'admin', 'superadmin'], $companyId);
     }
 
-    // !!! need to implement User::isMember();
-
     public function belongsToCompany(int $companyId): bool
     {
         return $this->companies()->where('company_id', $companyId)->exists();

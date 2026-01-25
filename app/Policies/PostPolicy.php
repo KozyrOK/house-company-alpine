@@ -2,40 +2,49 @@
 
 namespace App\Policies;
 
+use App\Models\Company;
 use App\Models\User;
 use App\Models\Post;
 
 class PostPolicy
 {
-    public function viewAny(User $user): bool
+    public function before(User $user): ?bool
     {
-        return $user->isSuperAdmin();
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+
+        return null;
+    }
+    public function viewAny(User $user, Company $company): bool
+    {
+        return $user->belongsToCompany($company->id);
     }
 
-    public function view(User $user, Post $post, int $companyId): bool
+    public function view(User $user, Post $post): bool
     {
-        return $user->belongsToCompany($companyId);
+        return $user->belongsToCompany($post->company_id);
     }
 
-    public function create(User $user, int $companyId): bool
+    public function create(User $user, Company $company): bool
     {
-        return $user->hasRole(['user','company_head','admin','superadmin'], $companyId);
+        return $user->belongsToCompany($company->id);
     }
 
-    public function update(User $user, Post $post, int $companyId): bool
+    public function update(User $user, Post $post): bool
     {
         return $user->id === $post->user_id
-            || $user->isCompanyHeadOrHigher($companyId);
+            || $user->isCompanyHeadOrHigher($post->company_id);
     }
 
-    public function delete(User $user, Post $post, int $companyId): bool
+    public function delete(User $user, Post $post): bool
     {
-        return $user->id === $post->user_id
-            || $user->isCompanyHeadOrHigher($companyId);
+        return $this->update($user, $post);
     }
 
-    public function approve(User $user, Post $post, int $companyId): bool
+    public function approve(User $user, Post $post): bool
     {
+        $companyId = $post->company_id;
         return $user->isCompanyHeadOrHigher($companyId);
     }
 }

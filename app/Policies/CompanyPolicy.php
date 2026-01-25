@@ -12,32 +12,31 @@ class CompanyPolicy
         if ($user->isSuperAdmin()) {
             return true;
         }
+
         return null;
     }
 
-    public function viewAny(User $user, string $model): bool
-    {
-        return $user->companies()->exists();
-    }
-
-    public function view(User $user, Company|int $company): bool
-    {
-        $id = $company instanceof Company ? $company->id : $company;
-        return $user->belongsToCompany($id);
-    }
-
-    public function create(User $user): bool
+    public function viewAny(User $user): bool
     {
         return false;
     }
 
-    public function update(User $user, Company|int $company): bool
+    public function view(User $user, Company $company): bool
     {
-        $id = $company instanceof Company ? $company->id : $company;
-        return $user->isAdminOrHigher($id);
+        return $user->belongsToCompany($company->id);
     }
 
-    public function delete(User $user, Company|int $company): bool
+    public function create(): bool
+    {
+        return false;
+    }
+
+    public function update(User $user, Company $company): bool
+    {
+        return $user->isAdminOrHigher($company->id);
+    }
+
+    public function delete(User $user, Company $company): bool
     {
         return false;
     }
