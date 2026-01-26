@@ -31,12 +31,8 @@ class PostController extends Controller
         return response()->json($post, 201);
     }
 
-    public function show(Company $company, Post $post)
+    public function show(Post $post)
     {
-        if ($post->company_id !== $company->id) {
-            abort(404);
-        }
-
         return $post;
     }
 

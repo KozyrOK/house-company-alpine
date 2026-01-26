@@ -7,7 +7,6 @@ use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class CompanyController extends Controller
 {
@@ -72,7 +71,7 @@ class CompanyController extends Controller
 
     public function show(Company $company)
     {
-        return $company;
+        return Company::paginate(10);
     }
 
     public function update(Request $request, Company $company)
