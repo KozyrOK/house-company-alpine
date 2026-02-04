@@ -16,9 +16,9 @@ class UserPolicy
         return null;
     }
 
-    public function viewAny(User $user, Company $company): bool
+    public function viewAny(User $user): bool
     {
-        return $user->isAdminOrHigher($company->id);
+        return false;
     }
 
     public function view(User $user, User $model, Company $company): bool

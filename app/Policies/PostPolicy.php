@@ -16,9 +16,9 @@ class PostPolicy
 
         return null;
     }
-    public function viewAny(User $user, Company $company): bool
+    public function viewAny(User $user): bool
     {
-        return $user->belongsToCompany($company->id);
+        return false;
     }
 
     public function view(User $user, Post $post): bool

@@ -71,7 +71,7 @@ class CompanyController extends Controller
 
     public function show(Company $company)
     {
-        return Company::paginate(10);
+        return $company;
     }
 
     public function update(Request $request, Company $company)

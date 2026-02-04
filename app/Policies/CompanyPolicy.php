@@ -26,7 +26,7 @@ class CompanyPolicy
         return $user->belongsToCompany($company->id);
     }
 
-    public function create(): bool
+    public function create(User $user): bool
     {
         return false;
     }
