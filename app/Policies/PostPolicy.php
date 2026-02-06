@@ -18,7 +18,9 @@ class PostPolicy
     }
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->companies()
+            ->wherePivotIn('role', ['admin', 'company_head'])
+            ->exists();
     }
 
     public function view(User $user, Post $post): bool
@@ -26,8 +28,12 @@ class PostPolicy
         return $user->belongsToCompany($post->company_id);
     }
 
-    public function create(User $user, Company $company): bool
+    public function create(User $user, ?Company $company = null): bool
     {
+        if (!$company) {
+            return $user->companies()->exists();
+        }
+
         return $user->belongsToCompany($company->id);
     }
 

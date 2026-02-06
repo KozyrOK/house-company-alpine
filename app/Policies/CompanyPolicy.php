@@ -18,7 +18,9 @@ class CompanyPolicy
 
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->companies()
+            ->wherePivotIn('role', ['admin', 'company_head'])
+            ->exists();
     }
 
     public function view(User $user, Company $company): bool

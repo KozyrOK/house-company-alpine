@@ -74,69 +74,24 @@ Route::middleware('auth')->group(function () {
     Route::view('/forum', 'pages.forum')->name('forum');
     Route::view('/chat', 'pages.chat')->name('chat');
 
-    // SUPERADMIN
+    // ADMIN
 
-    Route::prefix('admin')->middleware(['superadmin'])->group(function () {
+    Route::prefix('admin')->group(function () {
 
         Route::view('/', 'pages.admin')
             ->name('admin.index');
 
-        // USERS
+        Route::resource('users', UserController::class)
+            ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
+            ->names('admin.users');
 
-        Route::get('/users', [UserController::class, 'index'])
-            ->name('admin.users.index');
+        Route::resource('posts', PostController::class)
+            ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
+            ->names('admin.posts');
 
-        Route::get('/users/{user}', [UserController::class, 'show'])
-            ->name('admin.users.show');
-
-        Route::get('/users/create', [UserController::class, 'create'])
-            ->name('admin.users.create');
-
-        Route::post('/users/store', [UserController::class, 'store'])
-            ->name('admin.users.store');
-
-        Route::get('/users/{user}/edit', [UserController::class, 'edit'])
-            ->name('admin.users.edit');
-
-        // POSTS
-
-        Route::get('/posts', [PostController::class, 'index'])
-            ->name('admin.posts.index');
-
-        Route::get('/posts/{post}', [PostController::class, 'show'])
-            ->name('admin.posts.show');
-
-        Route::get('/posts/create', [PostController::class, 'create'])
-            ->name('admin.posts.create');
-
-        Route::post('/posts', [PostController::class, 'store'])
-            ->name('admin.posts.store');
-
-        Route::get('/posts/{post}/edit', [PostController::class, 'edit'])
-            ->name('admin.posts.edit');
-
-        Route::put('/posts/{post}', [PostController::class, 'update'])
-            ->name('posts.update');
-
-        Route::delete('/posts/{post}', [PostController::class, 'destroy'])
-            ->name('posts.destroy');
-
-        // COMPANIES
-
-        Route::get('/companies', [CompanyController::class, 'index'])
-            ->name('admin.companies.index');
-
-        Route::get('/companies/create', [CompanyController::class, 'create'])
-            ->name('admin.companies.create');
-
-        Route::post('/companies', [CompanyController::class, 'store'])
-            ->name('admin.companies.store');
-
-        Route::get('/companies/{company}', [CompanyController::class, 'show'])
-            ->name('admin.companies.show');
-
-        Route::get('/companies/{company}/edit', [CompanyController::class, 'edit'])
-            ->name('admin.companies.edit');
+        Route::resource('companies', CompanyController::class)
+            ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
+            ->names('admin.companies');
 
         Route::get('/companies/{company}/logo', [CompanyController::class, 'logo'])
             ->name('admin.companies.logo');

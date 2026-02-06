@@ -18,39 +18,53 @@ class UserPolicy
 
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->companies()
+            ->wherePivotIn('role', ['admin', 'company_head'])
+            ->exists();
     }
 
-    public function view(User $user, User $model, Company $company): bool
+    public function view(User $user, User $model): bool
     {
         if ($user->id === $model->id) {
             return true;
         }
 
-        return $user->isAdminOrHigher($company->id) && $model->belongsToCompany($company->id);
+        return $user->companies()
+            ->wherePivotIn('role', ['admin', 'company_head'])
+            ->whereIn('company_id', $model->companies()->select('companies.id'))
+            ->exists();
     }
 
     public function create(User $user, Company $company): bool
     {
-        return $user->isAdminOrHigher($company->id);
+        return $user->isCompanyHeadOrHigher($company->id);
     }
 
-    public function update(User $user, User $model, Company $company): bool
+    public function update(User $user, User $model): bool
     {
         if ($user->id === $model->id) {
             return true;
         }
 
-        return $user->isAdminOrHigher($company->id) && $model->belongsToCompany($company->id);
+        return $user->companies()
+            ->wherePivotIn('role', ['admin', 'company_head'])
+            ->whereIn('company_id', $model->companies()->select('companies.id'))
+            ->exists();
     }
 
-    public function delete(User $user, Company $company): bool
+    public function delete(User $user, User $model): bool
     {
-        return false;
+        return $user->companies()
+            ->wherePivotIn('role', ['admin'])
+            ->whereIn('company_id', $model->companies()->select('companies.id'))
+            ->exists();
     }
 
-    public function approve(User $user, User $model, Company $company): bool
+    public function approve(User $user, User $model): bool
     {
-        return $user->isAdminOrHigher($company->id) && $model->belongsToCompany($company->id);
+        return $user->companies()
+            ->wherePivotIn('role', ['admin'])
+            ->whereIn('company_id', $model->companies()->select('companies.id'))
+            ->exists();
     }
 }
