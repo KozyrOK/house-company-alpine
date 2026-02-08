@@ -3,95 +3,42 @@
 @section('title', 'Admin - User Detail')
 
 @section('content')
-
-    <div x-data="adminEditUser({{ $userId }})">
-
+    <section>
         <h1>User</h1>
 
-        <div x-show="loading">Loading...</div>
-
-        <div x-show="!loading">
-
-            <div class="content-item-wrapper">
-
-                <div class="top-crud-wrapper">
-
-                    <div class="button-wrapper">
-                        <x-link
-                            text="← Back to list"
-                            href="{{ route('admin.users.index') }}"
-                            class="button-list"
-                        />
-                    </div>
-
-                    <div>
-                        <img
-                            class="company-image"
-                            :src="user.image_path ?? '/images/default-image-company.jpg'"
-                        @@error="event.target.src='/images/default-image-company.jpg'"
-                        >
-                    </div>
-
-                    <div class="button-wrapper">
-                        <x-link
-                            text="Admin Menu"
-                            href="{{ route('admin.index') }}"
-                            class="button-list"
-                        />
-                    </div>
-
+        <div class="content-item-wrapper">
+            <div class="top-crud-wrapper">
+                <div class="button-wrapper">
+                    <x-link text="← Back to list" href="{{ route('admin.users.index') }}" class="button-list"/>
                 </div>
-
-                <table>
-
-                    <tr>
-                        <th class="key-content-item">ID</th>
-                        <td colspan="2" class="value-content-item" x-text="user.id"></td>
-                    </tr>
-
-                    <tr>
-                        <th class="key-content-item">Name</th>
-                        <td colspan="2" class="value-content-item"
-                            x-text="user.first_name + ' ' + user.second_name">
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <th class="key-content-item">Email</th>
-                        <td colspan="2" class="value-content-item" x-text="user.email"></td>
-                    </tr>
-
-                    <tr>
-                        <th class="key-content-item">Phone</th>
-                        <td colspan="2" class="value-content-item" x-text="user.phone"></td>
-                    </tr>
-
-                </table>
-
-                <div class="bottom-crud-wrapper">
-
-                    <div class="flex justify-start">
-                        <x-link
-                            text="Edit User"
-                            x-bind:href="`/admin/users/${user.id}/edit`"
-                            class="button-edit"
-                        />
-                    </div>
-
-                    <div class="flex justify-end">
-                        <x-link
-                            text="Delete User"
-                            x-bind:href="`/admin/users/${user.id}/delete`"
-                            class="button-delete"
-                        />
-                    </div>
-
+                <div>
+                    <img class="company-image" src="{{ $user->image_path ?: asset('images/default-image-company.jpg') }}" alt="user image">
                 </div>
-
+                <div class="button-wrapper">
+                    <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+                </div>
             </div>
 
+            <table>
+                <tr><th class="key-content-item">ID</th><td class="value-content-item" colspan="2">{{ $user->id }}</td></tr>
+                <tr><th class="key-content-item">Name</th><td class="value-content-item" colspan="2">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
+                <tr><th class="key-content-item">Email</th><td class="value-content-item" colspan="2">{{ $user->email }}</td></tr>
+                <tr><th class="key-content-item">Phone</th><td class="value-content-item" colspan="2">{{ $user->phone ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">Status</th><td class="value-content-item" colspan="2">{{ $user->status_account ?: '-' }}</td></tr>
+            </table>
+
+            <div class="bottom-crud-wrapper">
+                <div class="flex justify-start">
+                    <x-link text="Edit User" href="{{ route('admin.users.edit', $user) }}" class="button-edit"/>
+                </div>
+                <div class="flex justify-end">
+                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}">
+                        @csrf
+                        @method('DELETE')
+                        <x-button text="Delete User" type="submit" class="button-delete"/>
+                    </form>
+                </div>
+            </div>
         </div>
-
-    </div>
-
+    </section>
 @endsection
