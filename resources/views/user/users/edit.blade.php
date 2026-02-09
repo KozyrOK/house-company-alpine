@@ -1,5 +1,5 @@
 <div class="content-item-wrapper">
-    <h2 class="text-xl font-semibold">Edit User</h2>
+    <h2 class="text-xl font-semibold">Edit profile</h2>
 
     @if(session('status'))
         <div class="mt-3 text-sm text-green-600">{{ session('status') }}</div>
@@ -15,7 +15,7 @@
         </label>
 
         <label class="grid gap-1">
-            <span class="text-sm text-slate-500">Second name</span>
+            <span class="text-sm text-slate-500">Last name</span>
             <input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field">
         </label>
 
@@ -37,6 +37,6 @@
     <form method="POST" action="{{ route('dashboard.destroy') }}" class="mt-4">
         @csrf
         @method('DELETE')
-        <x-button text="Delete user" type="submit" class="button-list"/>
+        <x-button text="Delete account" type="submit" class="button-list"/>
     </form>
 </div>

@@ -24,7 +24,7 @@
                     <td class="value-content-item">{{ $listedUser->status_account ?? 'pending' }}</td>
                 </tr>
             @empty
-                <tr><td colspan="4" class="value-content-item">No users</td></tr>
+                <tr><td colspan="4" class="value-content-item">No users found.</td></tr>
             @endforelse
             </tbody>
         </table>

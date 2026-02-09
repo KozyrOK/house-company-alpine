@@ -10,12 +10,12 @@
             @csrf
 
             <label class="grid gap-1">
-                <span class="text-sm text-slate-500">First Name</span>
+                <span class="text-sm text-slate-500">First name</span>
                 <input type="text" name="first_name" class="input-field" required>
             </label>
 
             <label class="grid gap-1">
-                <span class="text-sm text-slate-500">Second Name</span>
+                <span class="text-sm text-slate-500">Last name</span>
                 <input type="text" name="second_name" class="input-field" required>
             </label>
 

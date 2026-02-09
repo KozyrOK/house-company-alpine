@@ -1,24 +1,26 @@
-@extends('_layouts.app')
+<div class="content-item-wrapper">
+    <h2 class="text-xl font-semibold">User profile</h2>
 
-@section('title', $post->title)
-
-@section('content')
-    <section>
-        <h1>{{ $post->title }}</h1>
-        <p class="text-sm text-slate-500">
-            Company: {{ $post->company->name ?? $company->name ?? '—' }}
-            · User: {{ $post->user->first_name ?? '' }} {{ $post->user->second_name ?? '' }}
-            · Status: {{ $post->status }}
-        </p>
-
-        <article class="content-item-wrapper mt-4 whitespace-pre-line">
-            {{ $post->content }}
-        </article>
-
-        @if($company)
-            <div class="mt-4">
-                <x-link text="Back to list" href="{{ route('main.posts.index', $company) }}" class="button-list"/>
-            </div>
-        @endif
-    </section>
-@endsection
+    <dl class="mt-4 grid gap-2">
+        <div>
+            <dt class="text-sm text-slate-500">First name</dt>
+            <dd class="text-base">{{ $user->first_name }} {{ $user->second_name }}</dd>
+        </div>
+        <div>
+            <dt class="text-sm text-slate-500">Email</dt>
+            <dd class="text-base">{{ $user->email }}</dd>
+        </div>
+        <div>
+            <dt class="text-sm text-slate-500">Phone</dt>
+            <dd class="text-base">{{ $user->phone ?? '—' }}</dd>
+        </div>
+        <div>
+            <dt class="text-sm text-slate-500">Status</dt>
+            <dd class="text-base">{{ $user->status_account ?? 'pending' }}</dd>
+        </div>
+        <div>
+            <dt class="text-sm text-slate-500">Companies</dt>
+            <dd class="text-base">{{ $user->companies->pluck('name')->join(', ') ?: '—' }}</dd>
+        </div>
+    </dl>
+</div>

@@ -7,7 +7,7 @@
         <h1>{{ __('app.layouts.hc') }} / Main</h1>
 
         <p class="mt-2 text-sm text-slate-600">
-            Relevant companies, posts and users
+            Here are the companies, users, and posts related to your account.
         </p>
 
         <div class="content-item-wrapper mt-6">
@@ -25,18 +25,18 @@
                                 Your role: <span class="font-semibold">{{ $company->pivot->role ?? '—' }}</span>
                             </div>
                         </div>
-                        <p class="mt-2 text-sm">{{ $company->description ?? 'No description' }}</p>
+                        <p class="mt-2 text-sm">{{ $company->description ?? 'No description provided.' }}</p>
                         <div class="mt-3 text-sm text-slate-600">
                             Users: <span class="font-semibold">{{ $company->users_count }}</span>
                             · Posts: <span class="font-semibold">{{ $company->posts_count }}</span>
                         </div>
                         <div class="mt-4 flex flex-wrap gap-2">
-                            <x-link text="Detail" href="{{ route('main.show', $company) }}" class="button-list"/>
+                            <x-link text="Details" href="{{ route('main.show', $company) }}" class="button-list"/>
                             <x-link text="Posts" href="{{ route('main.posts.index', $company) }}" class="button-edit"/>
                         </div>
                     </div>
                 @empty
-                    <p class="text-sm text-slate-500">No Companies</p>
+                    <p class="text-sm text-slate-500">No related companies.</p>
                 @endforelse
             </div>
         </div>
@@ -47,9 +47,9 @@
                 <thead>
                 <tr>
                     <th class="key-content-item-center">#</th>
-                    <th class="key-content-item-center">User</th>
+                    <th class="key-content-item-center">Name</th>
                     <th class="key-content-item-center">Email</th>
-                    <th class="key-content-item-center">Company</th>
+                    <th class="key-content-item-center">Companies</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -63,7 +63,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" class="value-content-item">No Users</td></tr>
+                    <tr><td colspan="4" class="value-content-item">No related users.</td></tr>
                 @endforelse
                 </tbody>
             </table>
@@ -76,10 +76,10 @@
                 <tr>
                     <th class="key-content-item-center">#</th>
                     <th class="key-content-item-center">Company</th>
-                    <th class="key-content-item-center">User</th>
+                    <th class="key-content-item-center">Author</th>
                     <th class="key-content-item-center">Title</th>
                     <th class="key-content-item-center">Status</th>
-                    <th class="key-content-item-center">Action</th>
+                    <th class="key-content-item-center">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -99,7 +99,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="value-content-item">No posts</td></tr>
+                    <tr><td colspan="6" class="value-content-item">No related posts.</td></tr>
                 @endforelse
                 </tbody>
             </table>

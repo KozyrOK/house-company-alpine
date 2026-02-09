@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +17,32 @@ class CompanyController extends Controller
 
     public function index(Request $request): View
     {
+        if ($request->routeIs('main.index')) {
+            $user = $request->user();
+
+            $companies = $user->companies()
+                ->withCount(['users', 'posts'])
+                ->orderBy('name')
+                ->get();
+
+            $companyIds = $companies->pluck('id');
+
+            $users = User::query()
+                ->with('companies:id,name')
+                ->whereHas('companies', fn ($query) => $query->whereIn('companies.id', $companyIds))
+                ->orderBy('first_name')
+                ->get();
+
+            $posts = Post::query()
+                ->with(['company:id,name', 'user:id,first_name,second_name'])
+                ->whereIn('company_id', $companyIds)
+                ->latest()
+                ->take(10)
+                ->get();
+
+            return view('pages.main', compact('companies', 'users', 'posts'));
+        }
+
         $this->authorize('viewAny', Company::class);
 
         $query = Company::query()->orderBy('name');
@@ -28,9 +56,18 @@ class CompanyController extends Controller
         return view('admin.companies.index', compact('companies'));
     }
 
-    public function show(Company $company): View
+    public function show(Request $request, Company $company): View
     {
         $this->authorize('view', $company);
+
+        if ($request->routeIs('main.show')) {
+            $company->load([
+                'users' => fn ($query) => $query->orderBy('first_name'),
+                'posts' => fn ($query) => $query->latest()->with('user:id,first_name,second_name'),
+            ]);
+
+            return view('user.companies.show', compact('company'));
+        }
 
         $company->loadCount(['users', 'posts']);
 
