@@ -6,17 +6,17 @@
     <section>
         <h1>Edit post</h1>
 
-        <form method="POST" action="#" class="content-item-wrapper mt-4 grid gap-4">
+        <form method="POST" action="#" class="content-item-wrapper section-spacing form-grid">
             @csrf
             @method('PATCH')
 
-            <label class="grid gap-1">
-                <span class="text-sm text-slate-500">Title</span>
+            <label class="form-field">
+                <span class="form-label">Title</span>
                 <input type="text" name="title" value="{{ old('title', $post->title ?? '') }}" class="input-field" required>
             </label>
 
-            <label class="grid gap-1">
-                <span class="text-sm text-slate-500">Content</span>
+            <label class="form-field">
+                <span class="form-label">Content</span>
                 <textarea name="content" rows="6" class="input-field" required>{{ old('content', $post->content ?? '') }}</textarea>
             </label>
 

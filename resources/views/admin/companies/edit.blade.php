@@ -31,8 +31,8 @@
             </table>
 
             <div class="bottom-crud-wrapper">
-                <div class="flex justify-start"><x-button text="Save" type="submit" class="button-edit"/></div>
-                <div class="flex justify-end"><x-link text="Cancel" href="{{ route('admin.companies.show', $company) }}" class="button-delete"/></div>
+                <div class="action-row-start"><x-button text="Save" type="submit" class="button-edit"/></div>
+                <div class="action-row-end"><x-link text="Cancel" href="{{ route('admin.companies.show', $company) }}" class="button-delete"/></div>
             </div>
         </form>
     </section>

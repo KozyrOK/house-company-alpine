@@ -64,7 +64,7 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
 
     // ADMIN
 
-Route::prefix('admin')->middleware(['web', 'auth:sanctum'])->group(function () {
+Route::prefix('admin')->middleware(['web', 'auth:sanctum', 'admin.access'])->group(function () {
 
     Route::get('/companies', [CompanyController::class, 'index'])
         ->middleware('api.can:viewAny,' . Company::class);
@@ -85,7 +85,7 @@ Route::prefix('admin')->middleware(['web', 'auth:sanctum'])->group(function () {
         ->middleware('api.can:delete,' . User::class);
 
     Route::get('/posts', [PostController::class, 'index'])
-        ->middleware('api.can:viewAny,' . User::class);
+        ->middleware('api.can:viewAny,' . Post::class);
 
     Route::get('/posts/{post}', [PostController::class, 'show'])
         ->middleware('api.can:view,' . Post::class);

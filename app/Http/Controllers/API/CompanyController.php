@@ -28,10 +28,13 @@ class CompanyController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
+        $isAdminRoute = $request->is('api/admin/*');
 
         $companies = $user->isSuperAdmin()
             ? Company::query()->orderBy('name')->paginate(15)
-            : $user->companies()->orderBy('name')->paginate(15);
+            : ($isAdminRoute
+                ? Company::query()->whereIn('id', $user->adminCompanyIds())->orderBy('name')->paginate(15)
+                : $user->companies()->orderBy('name')->paginate(15));
         return response()->json($companies);
     }
 
@@ -55,11 +58,18 @@ class CompanyController extends Controller
 
     public function show(Company $company): JsonResponse
     {
+        if (request()->is('api/admin/*') && !request()->user()->isAdminOrHigher($company->id)) {
+            abort(403);
+        }
         return response()->json($company->loadCount(['users', 'posts']));
     }
 
     public function update(Request $request, Company $company): JsonResponse
     {
+        if (request()->is('api/admin/*') && !request()->user()->isAdminOrHigher($company->id)) {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'address' => 'sometimes|nullable|string|max:255',
@@ -74,12 +84,19 @@ class CompanyController extends Controller
 
     public function destroy(Company $company): JsonResponse
     {
+        if (request()->is('api/admin/*') && !request()->user()->isAdminOrHigher($company->id)) {
+            abort(403);
+        }
         $company->delete();
         return response()->json([], 204);
     }
 
     public function uploadLogo(Request $request, Company $company): JsonResponse
     {
+        if (request()->is('api/admin/*') && !request()->user()->isAdminOrHigher($company->id)) {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'logo' => 'required|image|mimes:jpeg,png,jpg,webp,avif|max:5120',
         ]);
@@ -104,6 +121,10 @@ class CompanyController extends Controller
 
     public function deleteLogo(Company $company): JsonResponse
     {
+        if (request()->is('api/admin/*') && !request()->user()->isAdminOrHigher($company->id)) {
+            abort(403);
+        }
+
         if ($company->logo_path && Storage::disk('public')->exists($company->logo_path)) {
             Storage::disk('public')->delete($company->logo_path);
         }

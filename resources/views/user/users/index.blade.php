@@ -6,7 +6,7 @@
     <section>
         <h1>Users</h1>
 
-        <table class="content-item-wrapper mt-4">
+        <table class="content-item-wrapper section-spacing">
             <thead>
             <tr>
                 <th class="key-content-item-center">#</th>

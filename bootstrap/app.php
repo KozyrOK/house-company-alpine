@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AuthorizeApiResource;
 use App\Http\Middleware\SuperAdminOnly;
+use App\Http\Middleware\AdminAccess;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -29,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'api.can' => AuthorizeApiResource::class,
             'superadmin'  => SuperAdminOnly::class,
+            'admin.access' => AdminAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

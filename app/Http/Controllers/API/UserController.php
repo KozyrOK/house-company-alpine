@@ -15,11 +15,14 @@ class UserController extends Controller
     public function index(Request $request): JsonResponse
     {
         $actor = $request->user();
+        $isAdminRoute = $request->is('api/admin/*');
 
         $query = User::query()->with('companies:id,name')->latest('id');
 
         if (!$actor->isSuperAdmin()) {
-            $companyIds = $actor->companies()->pluck('companies.id');
+            $companyIds = $isAdminRoute
+                ? $actor->adminCompanyIds()
+                : $actor->companies()->pluck('companies.id');
             $query->whereHas('companies', fn ($q) => $q->whereIn('companies.id', $companyIds));
         }
 
@@ -68,6 +71,15 @@ class UserController extends Controller
             abort(404);
         }
 
+        if ($request->is('api/admin/*') && !$request->user()->isSuperAdmin()) {
+            $adminCompanyIds = $request->user()->adminCompanyIds();
+            $hasAccess = $user->companies()->whereIn('companies.id', $adminCompanyIds)->exists();
+
+            if (!$hasAccess) {
+                abort(403);
+            }
+        }
+
         return response()->json($user->load('companies:id,name'));
     }
 
@@ -76,6 +88,15 @@ class UserController extends Controller
         $company = $request->route('company');
         if ($company && !$user->belongsToCompany($company->id)) {
             abort(404);
+        }
+
+        if ($request->is('api/admin/*') && !$request->user()->isSuperAdmin()) {
+            $adminCompanyIds = $request->user()->adminCompanyIds();
+            $hasAccess = $user->companies()->whereIn('companies.id', $adminCompanyIds)->exists();
+
+            if (!$hasAccess) {
+                abort(403);
+            }
         }
 
         $validated = $request->validate([
@@ -109,6 +130,15 @@ class UserController extends Controller
             return response()->json([], 204);
         }
 
+        if ($request->is('api/admin/*') && !$request->user()->isSuperAdmin()) {
+            $adminCompanyIds = $request->user()->adminCompanyIds();
+            $hasAccess = $user->companies()->whereIn('companies.id', $adminCompanyIds)->exists();
+
+            if (!$hasAccess) {
+                abort(403);
+            }
+        }
+
         $user->delete();
 
         return response()->json([], 204);
@@ -120,6 +150,15 @@ class UserController extends Controller
 
         if ($company && !$user->belongsToCompany($company->id)) {
             abort(404);
+        }
+
+        if ($request->is('api/admin/*') && !$request->user()->isSuperAdmin()) {
+            $adminCompanyIds = $request->user()->adminCompanyIds();
+            $hasAccess = $user->companies()->whereIn('companies.id', $adminCompanyIds)->exists();
+
+            if (!$hasAccess) {
+                abort(403);
+            }
         }
 
         $user->update(['status_account' => 'active']);

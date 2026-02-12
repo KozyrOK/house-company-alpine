@@ -11,7 +11,7 @@
                 <x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/>
             </div>
 
-            <form method="GET" action="{{ route('admin.users.index') }}" class="flex gap-2">
+            <form method="GET" action="{{ route('admin.users.index') }}" class="filter-form">
                 <input type="number" name="company_id" value="{{ request('company_id') }}" placeholder="Company ID" class="input-field">
                 <select name="status_account" class="input-field">
                     <option value="">Any status</option>
@@ -34,7 +34,7 @@
                 <th class="key-content-item-center">Name</th>
                 <th class="key-content-item-center">Email</th>
                 <th class="key-content-item-center">Status</th>
-                <th class="key-content-item-center p-2">Actions</th>
+                <th class="key-content-item-center">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -54,7 +54,7 @@
             </tbody>
         </table>
 
-        <div class="mt-4">
+        <div class="content-actions">
             {{ $users->withQueryString()->links() }}
         </div>
     </section>

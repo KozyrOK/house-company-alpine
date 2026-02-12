@@ -18,6 +18,12 @@ class UserController extends Controller
         $this->authorize('viewAny', User::class);
 
         $query = User::query()->with('companies:id,name')->latest('id');
+        $actor = $request->user();
+
+        if (!$actor->isSuperAdmin()) {
+            $adminCompanyIds = $actor->adminCompanyIds();
+            $query->whereHas('companies', fn ($q) => $q->whereIn('companies.id', $adminCompanyIds));
+        }
 
         if ($request->filled('company_id')) {
             $companyId = (int) $request->integer('company_id');
@@ -37,6 +43,18 @@ class UserController extends Controller
     {
         $this->authorize('view', $user);
 
+        if (!request()->user()->isSuperAdmin()) {
+            $adminCompanyIds = request()->user()->adminCompanyIds();
+
+            $hasAccess = $user->companies()
+                ->whereIn('companies.id', $adminCompanyIds)
+                ->exists();
+
+            if (!$hasAccess) {
+                abort(403);
+            }
+        }
+
         $user->load('companies:id,name');
 
         return view('admin.users.show', compact('user'));
@@ -44,7 +62,14 @@ class UserController extends Controller
 
     public function create(): View
     {
-        $companies = Company::query()->orderBy('name')->get();
+        $user = request()->user();
+
+        $companies = Company::query()
+            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
+                $query->whereIn('id', $user->adminCompanyIds());
+            })
+            ->orderBy('name')
+            ->get();
 
         return view('admin.users.create', compact('companies'));
     }
@@ -52,8 +77,6 @@ class UserController extends Controller
     public function update(Request $request, User $user): RedirectResponse
     {
         $this->authorize('update', $user);
-
-        $companies = Company::query()->orderBy('name')->get();
 
         $validated = $request->validate([
             'first_name' => 'sometimes|required|string|max:50',
@@ -103,10 +126,7 @@ class UserController extends Controller
     public function edit(User $user): View
     {
         $this->authorize('update', $user);
-
-        $companies = Company::query()->orderBy('name')->get();
-
-        return view('admin.users.edit', compact('user', 'companies'));
+        return view('admin.users.edit', compact('user'));
     }
 
     public function destroy(User $user): RedirectResponse

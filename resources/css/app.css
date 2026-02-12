@@ -117,7 +117,6 @@ pre {
 abbr[title] {
     border-bottom: none;
     text-decoration: underline;
-    text-decoration: underline dotted;
 }
 
 button:focus,
@@ -367,6 +366,10 @@ h1 {
      @apply text-lg font-semibold text-center mt-3 mb-3;
  }
 
+ h3 {
+     @apply text-lg font-semibold;
+ }
+
 p {
     @apply mt-3 mb-2;
 }
@@ -437,6 +440,118 @@ p {
 
  .content-item-box-wrapper {
      @apply flex flex-col items-center justify-center text-center space-y-4;
+ }
+
+ .section-lead {
+     @apply mt-2 text-sm text-slate-600;
+ }
+
+ .section-spacing {
+     @apply mt-6;
+ }
+
+ .section-spacing-lg {
+     @apply mt-8;
+ }
+
+ .section-title {
+     @apply text-xl font-semibold;
+ }
+
+ .card-grid {
+     @apply mt-4 grid gap-4;
+ }
+
+ .card-panel {
+     @apply border rounded-lg p-4;
+ }
+
+ .card-header {
+     @apply flex items-center justify-between;
+ }
+
+ .card-meta {
+     @apply text-sm text-slate-600;
+ }
+
+ .card-description {
+     @apply mt-2 text-sm;
+ }
+
+ .card-stats {
+     @apply mt-3 text-sm text-slate-600;
+ }
+
+ .card-actions {
+     @apply mt-4 flex flex-wrap gap-2;
+ }
+
+ .text-muted {
+     @apply text-sm text-slate-500;
+ }
+
+ .text-small {
+     @apply text-sm;
+ }
+
+ .table-full {
+     @apply mt-4 w-full;
+ }
+
+ .list-grid {
+     @apply mt-4 grid gap-2;
+ }
+
+ .form-grid {
+     @apply grid gap-4;
+ }
+
+ .form-field {
+     @apply grid gap-1;
+ }
+
+ .form-label {
+     @apply text-sm text-slate-500;
+ }
+
+ .status-message {
+     @apply mt-3 text-sm text-green-600;
+ }
+
+ .form-actions {
+     @apply flex flex-wrap gap-2;
+ }
+
+ .filter-form {
+     @apply flex gap-2;
+ }
+
+ .action-row-start {
+     @apply flex justify-start;
+ }
+
+ .action-row-end {
+     @apply flex justify-end;
+ }
+
+ .dashboard-grid {
+     @apply mt-6 grid gap-6;
+ }
+
+ .text-body {
+     @apply text-base;
+ }
+
+ .text-meta {
+     @apply text-sm text-slate-500;
+ }
+
+ .content-article {
+     @apply mt-4 whitespace-pre-line;
+ }
+
+ .content-actions {
+     @apply mt-4;
  }
 
  /* BUTTON ELEMENTS */

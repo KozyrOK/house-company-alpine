@@ -24,8 +24,8 @@
             </table>
 
             <div class="bottom-crud-wrapper">
-                <div class="flex justify-start"><x-link text="Edit Company" href="{{ route('admin.companies.edit', $company) }}" class="button-edit"/></div>
-                <div class="flex justify-end">
+                <div class="action-row-start"><x-link text="Edit Company" href="{{ route('admin.companies.edit', $company) }}" class="button-edit"/></div>
+                <div class="action-row-end">
                     <form method="POST" action="{{ route('admin.companies.destroy', $company) }}">
                         @csrf
                         @method('DELETE')

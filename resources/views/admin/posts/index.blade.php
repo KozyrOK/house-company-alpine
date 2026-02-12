@@ -9,7 +9,7 @@
         <div class="top-crud-wrapper">
             <div class="button-wrapper"><x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/></div>
 
-            <form method="GET" action="{{ route('admin.posts.index') }}" class="flex gap-2">
+            <form method="GET" action="{{ route('admin.posts.index') }}" class="filter-form">
                 <input type="number" name="company_id" value="{{ request('company_id') }}" placeholder="Company ID" class="input-field">
                 <input type="number" name="user_id" value="{{ request('user_id') }}" placeholder="User ID" class="input-field">
                 <select name="status" class="input-field">
@@ -34,7 +34,7 @@
                 <th class="key-content-item-center">Company</th>
                 <th class="key-content-item-center">Author</th>
                 <th class="key-content-item-center">Status</th>
-                <th class="key-content-item-center p-2">Actions</th>
+                <th class="key-content-item-center">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -53,6 +53,6 @@
             </tbody>
         </table>
 
-        <div class="mt-4">{{ $posts->withQueryString()->links() }}</div>
+        <div class="content-actions">{{ $posts->withQueryString()->links() }}</div>
     </section>
 @endsection

@@ -1,35 +1,35 @@
 <div class="content-item-wrapper">
-    <h2 class="text-xl font-semibold">Edit profile</h2>
+    <h2 class="section-title">Edit profile</h2>
 
     @if(session('status'))
-        <div class="mt-3 text-sm text-green-600">{{ session('status') }}</div>
+        <div class="status-message">{{ session('status') }}</div>
     @endif
 
-    <form method="POST" action="{{ route('dashboard.update') }}" class="mt-4 grid gap-4">
+    <form method="POST" action="{{ route('dashboard.update') }}" class="form-grid section-spacing">
         @csrf
         @method('PATCH')
 
-        <label class="grid gap-1">
-            <span class="text-sm text-slate-500">First name</span>
+        <label class="form-field">
+            <span class="form-label">First name</span>
             <input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="input-field">
         </label>
 
-        <label class="grid gap-1">
-            <span class="text-sm text-slate-500">Last name</span>
+        <label class="form-field">
+            <span class="form-label">Last name</span>
             <input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field">
         </label>
 
-        <label class="grid gap-1">
-            <span class="text-sm text-slate-500">Email</span>
+        <label class="form-field">
+            <span class="form-label">Email</span>
             <input type="email" name="email" value="{{ old('email', $user->email) }}" class="input-field">
         </label>
 
-        <label class="grid gap-1">
-            <span class="text-sm text-slate-500">Phone</span>
+        <label class="form-field">
+            <span class="form-label">Phone</span>
             <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="input-field">
         </label>
 
-        <div class="flex flex-wrap gap-2">
+        <div class="form-actions">
             <x-button text="Save" type="submit" class="button-edit"/>
         </div>
     </form>

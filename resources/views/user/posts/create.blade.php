@@ -6,21 +6,21 @@
     <section>
         <h1>Create post</h1>
 
-        <form method="POST" action="#" class="content-item-wrapper mt-4 grid gap-4">
+        <form method="POST" action="#" class="content-item-wrapper section-spacing form-grid">
             @csrf
 
-            <label class="grid gap-1">
-                <span class="text-sm text-slate-500">Title</span>
+            <label class="form-field">
+                <span class="form-label">Title</span>
                 <input type="text" name="title" class="input-field" required>
             </label>
 
-            <label class="grid gap-1">
-                <span class="text-sm text-slate-500">Content</span>
+            <label class="form-field">
+                <span class="form-label">Content</span>
                 <textarea name="content" rows="6" class="input-field" required></textarea>
             </label>
 
-            <label class="grid gap-1">
-                <span class="text-sm text-slate-500">Status</span>
+            <label class="form-field">
+                <span class="form-label">Status</span>
                 <select name="status" class="input-field">
                     @foreach(['draft', 'future', 'pending', 'publish'] as $status)
                         <option value="{{ $status }}">{{ ucfirst($status) }}</option>

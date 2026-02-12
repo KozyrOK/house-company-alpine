@@ -29,6 +29,12 @@ class PostController extends Controller
         $this->authorize('viewAny', Post::class);
 
         $query = Post::query()->with(['company:id,name', 'user:id,first_name,second_name'])->latest();
+        $user = $request->user();
+
+        if (!$user->isSuperAdmin()) {
+            $adminCompanyIds = $user->adminCompanyIds();
+            $query->whereIn('company_id', $adminCompanyIds);
+        }
 
         if ($request->filled('company_id')) {
             $query->where('company_id', (int) $request->integer('company_id'));
@@ -71,6 +77,10 @@ class PostController extends Controller
             return view('user.posts.show', compact('post', 'company'));
         }
 
+        if (!request()->user()->isAdminOrHigher($post->company_id)) {
+            abort(403);
+        }
+
         $post->load(['company:id,name', 'user:id,first_name,second_name']);
 
         return view('admin.posts.show', compact('post'));
@@ -80,7 +90,13 @@ class PostController extends Controller
     {
         $this->authorize('create', Post::class);
 
-        $companies = Company::query()->orderBy('name')->get();
+        $user = request()->user();
+        $companies = Company::query()
+            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
+                $query->whereIn('id', $user->adminCompanyIds());
+            })
+            ->orderBy('name')
+            ->get();
 
         return view('admin.posts.create', compact('companies'));
     }
@@ -95,6 +111,10 @@ class PostController extends Controller
             'content' => 'required|string',
             'status' => 'sometimes|in:draft,future,pending,publish,trash',
         ]);
+
+        if (!$request->user()->isAdminOrHigher((int) $validated['company_id'])) {
+            abort(403);
+        }
 
         Post::create([
             'company_id' => (int) $validated['company_id'],
@@ -114,7 +134,13 @@ class PostController extends Controller
     {
         $this->authorize('update', $post);
 
-        $companies = Company::query()->orderBy('name')->get();
+        $user = request()->user();
+        $companies = Company::query()
+            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
+                $query->whereIn('id', $user->adminCompanyIds());
+            })
+            ->orderBy('name')
+            ->get();
 
         return view('admin.posts.edit', compact('post', 'companies'));
     }
@@ -129,6 +155,12 @@ class PostController extends Controller
             'content' => 'sometimes|required|string',
             'status' => 'sometimes|in:draft,future,pending,publish,trash',
         ]);
+
+        $companyId = (int) ($validated['company_id'] ?? $post->company_id);
+
+        if (!$request->user()->isAdminOrHigher($companyId)) {
+            abort(403);
+        }
 
         $validated['updated_by'] = $request->user()->id;
         $post->update($validated);

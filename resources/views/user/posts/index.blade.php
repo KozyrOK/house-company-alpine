@@ -6,8 +6,8 @@
     <section>
         <h1>Company post {{ $company->name }}</h1>
 
-        <div class="content-item-wrapper mt-4">
-            <table class="w-full">
+        <div class="content-item-wrapper section-spacing">
+            <table class="table-full">
                 <thead>
                 <tr>
                     <th class="key-content-item-center">#</th>
@@ -35,7 +35,7 @@
             </table>
         </div>
 
-        <div class="mt-4">
+        <div class="content-actions">
             {{ $posts->withQueryString()->links() }}
         </div>
     </section>

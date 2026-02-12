@@ -91,6 +91,30 @@ class User extends Authenticatable
         return $this->hasRole(['admin', 'superadmin'], $companyId);
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->companies()
+            ->wherePivot('role', 'admin')
+            ->exists();
+    }
+
+    public function adminCompanyIds(): \Illuminate\Support\Collection
+    {
+        return $this->companies()
+            ->wherePivot('role', 'admin')
+            ->pluck('companies.id');
+    }
+
+    public function hasMainAccess(): bool
+    {
+        return $this->isSuperAdmin() || $this->companies()->exists();
+    }
+
+    public function canAccessAdminPanel(): bool
+    {
+        return $this->isSuperAdmin() || $this->isAdmin();
+    }
+
     public function isCompanyHeadOrHigher(int $companyId): bool
     {
         return $this->hasRole(['company_head', 'admin', 'superadmin'], $companyId);

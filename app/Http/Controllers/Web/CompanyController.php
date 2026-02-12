@@ -20,25 +20,40 @@ class CompanyController extends Controller
         if ($request->routeIs('main.index')) {
             $user = $request->user();
 
-            $companies = $user->companies()
+            $companiesQuery = $user->isSuperAdmin()
+                ? Company::query()
+                : $user->companies();
+
+            $companies = $companiesQuery
                 ->withCount(['users', 'posts'])
                 ->orderBy('name')
                 ->get();
 
+            if (!$user->isSuperAdmin() && $companies->count() === 1) {
+                $company = $companies->first();
+
+                if (!$user->isAdminOrHigher($company->id)) {
+                    return redirect()->route('main.posts.index', $company);
+                }
+            }
+
             $companyIds = $companies->pluck('id');
 
-            $users = User::query()
+            $usersQuery = User::query()
                 ->with('companies:id,name')
-                ->whereHas('companies', fn ($query) => $query->whereIn('companies.id', $companyIds))
-                ->orderBy('first_name')
-                ->get();
+                ->orderBy('first_name');
 
-            $posts = Post::query()
+            $postsQuery = Post::query()
                 ->with(['company:id,name', 'user:id,first_name,second_name'])
-                ->whereIn('company_id', $companyIds)
-                ->latest()
-                ->take(10)
-                ->get();
+                ->latest();
+
+            if (!$user->isSuperAdmin()) {
+                $usersQuery->whereHas('companies', fn ($query) => $query->whereIn('companies.id', $companyIds));
+                $postsQuery->whereIn('company_id', $companyIds);
+            }
+
+            $users = $usersQuery->get();
+            $posts = $postsQuery->take(10)->get();
 
             return view('pages.main', compact('companies', 'users', 'posts'));
         }
@@ -46,6 +61,11 @@ class CompanyController extends Controller
         $this->authorize('viewAny', Company::class);
 
         $query = Company::query()->orderBy('name');
+
+        if (!$request->user()->isSuperAdmin()) {
+            $adminCompanyIds = $request->user()->adminCompanyIds();
+            $query->whereIn('id', $adminCompanyIds);
+        }
 
         if ($request->filled('city')) {
             $query->where('city', 'like', '%' . $request->string('city') . '%');
@@ -67,6 +87,10 @@ class CompanyController extends Controller
             ]);
 
             return view('user.companies.show', compact('company'));
+        }
+
+        if (!$request->user()->isAdminOrHigher($company->id)) {
+            abort(403);
         }
 
         $company->loadCount(['users', 'posts']);

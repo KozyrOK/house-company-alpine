@@ -38,7 +38,7 @@
             </table>
 
             <div class="bottom-crud-wrapper">
-                <div class="flex justify-end"><x-button text="Create Post" type="submit" class="button-edit"/></div>
+                <div class="action-row-end"><x-button text="Create Post" type="submit" class="button-edit"/></div>
             </div>
         </form>
     </section>

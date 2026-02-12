@@ -2,14 +2,16 @@
     <ul>
         @auth
 
-            @if(auth()->user()->isSuperAdminForHeader())
+            @if(auth()->user()->canAccessAdminPanel())
                 <li>
                     <a href="{{ route('admin.index') }}"
                        class="{{ request()->routeIs('admin.*') ? 'active' : '' }}">
                         {{ __('app.layouts.admin') }}
                     </a>
                 </li>
-            @else
+            @endif
+
+            @if(auth()->user()->hasMainAccess())
                 <li>
                     <a href="{{ route('main.index') }}"
                        class="{{ request()->routeIs('main.*') ? 'active' : '' }}">

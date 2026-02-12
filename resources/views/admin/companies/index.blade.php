@@ -9,7 +9,7 @@
         <div class="top-crud-wrapper">
             <div class="button-wrapper"><x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/></div>
 
-            <form method="GET" action="{{ route('admin.companies.index') }}" class="flex gap-2">
+            <form method="GET" action="{{ route('admin.companies.index') }}" class="filter-form">
                 <input type="text" name="city" value="{{ request('city') }}" placeholder="City" class="input-field">
                 <x-button text="Filter" type="submit" class="button-list"/>
             </form>
@@ -20,12 +20,12 @@
         <table class="content-item-wrapper">
             <thead>
             <tr>
-                <th class="key-content-item-center pr-2">#</th>
+                <th class="key-content-item-center">#</th>
                 <th class="key-content-item-center">Name</th>
                 <th class="key-content-item-center">City</th>
                 <th class="key-content-item-center">Users</th>
                 <th class="key-content-item-center">Posts</th>
-                <th class="key-content-item-center pl-2">Actions</th>
+                <th class="key-content-item-center">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -44,6 +44,6 @@
             </tbody>
         </table>
 
-        <div class="mt-4">{{ $companies->withQueryString()->links() }}</div>
+        <div class="content-actions">{{ $companies->withQueryString()->links() }}</div>
     </section>
 @endsection

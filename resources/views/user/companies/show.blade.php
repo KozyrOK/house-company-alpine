@@ -5,13 +5,13 @@
 @section('content')
     <section>
         <h1>{{ $company->name }}</h1>
-        <p class="text-sm text-slate-500">{{ $company->city ?? '—' }} · {{ $company->address ?? '—' }}</p>
+        <p class="text-muted">{{ $company->city ?? '—' }} · {{ $company->address ?? '—' }}</p>
 
-        <p class="mt-4">{{ $company->description ?? 'No description' }}</p>
+        <p class="section-spacing">{{ $company->description ?? 'No description' }}</p>
 
-        <div class="content-item-wrapper mt-6">
-            <h2 class="text-xl font-semibold">Company users</h2>
-            <table class="mt-4 w-full">
+        <div class="content-item-wrapper section-spacing">
+            <h2 class="section-title">Company users</h2>
+            <table class="table-full">
                 <thead>
                 <tr>
                     <th class="key-content-item-center">#</th>
@@ -33,9 +33,9 @@
             </table>
         </div>
 
-        <div class="content-item-wrapper mt-6">
-            <h2 class="text-xl font-semibold">Last Posts</h2>
-            <table class="mt-4 w-full">
+        <div class="content-item-wrapper section-spacing">
+            <h2 class="section-title">Last Posts</h2>
+            <table class="table-full">
                 <thead>
                 <tr>
                     <th class="key-content-item-center">#</th>

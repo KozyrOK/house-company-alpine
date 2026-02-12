@@ -76,7 +76,7 @@ Route::middleware('auth')->group(function () {
 
     // ADMIN
 
-    Route::prefix('admin')->group(function () {
+    Route::prefix('admin')->middleware('admin.access')->group(function () {
 
         Route::view('/', 'pages.admin')
             ->name('admin.index');

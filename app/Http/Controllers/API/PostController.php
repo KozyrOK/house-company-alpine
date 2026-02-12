@@ -12,9 +12,14 @@ class PostController extends Controller
     public function index(Request $request, ?Company $company = null): JsonResponse
     {
         $query = Post::query()->with(['company:id,name', 'user:id,first_name,second_name'])->latest();
+        $isAdminRoute = $request->is('api/admin/*');
 
         if ($company) {
             $query->where('company_id', $company->id);
+        }
+
+        if ($isAdminRoute && !$request->user()->isSuperAdmin()) {
+            $query->whereIn('company_id', $request->user()->adminCompanyIds());
         }
 
         if ($request->filled('company_id')) {
@@ -64,6 +69,10 @@ class PostController extends Controller
             abort(404);
         }
 
+        if ($request->is('api/admin/*') && !$request->user()->isAdminOrHigher($post->company_id)) {
+            abort(403);
+        }
+
         return response()->json($post->load(['company:id,name', 'user:id,first_name,second_name']));
     }
 
@@ -72,6 +81,10 @@ class PostController extends Controller
         $company = $request->route('company');
         if ($company && $post->company_id !== $company->id) {
             abort(404);
+        }
+
+        if ($request->is('api/admin/*') && !$request->user()->isAdminOrHigher($post->company_id)) {
+            abort(403);
         }
 
         $validated = $request->validate([
@@ -93,6 +106,10 @@ class PostController extends Controller
             abort(404);
         }
 
+        if ($request->is('api/admin/*') && !$request->user()->isAdminOrHigher($post->company_id)) {
+            abort(403);
+        }
+
         $post->update(['deleted_by' => auth()->id()]);
         $post->delete();
 
@@ -104,6 +121,10 @@ class PostController extends Controller
         $company = $request->route('company');
         if ($company && $post->company_id !== $company->id) {
             abort(404);
+        }
+
+        if ($request->is('api/admin/*') && !$request->user()->isAdminOrHigher($post->company_id)) {
+            abort(403);
         }
 
         $post->update([

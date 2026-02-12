@@ -28,7 +28,7 @@
                     </td>
                 </tr>
             </table>
-            <div class="bottom-crud-wrapper"><div class="flex justify-end"><x-button text="Create user" type="submit" class="button-edit"/></div></div>
+            <div class="bottom-crud-wrapper"><div class="action-row-end"><x-button text="Create user" type="submit" class="button-edit"/></div></div>
         </form>
     </section>
 @endsection

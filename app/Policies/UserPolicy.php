@@ -19,7 +19,7 @@ class UserPolicy
     public function viewAny(User $user): bool
     {
         return $user->companies()
-            ->wherePivotIn('role', ['admin', 'company_head'])
+            ->wherePivotIn('role', ['admin'])
             ->exists();
     }
 
