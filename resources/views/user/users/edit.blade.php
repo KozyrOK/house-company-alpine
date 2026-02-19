@@ -1,42 +1,64 @@
-<div class="content-item-wrapper">
-    <h2 class="section-title">Edit profile</h2>
+@extends('_layouts.app')
 
-    @if(session('status'))
-        <div class="status-message">{{ session('status') }}</div>
-    @endif
+@section('title', 'Edit User')
 
-    <form method="POST" action="{{ route('dashboard.update') }}" class="form-grid section-spacing">
-        @csrf
-        @method('PATCH')
+@section('content')
 
-        <label class="form-field">
-            <span class="form-label">First name</span>
-            <input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="input-field">
-        </label>
+    <section class="content-item-wrapper">
 
-        <label class="form-field">
-            <span class="form-label">Last name</span>
-            <input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field">
-        </label>
+        <h1>Edit User</h1>
 
-        <label class="form-field">
-            <span class="form-label">Email</span>
-            <input type="email" name="email" value="{{ old('email', $user->email) }}" class="input-field">
-        </label>
+        <div class="top-crud-wrapper">
 
-        <label class="form-field">
-            <span class="form-label">Phone</span>
-            <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="input-field">
-        </label>
+            <div class="button-wrapper">
+                <x-link text="← Back to detail" href="{{ route('', $user) }}" class="button-list"/>
+            </div>
 
-        <div class="form-actions">
-            <x-button text="Save" type="submit" class="button-edit"/>
+            <div>
+                <img class="company-image" src="{{ $user->image_path ?: asset('images/default-image-company.jpg') }}" alt="user image">
+            </div>
+
+            <div class="button-wrapper">
+                <x-link text="Admin Menu" href="{{ route('') }}" class="button-list"/>
+            </div>
+
         </div>
-    </form>
 
-    <form method="POST" action="{{ route('dashboard.destroy') }}" class="mt-4">
-        @csrf
-        @method('DELETE')
-        <x-button text="Delete account" type="submit" class="button-list"/>
-    </form>
-</div>
+        <form method="POST" action="{{ route('', $user) }}">
+            @csrf
+            @method('PATCH')
+
+            <table>
+                <tr><th class="key-content-item">First name</th><td colspan="2" class="value-content-item"><input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="input-field"></td></tr>
+                <tr><th class="key-content-item">Second name</th><td colspan="2" class="value-content-item"><input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field"></td></tr>
+                <tr><th class="key-content-item">Email</th><td colspan="2" class="value-content-item"><input type="email" name="email" value="{{ old('email', $user->email) }}" class="input-field"></td></tr>
+                <tr><th class="key-content-item">Phone</th><td colspan="2" class="value-content-item"><input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="input-field"></td></tr>
+                <tr>
+                    <th class="key-content-item">Account status</th>
+                    <td colspan="2" class="value-content-item">
+                        <select name="status_account" class="input-field">
+                            @foreach(['pending' => 'Pending', 'active' => 'Active', 'blocked' => 'Blocked'] as $value => $label)
+                                <option value="{{ $value }}" @selected(old('status_account', $user->status_account) === $value)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="bottom-crud-wrapper">
+
+                <div class="button-wrapper">
+                    <x-button text="Save" type="submit" class="button-edit"/>
+                </div>
+
+                <div class="button-wrapper">
+                    <x-link text="Cancel" href="{{ route('', $user) }}" class="button-delete"/>
+                </div>
+
+            </div>
+
+        </form>
+
+    </section>
+
+@endsection

@@ -3,14 +3,27 @@
 @section('title', 'Admin - Company Detail')
 
 @section('content')
+
     <section>
+
         <h1>Company</h1>
 
         <div class="content-item-wrapper">
+
             <div class="top-crud-wrapper">
-                <div class="button-wrapper"><x-link text="← Back to list" href="{{ route('admin.companies.index') }}" class="button-list"/></div>
-                <div><img alt="logo" src="{{ route('admin.companies.logo', $company) }}" class="company-image"></div>
-                <div class="button-wrapper"><x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/></div>
+
+                <div class="button-wrapper">
+                    <x-link text="← Back to list" href="{{ route('admin.companies.index') }}" class="button-list"/>
+                </div>
+
+                <div>
+                    <img alt="logo" src="{{ route('admin.companies.logo', $company) }}" class="company-image">
+                </div>
+
+                <div class="button-wrapper">
+                    <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+                </div>
+
             </div>
 
             <table>
@@ -24,15 +37,27 @@
             </table>
 
             <div class="bottom-crud-wrapper">
-                <div class="action-row-start"><x-link text="Edit Company" href="{{ route('admin.companies.edit', $company) }}" class="button-edit"/></div>
-                <div class="action-row-end">
-                    <form method="POST" action="{{ route('admin.companies.destroy', $company) }}">
-                        @csrf
-                        @method('DELETE')
-                        <x-button text="Delete Company" type="submit" class="button-delete"/>
-                    </form>
+
+                <div class="button-wrapper">
+                    @can('update', $company)
+                        <x-link text="Edit Company" href="{{ route('admin.companies.edit', $company) }}" class="button-edit"/>
+                    @endcan
                 </div>
+
+                <div class="button-wrapper">
+                    @can('delete', $company)
+                        <form method="POST" action="{{ route('admin.companies.destroy', $company) }}">
+                            @csrf
+                            @method('DELETE')
+                            <x-button text="Delete Company" type="submit" class="button-delete"/>
+                        </form>
+                    @endcan
+                </div>
+
             </div>
+
         </div>
+
     </section>
+
 @endsection

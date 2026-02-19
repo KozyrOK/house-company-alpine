@@ -3,32 +3,60 @@
 @section('title', 'Create Post')
 
 @section('content')
-    <section>
-        <h1>Create post</h1>
 
-        <form method="POST" action="#" class="content-item-wrapper section-spacing form-grid">
+    <section class="content-item-wrapper">
+
+        <div class="top-crud-wrapper">
+
+            <div class="button-wrapper">
+                <x-link text="← Back to list" href="{{ route('') }}" class="button-list"/>
+            </div>
+
+            <div></div>
+
+            <div class="button-wrapper">
+                <x-link text="Admin Menu" href="{{ route('') }}" class="button-list"/>
+            </div>
+
+        </div>
+
+        <form action="{{ route('') }}" method="POST">
             @csrf
+            <table>
+                <tr>
+                    <th class="key-content-item">Company</th>
+                    <td colspan="2" class="value-content-item">
+                        <select name="company_id" class="input-field" required>
+                            @foreach($companies as $company)
+                                <option value="{{ $company->id }}" @selected(old('company_id') == $company->id)>{{ $company->name }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                </tr>
+                <tr><th class="key-content-item">Title</th><td colspan="2" class="value-content-item"><input type="text" name="title" class="input-field" value="{{ old('title') }}" required></td></tr>
+                <tr><th class="key-content-item">Content</th><td colspan="2" class="value-content-item"><textarea name="content" rows="6" class="input-field" required>{{ old('content') }}</textarea></td></tr>
+                <tr>
+                    <th class="key-content-item">Status</th>
+                    <td colspan="2" class="value-content-item">
+                        <select name="status" class="input-field">
+                            @foreach(['draft','future','pending','publish','trash'] as $status)
+                                <option value="{{ $status }}" @selected(old('status', 'pending') === $status)>{{ ucfirst($status) }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                </tr>
+            </table>
 
-            <label class="form-field">
-                <span class="form-label">Title</span>
-                <input type="text" name="title" class="input-field" required>
-            </label>
+            <div class="bottom-crud-wrapper">
 
-            <label class="form-field">
-                <span class="form-label">Content</span>
-                <textarea name="content" rows="6" class="input-field" required></textarea>
-            </label>
+                <div class="button-wrapper">
+                    <x-button text="Create Post" type="submit" class="button-edit"/>
+                </div>
 
-            <label class="form-field">
-                <span class="form-label">Status</span>
-                <select name="status" class="input-field">
-                    @foreach(['draft', 'future', 'pending', 'publish'] as $status)
-                        <option value="{{ $status }}">{{ ucfirst($status) }}</option>
-                    @endforeach
-                </select>
-            </label>
+            </div>
 
-            <x-button text="Save" type="submit" class="button-edit"/>
         </form>
+
     </section>
+
 @endsection

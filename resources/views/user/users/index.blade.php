@@ -3,30 +3,54 @@
 @section('title', 'Users')
 
 @section('content')
+
     <section>
+
         <h1>Users</h1>
 
-        <table class="content-item-wrapper section-spacing">
+        <div class="top-crud-wrapper">
+
+            <div class="button-wrapper">
+                <x-link text="← Back to Admin Panel" href="{{ route('') }}" class="button-list"/>
+            </div>
+
+            <div></div>
+
+            <div class="button-wrapper">
+                <x-link text="Create new user" href="{{ route('') }}" class="button-edit"/>
+            </div>
+
+        </div>
+
+        <x-filter.filterUser/>
+
+        <table class="content-item-wrapper">
             <thead>
             <tr>
                 <th class="key-content-item-center">#</th>
                 <th class="key-content-item-center">Name</th>
                 <th class="key-content-item-center">Email</th>
                 <th class="key-content-item-center">Status</th>
+                <th class="key-content-item-center">Actions</th>
             </tr>
             </thead>
             <tbody>
-            @forelse($users as $index => $listedUser)
+            @forelse($users as $index => $u)
                 <tr>
-                    <td class="key-content-item">{{ $index + 1 }}</td>
-                    <td class="value-content-item">{{ $listedUser->first_name }} {{ $listedUser->second_name }}</td>
-                    <td class="value-content-item">{{ $listedUser->email }}</td>
-                    <td class="value-content-item">{{ $listedUser->status_account ?? 'pending' }}</td>
+                    <td class="key-content-item">{{ $users->firstItem() + $index }}</td>
+                    <td class="value-content-item">{{ $u->first_name }} {{ $u->second_name }}</td>
+                    <td class="value-content-item">{{ $u->email }}</td>
+                    <td class="value-content-item">{{ $u->status_account ?? '-' }}</td>
+                    <td class="value-content-item">
+                        <x-link text="Detail" class="button-list" href="{{ route('', $u) }}"/>
+                    </td>
                 </tr>
             @empty
-                <tr><td colspan="4" class="value-content-item">No users found.</td></tr>
+                <tr><td colspan="5" class="value-content-item">No users found.</td></tr>
             @endforelse
             </tbody>
         </table>
+
     </section>
+
 @endsection

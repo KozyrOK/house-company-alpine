@@ -273,7 +273,7 @@ user: Yes, but own post only,need approval by higher role user
 /forum – форум.
 /info – общая информация о PET-проекте.
 
-*Admin* (если у user есть хоть одна Company, где у него роль - admin)
+*Admin* (если у User есть хоть одна Company, где у него роль - admin. Если у User  )
 
 /admin – Отображение трех боксов-ссылок на страницы Companies (где user имеет роль admin), Users (в отношении Users в Companies, где user имеет роль admin) and Posts (в отношении Posts в Companies, где user имеет роль admin) соответсвенно (/admin/users, admin/companies, admin/posts)
 /main - отображения перечня Companies, Users and Posts к которой имеет отношение авторизованный User (имеет роли user, company_head).
@@ -306,6 +306,7 @@ Users: ряды - заголовок и данные User, строки - #, Nam
 Posts: ряды - заголовок и данные Posts, строки - #,	Title, Company,	Author, Status,	Date, Actions (кнопка Detail).
 
 **Описание отображения любой сущности для Superadmin после нажатия кнопки Detail в списке**
+
 !! У Users с другими ролями отображение элементов интерфейса зависит от прав доступа (к конкретному ресурсу и действий в отношении этого ресурса).
 
 Companies:

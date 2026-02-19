@@ -3,11 +3,23 @@
 @section('title','Admin - Create User')
 
 @section('content')
+
     <section class="content-item-wrapper" x-data="{ preview: null, updatePreview(e){ const f=e.target.files[0]; this.preview = f ? URL.createObjectURL(f) : null; } }">
+
         <div class="top-crud-wrapper">
-            <div class="button-wrapper"><x-link text="← Back to list" href="{{ route('admin.users.index') }}" class="button-list"/></div>
-            <div><img alt="user preview" class="company-image" :src="preview || '{{ asset('images/default-image-company.jpg') }}'"></div>
-            <div class="button-wrapper"><x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/></div>
+
+            <div class="button-wrapper">
+                <x-link text="← Back to list" href="{{ route('admin.users.index') }}" class="button-list"/>
+            </div>
+
+            <div>
+                <img alt="user preview" class="company-image" :src="preview || '{{ asset('images/default-image-company.jpg') }}'">
+            </div>
+
+            <div class="button-wrapper">
+                <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+            </div>
+
         </div>
 
         <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
@@ -24,11 +36,21 @@
                 <tr>
                     <th class="key-content-item">User Image</th>
                     <td class="value-content-item" colspan="2">
-                        <input type="file" name="image" accept="image/*" @change="updatePreview">
+                        <input type="file" name="image" accept="image/*" @@change="updatePreview">
                     </td>
                 </tr>
             </table>
-            <div class="bottom-crud-wrapper"><div class="action-row-end"><x-button text="Create user" type="submit" class="button-edit"/></div></div>
+
+            <div class="bottom-crud-wrapper">
+
+                <div class="button-wrapper">
+                    <x-button text="Create user" type="submit" class="button-edit"/>
+                </div>
+
+            </div>
+
         </form>
+
     </section>
+
 @endsection

@@ -1,26 +1,61 @@
-<div class="content-item-wrapper">
-    <h2 class="section-title">User profile</h2>
+@extends('_layouts.app')
 
-    <dl class="list-grid">
-        <div>
-            <dt class="text-meta">First name</dt>
-            <dd class="text-body">{{ $user->first_name }} {{ $user->second_name }}</dd>
+@section('title', 'User Detail')
+
+@section('content')
+
+    <section>
+
+        <h1>User</h1>
+
+        <div class="content-item-wrapper">
+
+            <div class="top-crud-wrapper">
+
+                <div class="button-wrapper">
+                    <x-link text="← Back to list" href="{{ route('') }}" class="button-list"/>
+                </div>
+
+                <div>
+                    <img class="company-image" src="{{ $user->image_path ?: asset('images/default-image-company.jpg') }}" alt="user image">
+                </div>
+
+                <div class="button-wrapper">
+                    <x-link text="Admin Menu" href="{{ route('') }}" class="button-list"/>
+                </div>
+
+            </div>
+
+            <table>
+                <tr><th class="key-content-item">ID</th><td class="value-content-item" colspan="2">{{ $user->id }}</td></tr>
+                <tr><th class="key-content-item">Name</th><td class="value-content-item" colspan="2">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
+                <tr><th class="key-content-item">Email</th><td class="value-content-item" colspan="2">{{ $user->email }}</td></tr>
+                <tr><th class="key-content-item">Phone</th><td class="value-content-item" colspan="2">{{ $user->phone ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">Status</th><td class="value-content-item" colspan="2">{{ $user->status_account ?: '-' }}</td></tr>
+            </table>
+
+            <div class="bottom-crud-wrapper">
+
+                <div class="button-wrapper">
+                    @can('update', $user)
+                        <x-link text="Edit User" href="{{ route('', $user) }}" class="button-edit"/>
+                    @endcan
+                </div>
+
+                <div class="button-wrapper">
+                    @can('delete', $user)
+                        <form method="POST" action="{{ route('', $user) }}">
+                            @csrf
+                            @method('DELETE')
+                            <x-button text="Delete User" type="submit" class="button-delete"/>
+                        </form>
+                    @endcan
+                </div>
+
+            </div>
+
         </div>
-        <div>
-            <dt class="text-meta">Email</dt>
-            <dd class="text-body">{{ $user->email }}</dd>
-        </div>
-        <div>
-            <dt class="text-meta">Phone</dt>
-            <dd class="text-body">{{ $user->phone ?? '—' }}</dd>
-        </div>
-        <div>
-            <dt class="text-meta">Status</dt>
-            <dd class="text-body">{{ $user->status_account ?? 'pending' }}</dd>
-        </div>
-        <div>
-            <dt class="text-meta">Companies</dt>
-            <dd class="text-body">{{ $user->companies->pluck('name')->join(', ') ?: '—' }}</dd>
-        </div>
-    </dl>
-</div>
+
+    </section>
+
+@endsection

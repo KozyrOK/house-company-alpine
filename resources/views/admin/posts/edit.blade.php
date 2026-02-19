@@ -3,13 +3,23 @@
 @section('title', 'Admin – Edit Post')
 
 @section('content')
+
     <section class="content-item-wrapper">
+
         <h1>Edit Post</h1>
 
         <div class="top-crud-wrapper">
-            <div class="button-wrapper"><x-link text="← Back to detail" href="{{ route('admin.posts.show', $post) }}" class="button-list"/></div>
+
+            <div class="button-wrapper">
+                <x-link text="← Back to detail" href="{{ route('admin.posts.show', $post) }}" class="button-list"/>
+            </div>
+
             <div></div>
-            <div class="button-wrapper"><x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/></div>
+
+            <div class="button-wrapper">
+                <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+            </div>
+
         </div>
 
         <form method="POST" action="{{ route('admin.posts.update', $post) }}">
@@ -42,9 +52,19 @@
             </table>
 
             <div class="bottom-crud-wrapper">
-                <div class="action-row-start"><x-button text="Save" type="submit" class="button-edit"/></div>
-                <div class="action-row-end"><x-link text="Cancel" href="{{ route('admin.posts.show', $post) }}" class="button-delete"/></div>
+
+                <div class="button-wrapper">
+                    <x-button text="Save" type="submit" class="button-edit"/>
+                </div>
+
+                <div class="button-wrapper">
+                    <x-link text="Cancel" href="{{ route('admin.posts.show', $post) }}" class="button-delete"/>
+                </div>
+
             </div>
+
         </form>
+
     </section>
+
 @endsection

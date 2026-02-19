@@ -1,42 +1,56 @@
 @extends('_layouts.app')
 
-@section('title', 'Posts')
+@section('title','Admin - Posts')
 
 @section('content')
+
     <section>
-        <h1>Company post {{ $company->name }}</h1>
 
-        <div class="content-item-wrapper section-spacing">
-            <table class="table-full">
-                <thead>
+        <h1>Posts</h1>
+
+        <div class="top-crud-wrapper">
+
+            <div class="button-wrapper">
+                <x-link text="← Back to Admin Panel" href="{{ route('') }}" class="button-list"/>
+            </div>
+
+            <div></div>
+
+            <div class="button-wrapper action-row-end">
+                <x-link text="Create Post" href="{{ route('') }}" class="button-edit"/>
+            </div>
+
+        </div>
+
+        <x-filter.filterPost/>
+
+        <table class="content-item-wrapper">
+            <thead>
+            <tr>
+                <th class="key-content-item-center">#</th>
+                <th class="key-content-item-center">Title</th>
+                <th class="key-content-item-center">Company</th>
+                <th class="key-content-item-center">Author</th>
+                <th class="key-content-item-center">Status</th>
+                <th class="key-content-item-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @forelse($posts as $index => $p)
                 <tr>
-                    <th class="key-content-item-center">#</th>
-                    <th class="key-content-item-center">User</th>
-                    <th class="key-content-item-center">Title</th>
-                    <th class="key-content-item-center">Status</th>
-                    <th class="key-content-item-center">Action</th>
+                    <td class="key-content-item">{{ $posts->firstItem() + $index }}</td>
+                    <td class="value-content-item">{{ $p->title }}</td>
+                    <td class="value-content-item">{{ $p->company?->name ?? '-' }}</td>
+                    <td class="value-content-item">{{ trim(($p->user?->first_name ?? '').' '.($p->user?->second_name ?? '')) ?: '-' }}</td>
+                    <td class="value-content-item">{{ $p->status }}</td>
+                    <td class="value-content-item"><x-link text="Detail" class="button-list" href="{{ route('', $p) }}"/></td>
                 </tr>
-                </thead>
-                <tbody>
-                @forelse($posts as $index => $post)
-                    <tr>
-                        <td class="key-content-item">{{ $posts->firstItem() + $index }}</td>
-                        <td class="value-content-item">{{ $post->user->first_name ?? '' }} {{ $post->user->second_name ?? '' }}</td>
-                        <td class="value-content-item">{{ $post->title }}</td>
-                        <td class="value-content-item">{{ $post->status }}</td>
-                        <td class="value-content-item">
-                            <x-link text="Open" class="button-list" href="{{ route('main.posts.show', [$company, $post]) }}"/>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="5" class="value-content-item">No posts</td></tr>
-                @endforelse
-                </tbody>
-            </table>
-        </div>
+            @empty
+                <tr><td colspan="6" class="value-content-item">No posts found.</td></tr>
+            @endforelse
+            </tbody>
+        </table>
 
-        <div class="content-actions">
-            {{ $posts->withQueryString()->links() }}
-        </div>
     </section>
+
 @endsection

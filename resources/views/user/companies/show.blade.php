@@ -1,66 +1,53 @@
 @extends('_layouts.app')
 
-@section('title', $company->name)
+@section('title', 'Company Detail')
 
 @section('content')
+
     <section>
-        <h1>{{ $company->name }}</h1>
-        <p class="text-muted">{{ $company->city ?? '—' }} · {{ $company->address ?? '—' }}</p>
 
-        <p class="section-spacing">{{ $company->description ?? 'No description' }}</p>
+        <h1>Company</h1>
 
-        <div class="content-item-wrapper section-spacing">
-            <h2 class="section-title">Company users</h2>
-            <table class="table-full">
-                <thead>
-                <tr>
-                    <th class="key-content-item-center">#</th>
-                    <th class="key-content-item-center">Name</th>
-                    <th class="key-content-item-center">Role</th>
-                </tr>
-                </thead>
-                <tbody>
-                @forelse($company->users as $index => $companyUser)
-                    <tr>
-                        <td class="key-content-item">{{ $index + 1 }}</td>
-                        <td class="value-content-item">{{ $companyUser->first_name }} {{ $companyUser->second_name }}</td>
-                        <td class="value-content-item">{{ $companyUser->pivot->role ?? '—' }}</td>
-                    </tr>
-                @empty
-                    <tr><td colspan="3" class="value-content-item">No users</td></tr>
-                @endforelse
-                </tbody>
+        <div class="content-item-wrapper">
+
+            <div class="top-crud-wrapper">
+
+                <div class="button-wrapper">
+                    <x-link text="← Back to list" href="{{ route('') }}" class="button-list"/>
+                </div>
+
+                <div>
+                    <img alt="logo" src="{{ route('', $company) }}" class="company-image">
+                </div>
+
+                <div class="button-wrapper">
+                    <x-link text="User Menu" href="{{ route('') }}" class="button-list"/>
+                </div>
+
+            </div>
+
+            <table>
+                <tr><th class="key-content-item">ID</th><td colspan="2" class="value-content-item">{{ $company->id }}</td></tr>
+                <tr><th class="key-content-item">Name</th><td colspan="2" class="value-content-item">{{ $company->name }}</td></tr>
+                <tr><th class="key-content-item">Address</th><td colspan="2" class="value-content-item">{{ $company->address ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">City</th><td colspan="2" class="value-content-item">{{ $company->city ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">Description</th><td colspan="2" class="value-content-item">{{ $company->description ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">Users count</th><td colspan="2" class="value-content-item">{{ $company->users_count }}</td></tr>
+                <tr><th class="key-content-item">Posts count</th><td colspan="2" class="value-content-item">{{ $company->posts_count }}</td></tr>
             </table>
+
+            <div class="bottom-crud-wrapper">
+
+                <div class="button-wrapper">
+                    @can('update', $company)
+                        <x-link text="Edit Company" href="{{ route('', $company) }}" class="button-edit"/>
+                    @endcan
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="content-item-wrapper section-spacing">
-            <h2 class="section-title">Last Posts</h2>
-            <table class="table-full">
-                <thead>
-                <tr>
-                    <th class="key-content-item-center">#</th>
-                    <th class="key-content-item-center">User</th>
-                    <th class="key-content-item-center">Title</th>
-                    <th class="key-content-item-center">Status</th>
-                    <th class="key-content-item-center">Detail</th>
-                </tr>
-                </thead>
-                <tbody>
-                @forelse($company->posts as $index => $companyPost)
-                    <tr>
-                        <td class="key-content-item">{{ $index + 1 }}</td>
-                        <td class="value-content-item">{{ $companyPost->user->first_name ?? '' }} {{ $companyPost->user->second_name ?? '' }}</td>
-                        <td class="value-content-item">{{ $companyPost->title }}</td>
-                        <td class="value-content-item">{{ $companyPost->status }}</td>
-                        <td class="value-content-item">
-                            <x-link text="Open" class="button-list" href="{{ route('main.posts.show', [$company, $companyPost]) }}"/>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="5" class="value-content-item">No posts</td></tr>
-                @endforelse
-                </tbody>
-            </table>
-        </div>
     </section>
+
 @endsection

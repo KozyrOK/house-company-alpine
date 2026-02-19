@@ -3,11 +3,23 @@
 @section('title', 'Admin - Create Company')
 
 @section('content')
+
     <section class="content-item-wrapper" x-data="{ preview: null, updatePreview(event){ const file = event.target.files[0]; this.preview = file ? URL.createObjectURL(file) : null; } }">
+
         <div class="top-crud-wrapper">
-            <div class="button-wrapper"><x-link text="← Back to list" href="{{ route('admin.companies.index') }}" class="button-list"/></div>
-            <div><img alt="logo preview" :src="preview ?? '/images/default-image-company.jpg'" class="company-image"></div>
-            <div class="button-wrapper"><x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/></div>
+
+            <div class="button-wrapper">
+                <x-link text="← Back to list" href="{{ route('admin.companies.index') }}" class="button-list"/>
+            </div>
+
+            <div>
+                <img alt="logo preview" :src="preview ?? '/images/default-image-company.jpg'" class="company-image">
+            </div>
+
+            <div class="button-wrapper">
+                <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+            </div>
+
         </div>
 
         <form action="{{ route('admin.companies.store') }}" method="POST" enctype="multipart/form-data">
@@ -20,11 +32,21 @@
                 <tr>
                     <th class="key-content-item">Company Logo</th>
                     <td class="value-content-item" colspan="2">
-                        <input type="file" name="logo" accept="image/*" @change="updatePreview">
+                        <input type="file" name="logo" accept="image/*" @@change="updatePreview">
                     </td>
                 </tr>
             </table>
-            <div class="bottom-crud-wrapper"><div class="action-row-end"><x-button text="Create Company" type="submit" class="button-edit"/></div></div>
+
+            <div class="bottom-crud-wrapper">
+
+                <div class="button-wrapper">
+                    <x-button text="Create Company" type="submit" class="button-edit"/>
+                </div>
+
+            </div>
+
         </form>
+
     </section>
+
 @endsection

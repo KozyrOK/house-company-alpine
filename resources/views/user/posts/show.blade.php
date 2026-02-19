@@ -1,24 +1,61 @@
 @extends('_layouts.app')
 
-@section('title', $post->title)
+@section('title', 'Admin - Post Detail')
 
 @section('content')
+
     <section>
-        <h1>{{ $post->title }}</h1>
-        <p class="text-muted">
-            Company: {{ $post->company->name ?? $company->name ?? '—' }}
-            · User: {{ $post->user->first_name ?? '' }} {{ $post->user->second_name ?? '' }}
-            · Status: {{ $post->status }}
-        </p>
 
-        <article class="content-item-wrapper content-article">
-            {{ $post->content }}
-        </article>
+        <h1>Post</h1>
 
-        @if($company)
-            <div class="content-actions">
-                <x-link text="Back to list" href="{{ route('main.posts.index', $company) }}" class="button-list"/>
+        <div class="content-item-wrapper">
+
+            <div class="top-crud-wrapper">
+
+                <div class="button-wrapper">
+                    <x-link text="← Back to list" href="{{ route('') }}" class="button-list"/>
+                </div>
+
+                <div>
+                    <img class="company-image" src="{{ asset('images/default-image-company.jpg') }}" alt="post image">
+                </div>
+
+                <div class="button-wrapper">
+                    <x-link text="Admin Menu" href="{{ route('') }}" class="button-list"/>
+                </div>
+
             </div>
-        @endif
+
+            <table>
+                <tr><th class="key-content-item">ID</th><td colspan="2" class="value-content-item">{{ $post->id }}</td></tr>
+                <tr><th class="key-content-item">Title</th><td colspan="2" class="value-content-item">{{ $post->title }}</td></tr>
+                <tr><th class="key-content-item">Company</th><td colspan="2" class="value-content-item">{{ $post->company?->name ?? '-' }}</td></tr>
+                <tr><th class="key-content-item">Status</th><td colspan="2" class="value-content-item">{{ $post->status }}</td></tr>
+                <tr><th class="key-content-item">Content</th><td colspan="2" class="value-content-item">{{ $post->content }}</td></tr>
+            </table>
+
+            <div class="bottom-crud-wrapper">
+
+                <div class="button-wrapper">
+                    @can('update', $post)
+                        <x-link text="Edit Post" href="{{ route('', $post) }}" class="button-edit"/>
+                    @endcan
+                </div>
+
+                <div class="button-wrapper">
+                    @can('delete', $post)
+                        <form method="POST" action="{{ route('', $post) }}">
+                            @csrf
+                            @method('DELETE')
+                            <x-button text="Delete Post" type="submit" class="button-delete"/>
+                        </form>
+                    @endcan
+                </div>
+
+            </div>
+
+        </div>
+
     </section>
+
 @endsection

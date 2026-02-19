@@ -3,29 +3,26 @@
 @section('title', 'Admin - Users')
 
 @section('content')
+
     <section>
+
         <h1>Users</h1>
 
         <div class="top-crud-wrapper">
+
             <div class="button-wrapper">
                 <x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/>
             </div>
 
-            <form method="GET" action="{{ route('admin.users.index') }}" class="filter-form">
-                <input type="number" name="company_id" value="{{ request('company_id') }}" placeholder="Company ID" class="input-field">
-                <select name="status_account" class="input-field">
-                    <option value="">Any status</option>
-                    @foreach(['pending' => 'Pending', 'active' => 'Active', 'blocked' => 'Blocked'] as $value => $label)
-                        <option value="{{ $value }}" @selected(request('status_account') === $value)>{{ $label }}</option>
-                    @endforeach
-                </select>
-                <x-button text="Filter" type="submit" class="button-list"/>
-            </form>
+            <div></div>
 
             <div class="button-wrapper">
                 <x-link text="Create new user" href="{{ route('admin.users.create') }}" class="button-edit"/>
             </div>
+
         </div>
+
+        <x-filter.filterUser/>
 
         <table class="content-item-wrapper">
             <thead>
@@ -54,8 +51,6 @@
             </tbody>
         </table>
 
-        <div class="content-actions">
-            {{ $users->withQueryString()->links() }}
-        </div>
     </section>
+
 @endsection

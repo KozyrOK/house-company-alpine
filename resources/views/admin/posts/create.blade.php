@@ -3,11 +3,21 @@
 @section('title', 'Admin - Create Post')
 
 @section('content')
+
     <section class="content-item-wrapper">
+
         <div class="top-crud-wrapper">
-            <div class="button-wrapper"><x-link text="← Back to list" href="{{ route('admin.posts.index') }}" class="button-list"/></div>
+
+            <div class="button-wrapper">
+                <x-link text="← Back to list" href="{{ route('admin.posts.index') }}" class="button-list"/>
+            </div>
+
             <div></div>
-            <div class="button-wrapper"><x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/></div>
+
+            <div class="button-wrapper">
+                <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+            </div>
+
         </div>
 
         <form action="{{ route('admin.posts.store') }}" method="POST">
@@ -38,8 +48,15 @@
             </table>
 
             <div class="bottom-crud-wrapper">
-                <div class="action-row-end"><x-button text="Create Post" type="submit" class="button-edit"/></div>
+
+                <div class="button-wrapper">
+                    <x-button text="Create Post" type="submit" class="button-edit"/>
+                </div>
+
             </div>
+
         </form>
+
     </section>
+
 @endsection

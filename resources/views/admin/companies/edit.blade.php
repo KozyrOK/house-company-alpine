@@ -3,13 +3,25 @@
 @section('title', 'Admin – Edit Company')
 
 @section('content')
+
     <section class="content-item-wrapper" x-data="{ preview: null, updatePreview(event){ const file = event.target.files[0]; this.preview = file ? URL.createObjectURL(file) : null; } }">
+
         <h1>Edit Company</h1>
 
         <div class="top-crud-wrapper">
-            <div class="button-wrapper"><x-link text="← Back to detail" href="{{ route('admin.companies.show', $company) }}" class="button-list"/></div>
-            <div><img alt="logo" class="company-image" :src="preview || '{{ route('admin.companies.logo', $company) }}'"></div>
-            <div class="button-wrapper"><x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/></div>
+
+            <div class="button-wrapper">
+                <x-link text="← Back to detail" href="{{ route('admin.companies.show', $company) }}" class="button-list"/>
+            </div>
+
+            <div>
+                <img alt="logo" class="company-image" :src="preview || '{{ route('admin.companies.logo', $company) }}'">
+            </div>
+
+            <div class="button-wrapper">
+                <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+            </div>
+
         </div>
 
         <form method="POST" action="{{ route('admin.companies.update', $company) }}" enctype="multipart/form-data">
@@ -24,16 +36,26 @@
                 <tr>
                     <th class="key-content-item">Company Logo</th>
                     <td colspan="2" class="value-content-item">
-                        <input type="file" name="logo" accept="image/*" @change="updatePreview">
+                        <input type="file" name="logo" accept="image/*" @@change="updatePreview">
                         <label class="ml-2"><input type="checkbox" name="remove_logo" value="1"> Remove current logo</label>
                     </td>
                 </tr>
             </table>
 
             <div class="bottom-crud-wrapper">
-                <div class="action-row-start"><x-button text="Save" type="submit" class="button-edit"/></div>
-                <div class="action-row-end"><x-link text="Cancel" href="{{ route('admin.companies.show', $company) }}" class="button-delete"/></div>
+
+                <div class="button-wrapper">
+                    <x-button text="Save" type="submit" class="button-edit"/>
+                </div>
+
+                <div class="button-wrapper">
+                    <x-link text="Cancel" href="{{ route('admin.companies.show', $company) }}" class="button-delete"/>
+                </div>
+
             </div>
+
         </form>
+
     </section>
+
 @endsection

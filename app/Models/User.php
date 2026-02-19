@@ -63,26 +63,13 @@ class User extends Authenticatable
             ->exists();
     }
 
-    public function isSuperAdminForHeader(): bool
-    {
-        if ($this->companies()->wherePivot('role', 'superadmin')->exists()) return true;
-        return false;
-    }
-
     public function isSuperAdmin(?int $companyId = null): bool
     {
-        $hasGlobalSuper = $this->companies()
-            ->wherePivot('role', 'superadmin')
-            ->exists();
-
-        if ($hasGlobalSuper) {
-            return true;
-        }
+        if ($this->companies()->wherePivot('role', 'superadmin')->exists()) return true;
 
         if ($companyId !== null) {
             return $this->hasRole('superadmin', $companyId);
         }
-
         return false;
     }
 
@@ -91,11 +78,22 @@ class User extends Authenticatable
         return $this->hasRole(['admin', 'superadmin'], $companyId);
     }
 
-    public function isAdmin(): bool
+    public function isAdminInAnyCompany(): bool
     {
-        return $this->companies()
-            ->wherePivot('role', 'admin')
-            ->exists();
+        return $this->companies()->wherePivot('role', 'admin')->exists();
+    }
+
+    public function isСompanyHeadOrUser(): bool
+    {
+//      логика проверки User на предмет участия в компанииях в качестве обычного User (роль user или company_head)
+//      Для отображения Main меню
+        return false;
+    }
+
+    public function isOneCompanyUserOnly(): bool
+    {
+//      логика проверки User на предмет участия только в одной компании в качестве обычного User (роль user или company_head)
+        return false;
     }
 
     public function adminCompanyIds(): \Illuminate\Support\Collection
@@ -103,16 +101,6 @@ class User extends Authenticatable
         return $this->companies()
             ->wherePivot('role', 'admin')
             ->pluck('companies.id');
-    }
-
-    public function hasMainAccess(): bool
-    {
-        return $this->isSuperAdmin() || $this->companies()->exists();
-    }
-
-    public function canAccessAdminPanel(): bool
-    {
-        return $this->isSuperAdmin() || $this->isAdmin();
     }
 
     public function isCompanyHeadOrHigher(int $companyId): bool

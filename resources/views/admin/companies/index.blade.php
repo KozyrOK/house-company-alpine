@@ -3,19 +3,26 @@
 @section('title','Admin - Companies')
 
 @section('content')
+
     <section>
+
         <h1>Companies</h1>
 
         <div class="top-crud-wrapper">
+
             <div class="button-wrapper"><x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/></div>
 
-            <form method="GET" action="{{ route('admin.companies.index') }}" class="filter-form">
-                <input type="text" name="city" value="{{ request('city') }}" placeholder="City" class="input-field">
-                <x-button text="Filter" type="submit" class="button-list"/>
-            </form>
+            <div></div>
 
-            <div class="button-wrapper"><x-link text="Create New Company" href="{{ route('admin.companies.create') }}" class="button-edit"/></div>
+            <div class="button-wrapper action-row-end">
+                @can('create', \App\Models\Company::class)
+                    <x-link text="Create New Company" href="{{ route('admin.companies.create') }}" class="button-edit"/>
+                @endcan
+            </div>
+
         </div>
+
+        <x-filter.filterCompany/>
 
         <table class="content-item-wrapper">
             <thead>
@@ -23,8 +30,6 @@
                 <th class="key-content-item-center">#</th>
                 <th class="key-content-item-center">Name</th>
                 <th class="key-content-item-center">City</th>
-                <th class="key-content-item-center">Users</th>
-                <th class="key-content-item-center">Posts</th>
                 <th class="key-content-item-center">Actions</th>
             </tr>
             </thead>
@@ -34,8 +39,6 @@
                     <td class="key-content-item">{{ $companies->firstItem() + $index }}</td>
                     <td class="value-content-item">{{ $c->name }}</td>
                     <td class="value-content-item">{{ $c->city ?: '-' }}</td>
-                    <td class="value-content-item">{{ $c->users_count ?? '-' }}</td>
-                    <td class="value-content-item">{{ $c->posts_count ?? '-' }}</td>
                     <td><x-link text="Detail" class="button-list" href="{{ route('admin.companies.show', $c) }}"/></td>
                 </tr>
             @empty
@@ -44,6 +47,6 @@
             </tbody>
         </table>
 
-        <div class="content-actions">{{ $companies->withQueryString()->links() }}</div>
     </section>
+
 @endsection

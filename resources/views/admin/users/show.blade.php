@@ -3,20 +3,27 @@
 @section('title', 'Admin - User Detail')
 
 @section('content')
+
     <section>
+
         <h1>User</h1>
 
         <div class="content-item-wrapper">
+
             <div class="top-crud-wrapper">
+
                 <div class="button-wrapper">
                     <x-link text="← Back to list" href="{{ route('admin.users.index') }}" class="button-list"/>
                 </div>
+
                 <div>
                     <img class="company-image" src="{{ $user->image_path ?: asset('images/default-image-company.jpg') }}" alt="user image">
                 </div>
+
                 <div class="button-wrapper">
                     <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
                 </div>
+
             </div>
 
             <table>
@@ -28,17 +35,27 @@
             </table>
 
             <div class="bottom-crud-wrapper">
-                <div class="action-row-start">
-                    <x-link text="Edit User" href="{{ route('admin.users.edit', $user) }}" class="button-edit"/>
+
+                <div class="button-wrapper">
+                    @can('update', $user)
+                        <x-link text="Edit User" href="{{ route('admin.users.edit', $user) }}" class="button-edit"/>
+                    @endcan
                 </div>
-                <div class="action-row-end">
-                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}">
-                        @csrf
-                        @method('DELETE')
-                        <x-button text="Delete User" type="submit" class="button-delete"/>
-                    </form>
+
+                <div class="button-wrapper">
+                    @can('delete', $user)
+                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}">
+                            @csrf
+                            @method('DELETE')
+                            <x-button text="Delete User" type="submit" class="button-delete"/>
+                        </form>
+                    @endcan
                 </div>
+
             </div>
+
         </div>
+
     </section>
+
 @endsection
