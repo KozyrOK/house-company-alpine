@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Company;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeederTest extends Seeder
 {
@@ -16,8 +15,6 @@ class DatabaseSeederTest extends Seeder
             TestUsersSeeder::class,
         ]);
 
-        $superadmin = User::where('email', 'admin@housing.local')->first();
-
         $companies = Company::factory(2)->create();
 
         $users = User::whereIn('email', [
@@ -26,7 +23,7 @@ class DatabaseSeederTest extends Seeder
             'admin@housingtest.local',
         ])->get();
 
-        $companies->each(function ($company) use ($superadmin, $users) {
+        $companies->each(function ($company) use ($users) {
 
             foreach ($users as $user) {
 
@@ -36,12 +33,6 @@ class DatabaseSeederTest extends Seeder
 
                 $user->companies()->syncWithoutDetaching([
                     $company->id => ['role' => $role]
-                ]);
-            }
-
-            if ($superadmin) {
-                $superadmin->companies()->syncWithoutDetaching([
-                    $company->id => ['role' => 'superadmin']
                 ]);
             }
         });

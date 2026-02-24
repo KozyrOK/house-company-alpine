@@ -76,7 +76,7 @@ class PostController extends Controller
         return response()->json($post->load(['company:id,name', 'user:id,first_name,second_name']));
     }
 
-    public function update(Request $request, Company $company, Post $post)
+    public function update(Request $request, Post $post)
     {
         $company = $request->route('company');
         if ($company && $post->company_id !== $company->id) {

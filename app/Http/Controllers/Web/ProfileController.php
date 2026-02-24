@@ -25,4 +25,3 @@ class ProfileController extends Controller
         return redirect()->route('info')->with('status', 'Account deleted');
     }
 }
-

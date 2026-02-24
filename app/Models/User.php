@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Company;
-use App\Models\CompanyUser;
 
 /**
  * @method static create(array $array)
@@ -40,7 +41,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function companies(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function companies(): BelongsToMany
     {
         return $this->belongsToMany(Company::class, 'company_user')
             ->using(CompanyUser::class)
@@ -63,14 +64,19 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function belongsToCompany(int $companyId): bool
+    {
+        return $this->companies()->where('company_id', $companyId)->exists();
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
     public function isSuperAdmin(?int $companyId = null): bool
     {
-        if ($this->companies()->wherePivot('role', 'superadmin')->exists()) return true;
-
-        if ($companyId !== null) {
-            return $this->hasRole('superadmin', $companyId);
-        }
-        return false;
+        return $this->companies()->wherePivot('role', 'superadmin')->exists();
     }
 
     public function isAdminOrHigher(int $companyId): bool
@@ -83,20 +89,23 @@ class User extends Authenticatable
         return $this->companies()->wherePivot('role', 'admin')->exists();
     }
 
-    public function isСompanyHeadOrUser(): bool
+    public function isCompanyHeadOrUser(): bool
     {
-//      логика проверки User на предмет участия в компанииях в качестве обычного User (роль user или company_head)
-//      Для отображения Main меню
-        return false;
+        return $this->companies()
+                    ->wherePivotIn('role', ['company_head', 'user'])
+                    ->exists();
     }
 
     public function isOneCompanyUserOnly(): bool
     {
-//      логика проверки User на предмет участия только в одной компании в качестве обычного User (роль user или company_head)
-        return false;
+        return $this->companies()
+                    ->wherePivotIn('role', ['company_head', 'user'])
+                    ->count() === 1
+            && !$this->isAdminInAnyCompany()
+            && !$this->isSuperAdmin();
     }
 
-    public function adminCompanyIds(): \Illuminate\Support\Collection
+    public function adminCompanyIds(): Collection
     {
         return $this->companies()
             ->wherePivot('role', 'admin')
@@ -106,16 +115,6 @@ class User extends Authenticatable
     public function isCompanyHeadOrHigher(int $companyId): bool
     {
         return $this->hasRole(['company_head', 'admin', 'superadmin'], $companyId);
-    }
-
-    public function belongsToCompany(int $companyId): bool
-    {
-        return $this->companies()->where('company_id', $companyId)->exists();
-    }
-
-    public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(Post::class);
     }
 
 }
