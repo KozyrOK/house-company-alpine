@@ -31,9 +31,12 @@ Route::get('/', function () {
         return redirect()->route('info');
     }
 
-    return auth()->user()->isSuperAdmin()
-        ? redirect()->route('admin.index')
-        : redirect()->route('main.index');
+    if (auth()->user()->isSuperAdmin() || auth()->user()->isAdminInAnyCompany()) {
+        return redirect()->route('admin.index');
+    }
+    else {
+        return redirect()->route('main.index');
+    }
 });
 
 // PUBLIC PAGE
@@ -46,7 +49,7 @@ Route::middleware('auth')->group(function () {
 
     // MAIN
 
-    Route::get('/main', [CompanyController::class, 'index'])
+    Route::get('/main', [MainController::class, 'index'])
         ->name('main.index');
 
     Route::get('/main/{company}', [CompanyController::class, 'show'])
@@ -81,19 +84,22 @@ Route::middleware('auth')->group(function () {
         Route::view('/', 'pages.admin')
             ->name('admin.index');
 
-        Route::resource('users', UserController::class)
+        Route::resource('users', AdminUserController::class)
             ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
             ->names('admin.users');
 
-        Route::resource('posts', PostController::class)
+        Route::resource('posts', AdminPostController::class)
             ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
             ->names('admin.posts');
 
-        Route::resource('companies', CompanyController::class)
+        Route::resource('companies', AdminCompanyController::class)
             ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
             ->names('admin.companies');
 
-        Route::get('/companies/{company}/logo', [CompanyController::class, 'logo'])
+//        Route::get('/companies/{company}/users', AdminCompanyController::class)
+//            ->name('admin.companies');
+
+        Route::get('/companies/{company}/logo', [AdminCompanyController::class, 'logo'])
             ->name('admin.companies.logo');
 
     });

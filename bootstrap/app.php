@@ -29,7 +29,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'api.can' => AuthorizeApiResource::class,
-            'superadmin'  => SuperAdminOnly::class,
             'admin.access' => AdminAccess::class,
         ]);
     })

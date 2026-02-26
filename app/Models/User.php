@@ -85,6 +85,13 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function isAdminInAnyCompany(): bool
+    {
+        return $this->companies()
+            ->wherePivot('role', 'admin')
+            ->exists();
+    }
+
     public function roleInCompany(Company $company): ?string
     {
         return $this->companies()

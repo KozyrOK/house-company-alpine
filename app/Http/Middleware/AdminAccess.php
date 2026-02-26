@@ -12,7 +12,13 @@ class AdminAccess
     {
         $user = $request->user();
 
-        if (!$user || (!$user->isSuperAdmin() && !$user->isAdmin())) {
+        if (!$user) {
+            abort(403);
+        }
+
+        if (!$user->companies()
+            ->wherePivotIn('role', ['admin', 'superadmin'])
+            ->exists()) {
             abort(403);
         }
 

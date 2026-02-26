@@ -63,7 +63,6 @@ class PostPolicy
 
     public function approve(User $user, Post $post): bool
     {
-        $companyId = $post->company_id;
         return $user->hasRole(['company_head', 'admin'], $post->company_id);
     }
 }
