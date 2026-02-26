@@ -16,6 +16,9 @@ class UserPolicy
         return null;
     }
 
+    /**
+     * GET /users
+     */
     public function viewAny(User $user): bool
     {
         return $user->companies()
@@ -23,6 +26,9 @@ class UserPolicy
             ->exists();
     }
 
+    /**
+     * GET /users/{user}
+     */
     public function view(User $user, User $model): bool
     {
         if ($user->id === $model->id) {
@@ -35,11 +41,17 @@ class UserPolicy
             ->exists();
     }
 
+    /**
+     * POST /users
+     */
     public function create(User $user, Company $company): bool
     {
-        return $user->isCompanyHeadOrHigher($company->id);
+        return $user->hasRole(['admin', 'company_head'], $company->id);
     }
 
+    /**
+     * PUT/PATCH /users/{user}
+     */
     public function update(User $user, User $model): bool
     {
         if ($user->id === $model->id) {
@@ -52,6 +64,9 @@ class UserPolicy
             ->exists();
     }
 
+    /**
+     * DELETE /users/{user}
+     */
     public function delete(User $user, User $model): bool
     {
         return $user->companies()

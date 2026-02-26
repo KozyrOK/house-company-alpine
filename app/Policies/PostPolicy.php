@@ -16,33 +16,46 @@ class PostPolicy
 
         return null;
     }
+
+    /**
+     * GET /posts
+     */
     public function viewAny(User $user): bool
     {
-        return $user->companies()
-            ->wherePivotIn('role', ['admin'])
-            ->exists();
+        return $user->companies()->exists();
     }
 
+    /**
+     * GET /posts/{post}
+     */
     public function view(User $user, Post $post): bool
     {
         return $user->belongsToCompany($post->company_id);
     }
 
-    public function create(User $user, ?Company $company = null): bool
+    /**
+     * POST /posts
+     */
+    public function create(User $user, Company $company): bool
     {
-        if (!$company) {
-            return $user->companies()->exists();
-        }
-
         return $user->belongsToCompany($company->id);
     }
 
+    /**
+     * PUT/PATCH /posts/{post}
+     */
     public function update(User $user, Post $post): bool
     {
-        return $user->id === $post->user_id
-            || $user->isCompanyHeadOrHigher($post->company_id);
+        if ($user->id === $post->user_id) {
+            return true;
+        }
+
+        return $user->hasRole(['company_head', 'admin'], $post->company_id);
     }
 
+    /**
+     * DELETE /posts/{post}
+     */
     public function delete(User $user, Post $post): bool
     {
         return $this->update($user, $post);
@@ -51,6 +64,6 @@ class PostPolicy
     public function approve(User $user, Post $post): bool
     {
         $companyId = $post->company_id;
-        return $user->isCompanyHeadOrHigher($companyId);
+        return $user->hasRole(['company_head', 'admin'], $post->company_id);
     }
 }

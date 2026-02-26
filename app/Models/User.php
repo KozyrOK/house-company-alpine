@@ -41,6 +41,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Relationships
+     */
+
     public function companies(): BelongsToMany
     {
         return $this->belongsToMany(Company::class, 'company_user')
@@ -49,14 +53,17 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Core Role Logic
+     */
     public function hasRole(array|string $roles, int $companyId): bool
     {
         $roles = (array) $roles;
-
-        if (in_array('superadmin', $roles) &&
-            $this->companies()->wherePivot('role', 'superadmin')->exists()) {
-            return true;
-        }
 
         return $this->companies()
             ->where('company_id', $companyId)
@@ -66,55 +73,37 @@ class User extends Authenticatable
 
     public function belongsToCompany(int $companyId): bool
     {
-        return $this->companies()->where('company_id', $companyId)->exists();
+        return $this->companies()
+            ->where('company_id', $companyId)
+            ->exists();
     }
 
-    public function posts(): HasMany
-    {
-        return $this->hasMany(Post::class);
-    }
-
-    public function isSuperAdmin(?int $companyId = null): bool
-    {
-        return $this->companies()->wherePivot('role', 'superadmin')->exists();
-    }
-
-    public function isAdminOrHigher(int $companyId): bool
-    {
-        return $this->hasRole(['admin', 'superadmin'], $companyId);
-    }
-
-    public function isAdminInAnyCompany(): bool
-    {
-        return $this->companies()->wherePivot('role', 'admin')->exists();
-    }
-
-    public function isCompanyHeadOrUser(): bool
+    public function isSuperAdmin(): bool
     {
         return $this->companies()
-                    ->wherePivotIn('role', ['company_head', 'user'])
-                    ->exists();
+            ->wherePivot('role', 'superadmin')
+            ->exists();
     }
 
-    public function isOneCompanyUserOnly(): bool
+    public function roleInCompany(Company $company): ?string
     {
         return $this->companies()
-                    ->wherePivotIn('role', ['company_head', 'user'])
-                    ->count() === 1
-            && !$this->isAdminInAnyCompany()
-            && !$this->isSuperAdmin();
+            ->where('company_id', $company->id)
+            ->first()?->pivot->role;
     }
 
-    public function adminCompanyIds(): Collection
+    /**
+     * Helpers
+     */
+    public function companyIds(): Collection
+    {
+        return $this->companies()->pluck('companies.id');
+    }
+
+    public function companiesWithRole(array $roles): BelongsToMany
     {
         return $this->companies()
-            ->wherePivot('role', 'admin')
-            ->pluck('companies.id');
-    }
-
-    public function isCompanyHeadOrHigher(int $companyId): bool
-    {
-        return $this->hasRole(['company_head', 'admin', 'superadmin'], $companyId);
+            ->wherePivotIn('role', $roles);
     }
 
 }
