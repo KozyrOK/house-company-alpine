@@ -1,13 +1,19 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Web\CompanyController;
 use App\Http\Controllers\Web\PostController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\ProfileController;
+
+use App\Http\Controllers\Web\AdminCompanyController;
+use App\Http\Controllers\Web\AdminUserController;
+use App\Http\Controllers\Web\AdminPostController;
 
 // LOCALE SWITCHER
 
@@ -52,14 +58,42 @@ Route::middleware('auth')->group(function () {
     Route::get('/main', [MainController::class, 'index'])
         ->name('main.index');
 
-    Route::get('/main/{company}', [CompanyController::class, 'show'])
-        ->name('main.show');
+    // COMPANIES
 
-    Route::get('/main/{company}/posts', [PostController::class, 'index'])
-        ->name('main.posts.index');
+    Route::get('/companies', [CompanyController::class, 'index'])
+        ->name('companies.index');
 
-    Route::get('/main/{company}/posts/{post}', [PostController::class, 'show'])
-        ->name('main.posts.show');
+    Route::get('/companies/{company}', [CompanyController::class, 'show'])
+        ->name('companies.show');
+
+    // POSTS
+
+    Route::get('/companies/{company}/posts', [PostController::class, 'index'])
+        ->name('companies.posts.index');
+
+    Route::get('/posts/{post}', [PostController::class, 'show'])
+        ->name('posts.show');
+
+//    Route::get('/main/companies/{company}/posts', [PostController::class, 'index'])
+//        ->name('main.posts.index');
+//
+//    Route::get('/main/companies/{company}/posts/{post}', [PostController::class, 'show'])
+//        ->name('main.posts.show');
+
+    // USERS
+
+    Route::get('/users', [UserController::class, 'index'])
+        ->name('users.index');
+
+    Route::get('/users/{user}', [UserController::class, 'show'])
+        ->name('users.show');
+
+//    Route::get('/main/companies/{company}/users', [UserController::class, 'index'])
+//        ->name('main.users.index');
+//
+//    Route::get('/main/companies/{company}/users/{user}', [UserController::class, 'show'])
+//        ->name('main.users.show');
+
 
     // PROFILE
 
@@ -79,28 +113,82 @@ Route::middleware('auth')->group(function () {
 
     // ADMIN
 
-    Route::prefix('admin')->middleware('admin.access')->group(function () {
+    Route::prefix('admin')->middleware('admin.access')->name('admin.')->group(function () {
 
         Route::view('/', 'pages.admin')
-            ->name('admin.index');
+            ->name('index');
 
-        Route::resource('users', AdminUserController::class)
-            ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
-            ->names('admin.users');
+        // COMPANIES
 
-        Route::resource('posts', AdminPostController::class)
-            ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
-            ->names('admin.posts');
+        Route::get('/companies', [AdminCompanyController::class, 'index'])
+            ->name('companies.index');
 
-        Route::resource('companies', AdminCompanyController::class)
-            ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy'])
-            ->names('admin.companies');
+        Route::get('/companies/create', [AdminCompanyController::class, 'create'])
+            ->name('companies.create');
 
-//        Route::get('/companies/{company}/users', AdminCompanyController::class)
-//            ->name('admin.companies');
+        Route::post('/companies', [AdminCompanyController::class, 'store'])
+            ->name('companies.store');
+
+        Route::get('/companies/{company}', [AdminCompanyController::class, 'show'])
+            ->name('companies.show');
+
+        Route::get('/companies/{company}/edit', [AdminCompanyController::class, 'edit'])
+            ->name('companies.edit');
+
+        Route::patch('/companies/{company}', [AdminCompanyController::class, 'update'])
+            ->name('companies.update');
+
+        Route::delete('/companies/{company}', [AdminCompanyController::class, 'destroy'])
+            ->name('companies.destroy');
 
         Route::get('/companies/{company}/logo', [AdminCompanyController::class, 'logo'])
-            ->name('admin.companies.logo');
+            ->name('companies.logo');
+
+        // USERS
+
+        Route::get('/users', [AdminUserController::class, 'index'])
+            ->name('users.index');
+
+        Route::get('/users/create', [AdminUserController::class, 'create'])
+            ->name('users.create');
+
+        Route::post('/users', [AdminUserController::class, 'store'])
+            ->name('users.store');
+
+        Route::get('/users/{user}', [AdminUserController::class, 'show'])
+            ->name('users.show');
+
+        Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])
+            ->name('users.edit');
+
+        Route::patch('/users/{user}', [AdminUserController::class, 'update'])
+            ->name('users.update');
+
+        Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])
+            ->name('users.destroy');
+
+        // POSTS
+
+        Route::get('/posts', [AdminPostController::class, 'index'])
+            ->name('posts.index');
+
+        Route::get('/posts/create', [AdminPostController::class, 'create'])
+            ->name('posts.create');
+
+        Route::post('/posts', [AdminPostController::class, 'store'])
+            ->name('posts.store');
+
+        Route::get('/posts/{post}', [AdminPostController::class, 'show'])
+            ->name('posts.show');
+
+        Route::get('/posts/{post}/edit', [AdminPostController::class, 'edit'])
+            ->name('posts.edit');
+
+        Route::patch('/posts/{post}', [AdminPostController::class, 'update'])
+            ->name('posts.update');
+
+        Route::delete('/posts/{post}', [AdminPostController::class, 'destroy'])
+            ->name('posts.destroy');
 
     });
 });

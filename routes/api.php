@@ -1,9 +1,14 @@
 <?php
+use Illuminate\Support\Facades\Route;
 
 use App\Models\Company;
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\API\AdminCompanyController as AdminCompanyController;
+use App\Http\Controllers\API\AdminUserController as AdminUserController;
+use App\Http\Controllers\API\AdminPostController as AdminPostController;
+
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CompanyController;
 use App\Http\Controllers\API\UserController;
@@ -21,11 +26,11 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
 
     // COMPANIES
 
-    Route::get('/companies/{company}', [CompanyController::class, 'show'])
-        ->middleware('api.can:view,' . Company::class);
-
     Route::get('/companies', [CompanyController::class, 'index'])
         ->middleware('api.can:viewAny,' . Company::class);
+
+    Route::get('/companies/{company}', [CompanyController::class, 'show'])
+        ->middleware('api.can:view,company');
 
     // USERS
 
@@ -33,16 +38,16 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
         ->middleware('api.can:create,' . User::class . ',company');
 
     Route::get('/companies/{company}/users/{user}', [UserController::class, 'show'])
-        ->middleware('api.can:view,' . User::class . ',user');
+        ->middleware('api.can:view,user');
 
     Route::patch('/companies/{company}/users/{user}', [UserController::class, 'update'])
-        ->middleware('api.can:update,' . User::class . ',user');
+        ->middleware('api.can:update,user');
 
     Route::delete('/companies/{company}/users/{user}', [UserController::class, 'destroy'])
-        ->middleware('api.can:delete,' . User::class . ',user');
+        ->middleware('api.can:delete,user');
 
     Route::patch('/companies/{company}/users/{user}/approve', [UserController::class, 'approve'])
-        ->middleware('api.can:approve,' . User::class . ',user');
+        ->middleware('api.can:approve,user');
 
     // POSTS
 
@@ -50,68 +55,74 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
         ->middleware('api.can:create,' . Post::class . ',company');
 
     Route::get('/companies/{company}/posts/{post}', [PostController::class, 'show'])
-        ->middleware('api.can:view,' . Post::class . ',post');
+        ->middleware('api.can:view,post');
 
     Route::patch('/companies/{company}/posts/{post}', [PostController::class, 'update'])
-        ->middleware('api.can:update,' . Post::class . ',post');
+        ->middleware('api.can:update,post');
 
     Route::patch('/companies/{company}/posts/{post}/approve', [PostController::class, 'approve'])
-        ->middleware('api.can:approve,' . Post::class . ',post');
+        ->middleware('api.can:approve,post');
 
     Route::delete('/companies/{company}/posts/{post}', [PostController::class, 'destroy'])
-        ->middleware('api.can:delete,' . Post::class . ',post');
+        ->middleware('api.can:delete,post');
 });
 
     // ADMIN
 
 Route::prefix('admin')->middleware(['web', 'auth:sanctum', 'admin.access'])->group(function () {
 
-    Route::get('/companies', [CompanyController::class, 'index'])
+    // COMPANIES
+
+    Route::get('/companies', [AdminCompanyController::class, 'index'])
         ->middleware('api.can:viewAny,' . Company::class);
 
-    Route::post('/companies', [CompanyController::class, 'store'])
+    Route::post('/companies', [AdminCompanyController::class, 'store'])
         ->middleware('api.can:create,' . Company::class);
 
-    Route::get('/users', [UserController::class, 'index'])
+    Route::get('/companies/{company}', [AdminCompanyController::class, 'show'])
+        ->middleware('api.can:view,company');
+
+    Route::patch('/companies/{company}', [AdminCompanyController::class, 'update'])
+        ->middleware('api.can:update,company');
+
+    Route::delete('/companies/{company}', [AdminCompanyController::class, 'destroy'])
+        ->middleware('api.can:delete,company');
+
+    Route::post('/companies/{company}/logo', [AdminCompanyController::class, 'uploadLogo'])
+        ->middleware('api.can:update,company');
+
+    Route::delete('/companies/{company}/logo', [AdminCompanyController::class, 'deleteLogo'])
+        ->middleware('api.can:update,company');
+
+    // USERS
+
+    Route::get('/users', [AdminUserController::class, 'index'])
         ->middleware('api.can:viewAny,' . User::class);
 
-    Route::get('/users/{user}', [UserController::class, 'show'])
-        ->middleware('api.can:view,' . User::class);
+    Route::get('/users/{user}', [AdminUserController::class, 'show'])
+        ->middleware('api.can:view,user');
 
-    Route::patch('/users/{user}', [UserController::class, 'update'])
-        ->middleware('api.can:update,' . User::class);
+    Route::patch('/users/{user}', [AdminUserController::class, 'update'])
+        ->middleware('api.can:update,user');
 
-    Route::delete('/users/{user}', [UserController::class, 'destroy'])
-        ->middleware('api.can:delete,' . User::class);
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])
+        ->middleware('api.can:delete,user');
 
-    Route::get('/posts', [PostController::class, 'index'])
+    // POSTS
+
+    Route::get('/posts', [AdminPostController::class, 'index'])
         ->middleware('api.can:viewAny,' . Post::class);
 
-    Route::get('/posts/{post}', [PostController::class, 'show'])
-        ->middleware('api.can:view,' . Post::class);
+    Route::get('/posts/{post}', [AdminPostController::class, 'show'])
+        ->middleware('api.can:view,post');
 
-    Route::patch('/posts/{post}', [PostController::class, 'update'])
-        ->middleware('api.can:update,' . Post::class);
+    Route::patch('/posts/{post}', [AdminPostController::class, 'update'])
+        ->middleware('api.can:update,post');
 
-    Route::patch('/posts/{post}/approve', [PostController::class, 'approve'])
-        ->middleware('api.can:approve,' . Post::class);
+    Route::patch('/posts/{post}/approve', [AdminPostController::class, 'approve'])
+        ->middleware('api.can:approve,post');
 
-    Route::delete('/posts/{post}', [PostController::class, 'destroy'])
-        ->middleware('api.can:delete,' . Post::class);
-
-    Route::post('/companies/{company}/logo', [CompanyController::class, 'uploadLogo'])
-        ->middleware('api.can:update,' . Company::class);
-
-    Route::delete('/companies/{company}/logo', [CompanyController::class, 'deleteLogo'])
-        ->middleware('api.can:update,' . Company::class);
-
-    Route::patch('/companies/{company}', [CompanyController::class, 'update'])
-        ->middleware('api.can:update,' . Company::class);
-
-    Route::delete('/companies/{company}', [CompanyController::class, 'destroy'])
-        ->middleware('api.can:delete,' . Company::class);
-
-    Route::get('/companies/{company}', [CompanyController::class, 'show'])
-        ->middleware('api.can:view,' . Company::class);
+    Route::delete('/posts/{post}', [AdminPostController::class, 'destroy'])
+        ->middleware('api.can:delete,post');
 
 });
