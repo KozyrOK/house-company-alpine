@@ -35,7 +35,7 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
     // USERS
 
     Route::post('/companies/{company}/users', [UserController::class, 'store'])
-        ->middleware('api.can:create,' . User::class . ',company');
+        ->middleware('api.can:create,' . User::class);
 
     Route::get('/companies/{company}/users/{user}', [UserController::class, 'show'])
         ->middleware('api.can:view,user');
@@ -52,10 +52,13 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
     // POSTS
 
     Route::post('/companies/{company}/posts', [PostController::class, 'store'])
-        ->middleware('api.can:create,' . Post::class . ',company');
+        ->middleware('api.can:create,' . Post::class);
 
     Route::get('/companies/{company}/posts/{post}', [PostController::class, 'show'])
         ->middleware('api.can:view,post');
+
+    Route::get('/companies/{company}/posts', [PostController::class, 'index'])
+        ->middleware('api.can:viewAny,' . Post::class);
 
     Route::patch('/companies/{company}/posts/{post}', [PostController::class, 'update'])
         ->middleware('api.can:update,post');

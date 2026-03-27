@@ -21,7 +21,9 @@ class CompanyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->companies()->exists();
+        return $user->companies()
+            ->wherePivotIn('role', ['admin'])
+            ->exists();
     }
 
     /**

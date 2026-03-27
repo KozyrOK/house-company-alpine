@@ -85,10 +85,16 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function isAdminOrHigher(int $companyId): bool
+    {
+        return $this->hasRole(['admin', 'superadmin'], $companyId);
+    }
+
     public function isAdminInAnyCompany(): bool
     {
         return $this->companies()
             ->wherePivot('role', 'admin')
+            ->wherePivotIn('role', ['admin', 'superadmin'])
             ->exists();
     }
 
@@ -99,12 +105,16 @@ class User extends Authenticatable
             ->first()?->pivot->role;
     }
 
-    /**
-     * Helpers
-     */
     public function companyIds(): Collection
     {
         return $this->companies()->pluck('companies.id');
+    }
+
+    public function adminCompanyIds(): Collection
+    {
+        return $this->companies()
+            ->wherePivotIn('role', ['admin', 'superadmin'])
+            ->pluck('companies.id');
     }
 
     public function companiesWithRole(array $roles): BelongsToMany

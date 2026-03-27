@@ -217,8 +217,8 @@ progress {
 /* HEADER */
 
 .header-background {
-    @apply h-28 bg-top bg-repeat-x transition-all duration-500 bg-[url('@/images/header-pattern.png')]
-    dark:bg-[url('@/images/header-pattern-dark.png')];
+    @apply h-28 bg-top bg-repeat-x transition-all duration-500 bg-[url('@/images/header-pattern.webp')]
+    dark:bg-[url('@/images/header-pattern-dark.webp')];
 }
 
 /* TOPBAR */
@@ -343,7 +343,7 @@ progress {
      @apply absolute inset-0 left-1/2 -translate-x-1/2 w-[80vw] h-full
      bg-cover bg-center opacity-20 pointer-events-none
      transition-opacity duration-500 z-0
-     bg-[url('@/images/main-background.jpg')];
+     bg-[url('@/images/main-background.webp')];
  }
 
  .main-container {

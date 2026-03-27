@@ -37,4 +37,24 @@ class AdminUserController extends Controller
             ->route('admin.users.index')
             ->with('success', 'User deleted successfully.');
     }
+
+    public function create()
+    {
+
+    }
+
+    public function store()
+    {
+
+    }
+
+    public function edit(User $user)
+    {
+
+    }
+
+    public function update(User $user)
+    {
+
+    }
 }

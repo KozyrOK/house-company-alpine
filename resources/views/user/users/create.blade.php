@@ -9,7 +9,7 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to list" href="{{ route('') }}" class="button-list"/>
+                <x-link text="← Back to list" href="#" class="button-list"/>
             </div>
 
             <div>

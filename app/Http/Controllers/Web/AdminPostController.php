@@ -39,4 +39,25 @@ class AdminPostController extends Controller
             ->route('admin.posts.index')
             ->with('success', 'Post deleted successfully.');
     }
+
+    public function create()
+    {
+
+    }
+
+    public function store()
+    {
+
+    }
+
+    public function edit(Post $post)
+    {
+
+    }
+
+    public function update(Post $post)
+    {
+
+    }
+
 }

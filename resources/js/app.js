@@ -3,10 +3,10 @@ import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
 
-import headerPattern from '@/images/header-pattern.png';
-import headerPatternDark from '@/images/header-pattern-dark.png';
-import mainBackground from '@/images/main-background.jpg';
-import defaultCompanyLogo from '@/images/default-image-company.jpg';
+import headerPattern from '@/images/header-pattern.webp';
+import headerPatternDark from '@/images/header-pattern-dark.webp';
+import mainBackground from '@/images/main-background.webp';
+import defaultCompanyLogo from '@/images/default-image-company.webp';
 
 import themeToggle from './components/themeToggle.js';
 import localeSwitch from './components/localeSwitch.js';

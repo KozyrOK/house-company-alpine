@@ -13,7 +13,7 @@
             <div class="top-crud-wrapper">
 
                 <div class="button-wrapper">
-                    <x-link text="← Back to list" href="{{ route('') }}" class="button-list"/>
+                    <x-link text="← Back to list" href="#" class="button-list"/>
                 </div>
 
                 <div>
@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="Admin Menu" href="{{ route('') }}" class="button-list"/>
+                    <x-link text="Admin Menu" href="#" class="button-list"/>
                 </div>
 
             </div>
@@ -38,13 +38,13 @@
 
                 <div class="button-wrapper">
                     @can('update', $user)
-                        <x-link text="Edit User" href="{{ route('', $user) }}" class="button-edit"/>
+                        <x-link text="Edit User" href="#" class="button-edit"/>
                     @endcan
                 </div>
 
                 <div class="button-wrapper">
                     @can('delete', $user)
-                        <form method="POST" action="{{ route('', $user) }}">
+                        <form method="POST" action="#">
                             @csrf
                             @method('DELETE')
                             <x-button text="Delete User" type="submit" class="button-delete"/>

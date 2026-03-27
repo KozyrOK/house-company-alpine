@@ -82,4 +82,9 @@ class AdminCompanyController extends Controller
             ->route('admin.companies.index')
             ->with('success', 'Company deleted successfully.');
     }
+
+    public function logo(Company $company)
+    {
+
+    }
 }

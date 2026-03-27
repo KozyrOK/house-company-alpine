@@ -14,6 +14,7 @@ use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\AdminCompanyController;
 use App\Http\Controllers\Web\AdminUserController;
 use App\Http\Controllers\Web\AdminPostController;
+use App\Http\Controllers\Web\MainController;
 
 // LOCALE SWITCHER
 
@@ -55,7 +56,7 @@ Route::middleware('auth')->group(function () {
 
     // MAIN
 
-    Route::get('/main', [MainController::class, 'index'])
+    Route::get('/main', [CompanyController::class, 'index'])
         ->name('main.index');
 
     // COMPANIES
@@ -108,7 +109,6 @@ Route::middleware('auth')->group(function () {
 
     // OTHER PAGES
 
-    Route::view('/forum', 'pages.forum')->name('forum');
     Route::view('/chat', 'pages.chat')->name('chat');
 
     // ADMIN

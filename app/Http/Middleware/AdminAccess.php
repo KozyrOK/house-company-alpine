@@ -16,9 +16,7 @@ class AdminAccess
             abort(403);
         }
 
-        if (!$user->companies()
-            ->wherePivotIn('role', ['admin', 'superadmin'])
-            ->exists()) {
+        if (!$user->isSuperAdmin() && !$user->isAdminInAnyCompany()) {
             abort(403);
         }
 

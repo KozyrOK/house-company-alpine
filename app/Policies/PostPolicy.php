@@ -50,7 +50,16 @@ class PostPolicy
             return true;
         }
 
-        return $user->hasRole(['company_head', 'admin'], $post->company_id);
+        if ($user->hasRole('admin', $post->company_id)) {
+            return true;
+        }
+
+            if ($user->hasRole('company_head', $post->company_id)) {
+                $authorRole = $post->user?->roleInCompany($post->company);
+                return in_array($authorRole, ['user', 'company_head'], true);
+        }
+
+        return false;
     }
 
     /**

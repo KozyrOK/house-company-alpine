@@ -11,13 +11,13 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to Admin Panel" href="{{ route('') }}" class="button-list"/>
+                <x-link text="← Back to Admin Panel" href="#" class="button-list"/>
             </div>
 
             <div></div>
 
             <div class="button-wrapper">
-                <x-link text="Create new user" href="{{ route('') }}" class="button-edit"/>
+                <x-link text="Create new user" href="#" class="button-edit"/>
             </div>
 
         </div>

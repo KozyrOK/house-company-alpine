@@ -52,4 +52,14 @@ class AdminCompanyController extends Controller
 
         return response()->noContent();
     }
+
+    public function uploadLogo(Company $company)
+    {
+
+    }
+
+    public function deleteLogo(Company $company)
+    {
+
+    }
 }
