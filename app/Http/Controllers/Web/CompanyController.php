@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
-use App\Models\Post;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,45 +15,13 @@ class CompanyController extends Controller
 
     public function index(Request $request): View
     {
-        if ($request->routeIs('main.index')) {
-            $user = $request->user();
-
-            $companiesQuery = $user->isSuperAdmin()
-                ? Company::query()
-                : $user->companies();
-
-            $companies = $companiesQuery
+        if ($request->routeIs('main.companies.index')) {
+            $companies = $request->user()
+                ->companies()
                 ->withCount(['users', 'posts'])
                 ->orderBy('name')
-                ->get();
-
-            if (!$user->isSuperAdmin() && $companies->count() === 1) {
-                $company = $companies->first();
-
-                if (!$user->isAdminOrHigher($company->id)) {
-                    return redirect()->route('main.posts.index', $company);
-                }
-            }
-
-            $companyIds = $companies->pluck('id');
-
-            $usersQuery = User::query()
-                ->with('companies:id,name')
-                ->orderBy('first_name');
-
-            $postsQuery = Post::query()
-                ->with(['company:id,name', 'user:id,first_name,second_name'])
-                ->latest();
-
-            if (!$user->isSuperAdmin()) {
-                $usersQuery->whereHas('companies', fn ($query) => $query->whereIn('companies.id', $companyIds));
-                $postsQuery->whereIn('company_id', $companyIds);
-            }
-
-            $users = $usersQuery->get();
-            $posts = $postsQuery->take(10)->get();
-
-            return view('pages.main', compact('companies', 'users', 'posts'));
+                ->paginate(15);
+            return view('user.companies.index', compact('companies'));
         }
 
         $this->authorize('viewAny', Company::class);
@@ -80,11 +46,13 @@ class CompanyController extends Controller
     {
         $this->authorize('view', $company);
 
-        if ($request->routeIs('main.show')) {
+        if ($request->routeIs('main.companies.show')) {
             $company->load([
                 'users' => fn ($query) => $query->orderBy('first_name'),
                 'posts' => fn ($query) => $query->latest()->with('user:id,first_name,second_name'),
             ]);
+
+            $company->loadCount(['users', 'posts']);
 
             return view('user.companies.show', compact('company'));
         }

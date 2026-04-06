@@ -4,44 +4,44 @@
 
 @section('content')
 
-    {{--    **Правила отображения /main в зависимости от User (его ролей, участия в Companies):**--}}
-
-    {{--    - User - участник только одной Company с ролью user -> переадресация на список Posts в этой компании с правами простого User.--}}
-    {{--    - User - участник только одной Company с ролью company_user -> отображение двух боксов-ссылок на страницы Users (перечень user в этой Company) and Posts (перечень Posts в этой Company).--}}
-    {{--    - User - участник нескольких Company -> отображение трех боксов-ссылок на страницы Companies, Users и Posts (где User имеет роли company_head, user).--}}
-
     <section>
 
         <h1>User Panel</h1>
 
         <div class="admin-panel-content-box-wrapper">
 
-            <a href="{{ route('') }}"
-               class="content-items-box">
-                <div class="content-item-box-wrapper">
-                    <x-icons.user/>
-                    <h2>Users</h2>
-                    <p></p>
-                </div>
-            </a>
+            @if($showUsersCard)
+                <a href="{{ route('main.users.index', $companies->first()) }}"
+                   class="content-items-box">
+                    <div class="content-item-box-wrapper">
+                        <x-icons.user/>
+                        <h2>Users</h2>
+                        <p>Users in your company scope</p>
+                    </div>
+                </a>
+            @endif
 
-            <a href="{{ route('') }}"
-               class="content-items-box">
-                <div class="content-item-box-wrapper">
-                    <x-icons.company/>
-                    <h2>Companies</h2>
-                    <p></p>
-                </div>
-            </a>
+            @if($showCompaniesCard)
+                <a href="{{ route('main.companies.index') }}"
+                   class="content-items-box">
+                    <div class="content-item-box-wrapper">
+                        <x-icons.company/>
+                        <h2>Companies</h2>
+                        <p>Companies where you are a member</p>
+                    </div>
+                </a>
+            @endif
 
-            <a href="{{ route('') }}"
-               class="content-items-box">
-                <div class="content-item-box-wrapper">
-                    <x-icons.post/>
-                    <h2>Posts</h2>
-                    <p></p>
-                </div>
-            </a>
+            @if($showPostsCard)
+                <a href="{{ route('main.posts.index', $companies->first()) }}"
+                   class="content-items-box">
+                    <div class="content-item-box-wrapper">
+                        <x-icons.post/>
+                        <h2>Posts</h2>
+                        <p>Posts in your company scope</p>
+                    </div>
+                </a>
+            @endif
 
         </div>
 

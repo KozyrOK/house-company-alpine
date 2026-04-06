@@ -1,6 +1,6 @@
 @extends('_layouts.app')
 
-@section('title','Admin - Posts')
+@section('title','Main - Posts')
 
 @section('content')
 
@@ -11,14 +11,12 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to Admin Panel" href="{{ route('') }}" class="button-list"/>
+                <x-link text="← Back to Main Panel" href="{{ route('main.index') }}" class="button-list"/>
             </div>
 
             <div></div>
 
-            <div class="button-wrapper action-row-end">
-                <x-link text="Create Post" href="{{ route('') }}" class="button-edit"/>
-            </div>
+            <div></div>
 
         </div>
 
@@ -43,7 +41,7 @@
                     <td class="value-content-item">{{ $p->company?->name ?? '-' }}</td>
                     <td class="value-content-item">{{ trim(($p->user?->first_name ?? '').' '.($p->user?->second_name ?? '')) ?: '-' }}</td>
                     <td class="value-content-item">{{ $p->status }}</td>
-                    <td class="value-content-item"><x-link text="Detail" class="button-list" href="{{ route('', $p) }}"/></td>
+                    <td class="value-content-item"><x-link text="Detail" class="button-list" href="{{ route('main.posts.show', [$company, $p]) }}"/></td>
                 </tr>
             @empty
                 <tr><td colspan="6" class="value-content-item">No posts found.</td></tr>

@@ -9,7 +9,7 @@
         @php($user = $user ?? auth()->user())
         @php($isEditMode = request()->boolean('edit'))
 
-        <div class="dashboard-grid">
+        <div class="top-crud-wrapper">
 
             @include('user.users.show', ['user' => $user])
 

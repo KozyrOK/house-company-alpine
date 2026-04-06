@@ -13,7 +13,7 @@
             <div class="top-crud-wrapper">
 
                 <div class="button-wrapper">
-                    <x-link text="← Back to list" href="#" class="button-list"/>
+                    <x-link text="← Back to list" href="{{ isset($company) ? route('main.users.index', $company) : route('dashboard') }}" class="button-list"/>
                 </div>
 
                 <div>
@@ -21,7 +21,9 @@
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="Admin Menu" href="#" class="button-list"/>
+                    <x-link text="{{ isset($company) ? 'Main Menu' : 'Dashboard' }}"
+                            href="{{ isset($company) ? route('main.index') : route('dashboard') }}"
+                            class="button-list"/>
                 </div>
 
             </div>
@@ -36,11 +38,8 @@
 
             <div class="bottom-crud-wrapper">
 
-                <div class="button-wrapper">
-                    @can('update', $user)
-                        <x-link text="Edit User" href="#" class="button-edit"/>
-                    @endcan
-                </div>
+                <div></div>
+                <div></div>
 
                 <div class="button-wrapper">
                     @can('delete', $user)

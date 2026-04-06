@@ -38,12 +38,14 @@ Route::get('/', function () {
         return redirect()->route('info');
     }
 
-    if (auth()->user()->isSuperAdmin() || auth()->user()->isAdminInAnyCompany()) {
+    if (auth()->user()->canAccessAdminPanel()) {
         return redirect()->route('admin.index');
     }
-    else {
+    if (auth()->user()->canAccessMainPanel()) {
+
         return redirect()->route('main.index');
     }
+    abort(403);
 });
 
 // PUBLIC PAGE
@@ -56,30 +58,53 @@ Route::middleware('auth')->group(function () {
 
     // MAIN
 
-    Route::get('/main', [CompanyController::class, 'index'])
+    Route::middleware('main.access')->group(function () {
+        Route::get('/main', [MainController::class, 'index'])
         ->name('main.index');
+
+        Route::get('/main/companies', [CompanyController::class, 'index'])
+            ->name('main.companies.index');
+
+        Route::get('/main/companies/{company}', [CompanyController::class, 'show'])
+            ->name('main.companies.show');
+
+        Route::get('/main/companies/{company}/posts', [PostController::class, 'index'])
+            ->name('main.posts.index');
+
+        Route::get('/main/companies/{company}/posts/{post}', [PostController::class, 'show'])
+            ->name('main.posts.show');
+
+        Route::get('/main/companies/{company}/users', [UserController::class, 'index'])
+            ->name('main.users.index');
+
+        Route::get('/main/companies/{company}/users/{user}', [UserController::class, 'show'])
+            ->name('main.users.show');
+    });
 
     // COMPANIES
 
     Route::get('/companies', [CompanyController::class, 'index'])
+        ->middleware('admin.access')
         ->name('companies.index');
 
     Route::get('/companies/{company}', [CompanyController::class, 'show'])
+        ->middleware('admin.access')
         ->name('companies.show');
 
     // POSTS
 
     Route::get('/companies/{company}/posts', [PostController::class, 'index'])
+        ->middleware('admin.access')
         ->name('companies.posts.index');
 
     Route::get('/posts/{post}', [PostController::class, 'show'])
         ->name('posts.show');
 
-//    Route::get('/main/companies/{company}/posts', [PostController::class, 'index'])
-//        ->name('main.posts.index');
-//
-//    Route::get('/main/companies/{company}/posts/{post}', [PostController::class, 'show'])
-//        ->name('main.posts.show');
+    Route::get('/main/companies/{company}/posts', [PostController::class, 'index'])
+        ->name('main.posts.index');
+
+    Route::get('/main/companies/{company}/posts/{post}', [PostController::class, 'show'])
+        ->name('main.posts.show');
 
     // USERS
 
@@ -89,11 +114,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/{user}', [UserController::class, 'show'])
         ->name('users.show');
 
-//    Route::get('/main/companies/{company}/users', [UserController::class, 'index'])
-//        ->name('main.users.index');
-//
-//    Route::get('/main/companies/{company}/users/{user}', [UserController::class, 'show'])
-//        ->name('main.users.show');
+    Route::get('/main/companies/{company}/users', [UserController::class, 'index'])
+        ->name('main.users.index');
+
+    Route::get('/main/companies/{company}/users/{user}', [UserController::class, 'show'])
+        ->name('main.users.show');
 
 
     // PROFILE
@@ -127,6 +152,7 @@ Route::middleware('auth')->group(function () {
             ->name('companies.create');
 
         Route::post('/companies', [AdminCompanyController::class, 'store'])
+            ->middleware('superadmin.only')
             ->name('companies.store');
 
         Route::get('/companies/{company}', [AdminCompanyController::class, 'show'])
@@ -139,6 +165,7 @@ Route::middleware('auth')->group(function () {
             ->name('companies.update');
 
         Route::delete('/companies/{company}', [AdminCompanyController::class, 'destroy'])
+            ->middleware('superadmin.only')
             ->name('companies.destroy');
 
         Route::get('/companies/{company}/logo', [AdminCompanyController::class, 'logo'])

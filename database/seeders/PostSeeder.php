@@ -10,26 +10,30 @@ class PostSeeder extends Seeder
 {
     public function run(): void
     {
-        User::with('companies')->each(function (User $user) {
-
+        User::with('companies')->get()->each(function (User $user) {
             if ($user->isSuperAdmin()) {
                 return;
             }
 
             $company = $user->companies->first();
+
             if (!$company) {
                 return;
             }
 
-            Post::factory()
-                ->count(2)
-                ->create([
+            Post::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                ],
+                [
                     'company_id' => $company->id,
-                    'user_id'    => $user->id,
-                    'status'     => 'publish',
+                    'title' => 'Test post by ' . $user->first_name . ' ' . $user->second_name,
+                    'content' => 'This is a seeded test post for ' . $user->email,
+                    'status' => 'publish',
                     'created_by' => $user->id,
                     'updated_by' => $user->id,
-                ]);
+                ]
+            );
         });
     }
 }

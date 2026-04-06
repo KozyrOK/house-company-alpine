@@ -88,7 +88,9 @@ class PostController extends Controller
 
     public function create(): View
     {
-        $this->authorize('create', Post::class);
+        if (!request()->user()->canAccessAdminPanel()) {
+            abort(403);
+        }
 
         $user = request()->user();
         $companies = Company::query()
@@ -103,7 +105,6 @@ class PostController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $this->authorize('create', Post::class);
 
         $validated = $request->validate([
             'company_id' => 'required|integer|exists:companies,id',
@@ -112,12 +113,15 @@ class PostController extends Controller
             'status' => 'sometimes|in:draft,future,pending,publish,trash',
         ]);
 
-        if (!$request->user()->isAdminOrHigher((int) $validated['company_id'])) {
+        $company = Company::query()->findOrFail((int) $validated['company_id']);
+        $this->authorize('create', [Post::class, $company]);
+
+        if (!$request->user()->isAdminOrHigher($company->id)) {
             abort(403);
         }
 
         Post::create([
-            'company_id' => (int) $validated['company_id'],
+            'company_id' => $company->id,
             'user_id' => $request->user()->id,
             'title' => $validated['title'],
             'content' => $validated['content'],

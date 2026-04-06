@@ -11,14 +11,12 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to Admin Panel" href="#" class="button-list"/>
+                <x-link text="← Back to Main Panel" href="{{ route('main.index') }}" class="button-list"/>
             </div>
 
             <div></div>
 
-            <div class="button-wrapper">
-                <x-link text="Create new user" href="#" class="button-edit"/>
-            </div>
+            <div></div>
 
         </div>
 
@@ -42,7 +40,7 @@
                     <td class="value-content-item">{{ $u->email }}</td>
                     <td class="value-content-item">{{ $u->status_account ?? '-' }}</td>
                     <td class="value-content-item">
-                        <x-link text="Detail" class="button-list" href="{{ route('', $u) }}"/>
+                        <x-link text="Detail" class="button-list" href="{{ route('main.users.show', [$company, $u]) }}"/>
                     </td>
                 </tr>
             @empty

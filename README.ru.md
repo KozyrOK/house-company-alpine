@@ -94,14 +94,14 @@
 ```bash
 git clone https://github.com/KozyrOK/house-company-alpine.git
 ```
-***Переходим в директорию проекта***
+**Переходим в директорию проекта**
 ```bash
 cd house-company-alpine
 ```
 
 ### 2. Настройка окружения
 
-***Создайте файл окружения на основе примера (при необходимости отредактируйте .env (порты, доступ к БД и т.д.)):***
+**Создайте файл окружения на основе примера (при необходимости отредактируйте .env (порты, доступ к БД и т.д.)):**
 ```bash
 cp .env.example .env
 ```
@@ -111,43 +111,47 @@ cp .env.example .env
 ```bash
 docker compose up -d --build
 ```
-***После выполнения команда запустит все сервисы проекта в фоновом режиме.***
+**После выполнения команда запустит все сервисы проекта в фоновом режиме.**
 
 ### 4. Установка зависимостей
 
 ```bash
-docker compose exec app composer install
-docker compose exec app npm install
+docker compose exec laravel.test composer install
+docker compose exec laravel.test npm install
 ```
 
 ### 5. Инициализация приложения
 
-***Сгенерировать ключ приложения:***
+**Сгенерировать ключ приложения:**
 ```bash
-docker compose exec app php artisan key:generate
+docker compose exec laravel.test php artisan key:generate
 ```
 
-***Применить миграции базы данных:***
+**Применить миграции базы данных:**
 ```bash
-docker compose exec app php artisan migrate
+docker compose exec laravel.test php artisan migrate
 ```
 
-### 6. (Опционально) Заполнение базы тестовыми данными
+### 6. Дополнительное заполнение базы данных
 
-***Если требуется тестовый набор данных:***
+**Заполните базу данных минимальным начальным набором данных (безопасным для производственной среды):**
 ```bash
-docker compose exec app php artisan db:seed
+docker compose exec laravel.test php artisan db:seed
+```
+**Заполните базу данных расширенными тестовыми данными для локальной разработки:**
+```bash
+docker compose exec laravel.test php artisan db:seed --class=DatabaseSeederTest
 ```
 
 ### 7. Запуск frontend
 
-***Для режима разработки (Vite dev server):***
+**Для режима разработки (Vite dev server):**
 ```bash
-docker compose exec app npm run dev
+docker compose exec laravel.test npm run dev
 ```
-***Для production-сборки:***
+**Для production-сборки:**
 ```bash
-docker compose exec app npm run build
+docker compose exec laravel.test npm run build
 ```
 
 ### 📌 Результат
@@ -156,21 +160,21 @@ docker compose exec app npm run build
 
 ## Полезные команды
 
-***Остановка контейнеров:***
+**Остановка контейнеров:**
 ```bash
 docker compose down
 ```
-***Удаление контейнеров вместе с volumes:***
+**Удаление контейнеров вместе с volumes:**
 ```bash
 docker compose down -v
 ```
-***Просмотр логов:***
+**Просмотр логов:**
 ```bash 
 docker compose logs -f
 ```
-***Вход в контейнер приложения:***
+**Вход в контейнер приложения:**
 ```bash
-docker compose exec app sh
+docker compose exec laravel.test sh
 ```
 
 ### ⚙️ Примечания:

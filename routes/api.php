@@ -80,6 +80,7 @@ Route::prefix('admin')->middleware(['web', 'auth:sanctum', 'admin.access'])->gro
         ->middleware('api.can:viewAny,' . Company::class);
 
     Route::post('/companies', [AdminCompanyController::class, 'store'])
+        ->middleware('superadmin.only')
         ->middleware('api.can:create,' . Company::class);
 
     Route::get('/companies/{company}', [AdminCompanyController::class, 'show'])
@@ -89,6 +90,7 @@ Route::prefix('admin')->middleware(['web', 'auth:sanctum', 'admin.access'])->gro
         ->middleware('api.can:update,company');
 
     Route::delete('/companies/{company}', [AdminCompanyController::class, 'destroy'])
+        ->middleware('superadmin.only')
         ->middleware('api.can:delete,company');
 
     Route::post('/companies/{company}/logo', [AdminCompanyController::class, 'uploadLogo'])

@@ -12,33 +12,31 @@ class SuperAdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $email = config('app.superadmin_email');
-        $password = config('app.superadmin_password');
+        $email = config('app.superadmin_email', 'superadmin@housing.local');
+        $password = config('app.superadmin_password', 'password');
 
-        $superAdmin = User::firstOrCreate(
-        ['email' => $email],
+        $superAdmin = User::updateOrCreate(
+            ['email' => $email],
             [
                 'first_name' => 'Super',
                 'second_name' => 'Admin',
-                'email' => $email,
                 'password' => Hash::make($password),
                 'status_account' => 'active',
                 'remember_token' => Str::random(10),
             ]
         );
 
-        $company = Company::firstOrCreate(
+        $systemCompany = Company::updateOrCreate(
             ['name' => 'Housing Platform Core'],
             [
-                'address' => 'HQ address',
-                'city' => 'Paris',
-                'description' => 'Technical company for global superadmin role assignment.',
+                'address' => 'System address',
+                'city' => 'System city',
+                'description' => 'Technical company stub for superadmin role.',
             ]
         );
 
         $superAdmin->companies()->syncWithoutDetaching([
-            $company->id => ['role' => 'superadmin'],
+            $systemCompany->id => ['role' => 'superadmin'],
         ]);
-
     }
 }

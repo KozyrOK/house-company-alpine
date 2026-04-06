@@ -11,7 +11,7 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to detail" href="{{ route('', $user) }}" class="button-list"/>
+                <x-link text="← Back to detail" href="{{ route('dashboard') }}" class="button-list"/>
             </div>
 
             <div>
@@ -24,7 +24,7 @@
 
         </div>
 
-        <form method="POST" action="{{ route('', $user) }}">
+        <form method="POST" action="{{ route('dashboard.update') }}">
             @csrf
             @method('PATCH')
 
@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="Cancel" href="{{ route('', $user) }}" class="button-delete"/>
+                    <x-link text="Cancel" href="{{ route('dashboard') }}" class="button-delete"/>
                 </div>
 
             </div>

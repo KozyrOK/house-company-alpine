@@ -9,18 +9,18 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to list" href="{{ route('') }}" class="button-list"/>
+                <x-link text="← Back to list" href="{{ route('main.index') }}" class="button-list"/>
             </div>
 
             <div></div>
 
             <div class="button-wrapper">
-                <x-link text="Admin Menu" href="{{ route('') }}" class="button-list"/>
+                <x-link text="Admin Menu" href="{{ route('main.index') }}" class="button-list"/>
             </div>
 
         </div>
 
-        <form action="{{ route('') }}" method="POST">
+        <form action="{{ route('admin.posts.store') }}" method="POST">
             @csrf
             <table>
                 <tr>

@@ -47,8 +47,7 @@ class User extends Authenticatable
 
     public function companies(): BelongsToMany
     {
-        return $this->belongsToMany(Company::class, 'company_user')
-            ->using(CompanyUser::class)
+        return $this->belongsToMany(Company::class)
             ->withPivot('role')
             ->withTimestamps();
     }
@@ -65,6 +64,10 @@ class User extends Authenticatable
     {
         $roles = (array) $roles;
 
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
         return $this->companies()
             ->where('company_id', $companyId)
             ->wherePivotIn('role', $roles)
@@ -73,6 +76,10 @@ class User extends Authenticatable
 
     public function belongsToCompany(int $companyId): bool
     {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
         return $this->companies()
             ->where('company_id', $companyId)
             ->exists();
@@ -87,14 +94,63 @@ class User extends Authenticatable
 
     public function isAdminOrHigher(int $companyId): bool
     {
-        return $this->hasRole(['admin', 'superadmin'], $companyId);
+        return $this->hasRole('admin', $companyId);
+    }
+
+    public function isCompanyHeadOrHigher(int $companyId): bool
+    {
+        return $this->hasRole(['admin', 'company_head'], $companyId);
+    }
+
+    public function isUserInCompany(int $companyId): bool
+    {
+        return $this->hasRole(['user'], $companyId);
     }
 
     public function isAdminInAnyCompany(): bool
     {
         return $this->companies()
-            ->wherePivot('role', 'admin')
             ->wherePivotIn('role', ['admin', 'superadmin'])
+            ->exists();
+    }
+
+    public function adminCompanyIds(): array
+    {
+        if ($this->isSuperAdmin()) {
+            return Company::pluck('id')->all();
+        }
+
+        return $this->companies()
+            ->wherePivot('role', 'admin')
+            ->pluck('companies.id')
+            ->all();
+    }
+
+    public function companyHeadCompanyIds(): array
+    {
+        if ($this->isSuperAdmin()) {
+            return Company::pluck('id')->all();
+        }
+
+        return $this->companies()
+            ->wherePivotIn('role', ['admin', 'company_head'])
+            ->pluck('companies.id')
+            ->all();
+    }
+
+    public function canAccessAdminPanel(): bool
+    {
+        return $this->isSuperAdmin() || $this->isAdminInAnyCompany();
+    }
+
+    public function canAccessMainPanel(): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return false;
+        }
+
+        return $this->companies()
+            ->wherePivotIn('role', ['user', 'company_head', 'admin'])
             ->exists();
     }
 
@@ -103,24 +159,6 @@ class User extends Authenticatable
         return $this->companies()
             ->where('company_id', $company->id)
             ->first()?->pivot->role;
-    }
-
-    public function companyIds(): Collection
-    {
-        return $this->companies()->pluck('companies.id');
-    }
-
-    public function adminCompanyIds(): Collection
-    {
-        return $this->companies()
-            ->wherePivotIn('role', ['admin', 'superadmin'])
-            ->pluck('companies.id');
-    }
-
-    public function companiesWithRole(array $roles): BelongsToMany
-    {
-        return $this->companies()
-            ->wherePivotIn('role', $roles);
     }
 
 }

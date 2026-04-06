@@ -17,12 +17,12 @@
             </div>
 
             <div class="button-wrapper">
-                <x-link text="Admin Menu" href="{{ route('') }}" class="button-list"/>
+                <x-link text="Main Menu" href="{{ route('main.index') }}" class="button-list"/>
             </div>
 
         </div>
 
-        <form action="{{ route('') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <table>
                 <tr><th class="key-content-item">Company</th><td class="value-content-item" colspan="2"><select name="company_id" class="input-field" required>@foreach($companies as $company)<option value="{{ $company->id }}" @selected(old('company_id') == $company->id)>{{ $company->name }}</option>@endforeach</select></td></tr>

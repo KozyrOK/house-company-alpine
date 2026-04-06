@@ -13,15 +13,15 @@
             <div class="top-crud-wrapper">
 
                 <div class="button-wrapper">
-                    <x-link text="← Back to list" href="{{ route('') }}" class="button-list"/>
+                    <x-link text="← Back to list" href="{{ route('main.companies.index') }}" class="button-list"/>
                 </div>
 
                 <div>
-                    <img alt="logo" src="{{ route('', $company) }}" class="company-image">
+                    <img alt="logo" src="{{ $company->logo_url }}" class="company-image">
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="User Menu" href="{{ route('') }}" class="button-list"/>
+                    <x-link text="Main Menu" href="{{ route('main.index') }}" class="button-list"/>
                 </div>
 
             </div>
@@ -40,7 +40,7 @@
 
                 <div class="button-wrapper">
                     @can('update', $company)
-                        <x-link text="Edit Company" href="{{ route('', $company) }}" class="button-edit"/>
+                        <x-link text="Company Users" href="{{ route('main.users.index', $company) }}" class="button-edit"/>
                     @endcan
                 </div>
 

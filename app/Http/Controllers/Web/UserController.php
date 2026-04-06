@@ -15,6 +15,20 @@ class UserController extends Controller
 {
     public function index(Request $request): View
     {
+        if ($request->routeIs('main.users.index')) {
+            $company = $request->route('company');
+
+            $this->authorize('view', $company);
+
+            $users = $company->users()
+                ->wherePivotIn('role', ['user', 'company_head'])
+                ->with('companies:id,name')
+                ->latest('users.id')
+                ->paginate(15);
+
+            return view('user.users.index', compact('users', 'company'));
+        }
+
         $this->authorize('viewAny', User::class);
 
         $query = User::query()->with('companies:id,name')->latest('id');
@@ -41,6 +55,25 @@ class UserController extends Controller
 
     public function show(User $user): View
     {
+        if (request()->routeIs('main.users.show')) {
+            $company = request()->route('company');
+
+            $this->authorize('view', $company);
+
+            if (!$user->belongsToCompany($company->id)) {
+                abort(404);
+            }
+
+            $role = $user->roleInCompany($company);
+            if (!in_array($role, ['user', 'company_head'], true)) {
+                abort(403);
+            }
+
+            $user->load('companies:id,name');
+
+            return view('user.users.show', compact('user', 'company'));
+        }
+
         $this->authorize('view', $user);
 
         if (!request()->user()->isSuperAdmin()) {

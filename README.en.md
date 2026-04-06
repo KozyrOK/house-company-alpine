@@ -117,38 +117,42 @@ docker compose up -d --build
 
 ### 4. Install dependencies
 ```bash
-docker compose exec app composer install
-docker compose exec app npm install
+docker compose exec laravel.test composer install
+docker compose exec laravel.test npm install
 ```
 
 ### 5. Application initialization
 
 **Generate application key:**
 ```bash
-docker compose exec app php artisan key:generate
+docker compose exec laravel.test php artisan key:generate
 ```
 **Run database migrations:**
 ```bash
-docker compose exec app php artisan migrate
+docker compose exec laravel.test php artisan migrate
 ```
 
-### 6. (Optional) Seed the database with test data
+### 6. Optional database seeding
 
-**Use this step if test data is required:**
+**Seed the database with the minimal initial data set (production-safe):**
 ```bash
-docker compose exec app php artisan db:seed
+docker compose exec laravel.test php artisan db:seed
+```
+**Seed the database with extended test data for local development:**
+```bash
+docker compose exec laravel.test php artisan db:seed --class=DatabaseSeederTest
 ```
 
 ### 7. Frontend setup
 
 **For development mode (Vite dev server):**
 ```bash
-docker compose exec app npm run dev
+docker compose exec laravel.test npm run dev
 ```
 
 **For production build:**
 ```bash
-docker compose exec app npm run build
+docker compose exec laravel.test npm run build
 ```
 
 ### 📌 Result
@@ -171,7 +175,7 @@ docker compose logs -f
 ```
 **Access the application container:**
 ```bash
-docker compose exec app sh
+docker compose exec laravel.test sh
 ```
 
 ### ⚙️ Notes:

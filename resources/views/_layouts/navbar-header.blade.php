@@ -2,7 +2,7 @@
     <ul>
         @auth
 
-            @if(auth()->user()->isAdminInAnyCompany())
+            @if(auth()->user()->canAccessAdminPanel())
                 <li>
                     <a href="{{ route('admin.index') }}"
                        class="{{ request()->routeIs('admin.*') ? 'active' : '' }}">
@@ -11,14 +11,14 @@
                 </li>
             @endif
 
-{{--            @if(auth()->user()->hasMainAccess())--}}
+            @if(auth()->user()->canAccessMainPanel())
                 <li>
                     <a href="{{ route('main.index') }}"
                        class="{{ request()->routeIs('main.*') ? 'active' : '' }}">
                         {{ __('app.layouts.main') }}
                     </a>
                 </li>
-{{--            @endif--}}
+            @endif
 
             <li>
                 <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">

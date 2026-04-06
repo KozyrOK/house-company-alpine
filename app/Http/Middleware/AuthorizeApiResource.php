@@ -41,6 +41,14 @@ class AuthorizeApiResource
             return $next($request);
         }
 
+        if (in_array($ability, ['create'], true) && isset($routeParams['company'])) {
+            if (!$user->can($ability, [$model, $routeParams['company']])) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+
+            return $next($request);
+        }
+
         if (!$user->can($ability, $model)) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }

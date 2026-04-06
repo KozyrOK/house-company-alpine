@@ -11,18 +11,18 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to detail" href="{{ route('', $post) }}" class="button-list"/>
+                <x-link text="← Back to detail" href="{{ route('admin.posts.show', $post) }}" class="button-list"/>
             </div>
 
             <div></div>
 
             <div class="button-wrapper">
-                <x-link text="Admin Menu" href="{{ route('') }}" class="button-list"/>
+                <x-link text="Main Menu" href="{{ route('main.index') }}" class="button-list"/>
             </div>
 
         </div>
 
-        <form method="POST" action="{{ route('', $post) }}">
+        <form method="POST" action="{{ route('admin.posts.update', $post) }}">
             @csrf
             @method('PATCH')
 
@@ -58,7 +58,7 @@
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="Cancel" href="{{ route('', $post) }}" class="button-delete"/>
+                    <x-link text="Cancel" href="{{ route('admin.posts.show', $post) }}" class="button-delete"/>
                 </div>
 
             </div>

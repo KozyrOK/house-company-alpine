@@ -1,76 +1,85 @@
-﻿**Техническое задание для веб\-приложения** 
+﻿# Technical Specification for Web Application “Housing Company”
 
-**“Housing Company”**
+---
 
-**1\. Название проекта и краткое описание**
+## 1. Project Name and Description
 
-Проект «Housing Company» является PET-проектом и представляет собой веб\-приложение с функционалом для объединений сособственников (Users) многоквартирных домов (ОСМД), где для каждого объединения (сущность Companies) будет создана отдельная часть для размещения постов (Posts).
+The “Housing Company” project is a PET project and represents a web application designed for associations of co-owners (Users) of apartment buildings (condominiums). Each association (Company entity) has its own dedicated section for publishing posts (Posts).
+The main goal of the project is to practice the full lifecycle of web application development. The implementation should follow modern development principles (e.g., SOLID).
 
-Основная цель проекта \- научиться разрабатывать на практике все основные этапы веб\-приложения. Разработка должна соответствовать всем современным  методикам разработки (SOLID и т.д.)
+---
 
-**2\. Стек технологий**
+## 2. Technology Stack
 
-Среда \- Laravel Sail, Ubuntu 23.4
+### Environment: \- Laravel Sail, Ubuntu 23.4
+### Backend: \- Laravel 13
+### Frontend: \- Blade, Alpane.js, Vite.
+### Database: \- MySql
+### VCS: \- GitHub
+### IDE: \- PHPStorm
+### Other: Laravel 13 AI SDK, Laravel Breeze, Sanctum.
 
-Бекэнд \- Laravel 13
+The application must be developed and run in containers.
+The developer’s local environment (PHP, Node.js, Composer, MySQL, OS) must not be required to run the project.
+It is allowed to use Laravel Sail as a base container solution or a custom Docker configuration.
 
-Фронтенд \- Blade, Alpane.js, Vite.
+---
 
-База данных \- MySql
+## 3\. Feature List (Epics):
 
-VCS \- GitHub
+\- The application must have a public page (`/info`) доступная для both unauthorized and authorized users, with a header link.
 
-IDE \- PHPStorm
+\- Admin panel for **superadmin**: editing informational pages, managing languages, working with resources (CRUD-style admin interface).
 
-Другое: Laravel 13 AI SDK, авторизация, токены \- Laravel Breeze, Sanctum.
+\- Main page must include: authentication, password reset, registration (Laravel Breeze).
 
-Приложение должно разрабатываться и запускаться в контейнерах.
-Локальное окружение разработчика (версия PHP, Node.js, Composer, MySQL и ОС) не должно быть обязательным для запуска проекта.
-Допускается использование Laravel Sail как базового контейнерного решения либо собственного Docker-конфига проекта.
+\- Any delete action must include confirmation. All deletions are soft deletes.
 
-**3\. Список фич (epics) — крупные блоки функциональности:**
+\- Server-side filtering with UI panel: filtering entities, search by entity name.
 
-\- при входе в приложение для unauthorized and authorized users (в хедере  должна быть ссылка на страницу с информацией об этом приложении (что реализовано) \- /info;
+\- Social authentication (Google, X, Facebook) via Laravel Socialite.
 
-\- внедрение админки (редактирование страниц с текстовой информацией, подключение новых языков, работа в админке как в приложении с явными ресурсами) для superadmin (главная роль среди пользователей);
+\- Multi-language support: English, Russian, Ukrainian.
 
-\- главная страница должна быть с авторизацией, системой восстановления пароля и регистрацией (Laravel Breeze).
+\- AI-powered chat (Laravel 13 AI SDK).
 
-\- удаление любой сущности должно сопровождаться окном подтверждения действия (удаление любой сущности являеться мягким, т.е. не окончательным).
+\- Dark mode: auto-detection for guests, toggle in header, persisted per user.
 
-\- серверный фильтр (server-side filtering) с UI-панелью при отобращении отдельных сущностей приложения для их фильтрации, поиск по имени сущности.
+\- Approval workflow for Posts: posts created by `user` role must have `pending` status, approval required by `company_head`, `admin`, or `superadmin`.
 
-Опционально: авторизация через  соц. сети (Google, X, Facebook) через Laravel **Socialite**;
+---
 
-\- веб\-приложение должно поддерживать несколько языков (английский, русский, украинский);
+## 4\. Entities (Models / CRUD Resources)
 
-\- создание чата с AI (Laravel 13 AI SDK);
+### 1\. User
 
-\- создание темной темы (распознавание темы для неавторизованных пользователей для отображения по умолчанию), тумблер в хедере для включения темы (запоминание для каждого пользователя положения тумблера);
+A User can belong to one or multiple Companies and can have different roles in each:
+- admin
+- company_head
+- user
 
-\- должен быть функционал одобрения для публикации Post со стороны company\_head, admin и superadmin. Любой новый пост от роли user имеет статус \- 'pending', до его одобрения вышестоящими ролями.
+A User with role `superadmin` belongs to all Companies.
 
-**4\. Сущности (модели, реализация как ресурсы через CRUD)**
+### 2\. Company
 
-На начальном этапе вижу три сущности в приложении и одна пивот таблица:
+Within a Company, Users can create Posts.
 
-1\. **User**
+### 3\. Post
 
-Предполагается, что User (сущность, пользователь приложения) может относиться к одной или нескольким company, где он может иметь разные роли ('admin', 'company\_head', 'user').  User с ролью superadmin относиться ко всем company.
+A Post is an informational message within a Company (text + optional image).
 
-**2\. Company**
+### 4\. company\_user (pivot table)
 
-**В рамках company, user к которой он относиться, может публиковать посты (сущность post).**
+User:
+- can belong to multiple Companies,
+- can have different roles per Company,
+- except `superadmin` (global role).
 
-**3\. Post**
+---
 
-	**Информационное сообщение в рамках company (текст, картинка)** 
+**Database Schema:**
 
-**4\. company\_user \-** пивот таблица для отображения отношений между User и Company. User может относиться к многим **Company и иметь в каждой Company разные роли, кроме** superadmin. 
-
-**Таблицы миграции для БД:**
-
-	**\- user (таблица в БД “users”), поля:** 
+**\- users table:** 
 
 * “id”;   
 * 'first\_name';   
@@ -83,7 +92,7 @@ IDE \- PHPStorm
 * 'image\_path' (nullable);  
 * 'phone' (nullable).
 
-**\- company (таблица в БД 'companies'),поля:** 
+**\- companies table:** 
 
 * ‘id’;    
 * 'name';  
@@ -91,7 +100,7 @@ IDE \- PHPStorm
 *  'city';   
 * 'description' (nullable).
 
-**\- post (таблица в БД 'posts'), поля:** 
+**\- posts table:** 
 
 * 'id';   
 * 'company\_id' (foreignId 'companies', constrained('companies'));     
@@ -104,295 +113,204 @@ IDE \- PHPStorm
 * foreignId('updated\_by')-\>constrained('users');   
 * foreignId('deleted\_by')-\>constrained('users').
 
-**\- company\_user (таблица в БД** '**company\_user**'**), поля:** 
+**\- company_user table:** 
 
 * 'user\_id' (constrained()-\>onDelete('cascade');   
 * foreignId ('company\_id')-\>constrained()-\>onDelete('cascade');   
 * enum('role', \['superadmin', 'admin', 'company\_head', 'user'\]);   
 * unique(\['user\_id', 'company\_id'\]).
 
-**5\. Список ролей (и примеры поведения)**
+---
 
- Таблица ролей пользователей (user) с указанием прав доступа к API:
+## 5\. Roles and Access Control
 
-(таблица routes не исчерпывающая. Необходим дополнительный функционал (роуты) для обеспечения одобрения действий над ресурсами со стороны вышестоящих ролей user)
+**Role hierarchy (highest to lowest):** 
+* superadmin (single user in system) 
+* admin
+* company\_head 
+* user
 
-Иерархия ролей (от с самыми большими правами до самых маленьких прав): superadmin (один user на все приложение), admin, company\_head, user.
-Каждый user может иметь отношение к одной или многим компаниям. В каждой компании user может иметь разные роли (кроми роли superadmin).
+A User can belong to one or multiple Companies and have different roles per Company.
 
-\- GET /api/users index()  
-superadmin: Yes
-admin: Yes, but in own company only 
-company\_head: Yes, but in own company only. (users with user, and company_head role)
-user: Yes, but in own company only. (users with user, and company_head role)
+---
 
-\- POST /api/users store()
-superadmin: Yes
-admin: Yes, but in own company only 
-company\_head: Yes, but in own company only,need approval by higher role
-user: yes by own self,during registration,need approval by company admin  
+## Resource tables with user roles and access rights:
 
-\- GET /api/users/{user} show()
-superadmin: Yes
-admin: Yes, but in own company only 
-company\_head: Yes, but in own company only(users with user, and company_head role) 
-user: Yes, but in own company only(users with user, and company_head role) 
+### Resource: User
 
-\- PUT /api/users/{user} update()
-superadmin: Yes
-admin: Yes, but in own company only(users with user, and company_head role) 
-company\_head: Yes, but in own company only need approval by higher role users 
-user: yes, but only own user info, need approval by higher role users
-  
+| Action | superadmin | admin | company_head | user|
+|---|---|---|---|-----------------------------------------------------|
+| index | allow | allow: own company | allow: own company | allow: own company|
+| show | allow | allow: own company | allow: own company  | allow: own company|
+| store | allow | allow: own company | allow: own company, requires approval by higher role| allow, own profile only, requires approval by admin |
+| update | allow | allow: own company | allow: own company, requires approval by higher role | allow, own profile only, requires approval by admin |
+| delete | allow | allow: own company | allow: own company, requires approval by higher role | allow, own profile only, requires approval by admin |
 
-\- PATCH /api/users/{user} update()
-superadmin: Yes
-admin: Yes, but in own company only (users with user, and company_head role)
-company\_head: Yes, but in own company only,need approval by higher role users
-user: yes, only own user info, need approval by higher role users  
+### Resource: Company
 
+| Action | superadmin | admin | company_head | user|
+|--------|---|-------|--------------|-----|
+| index  | allow | allow: own company | allow: own company | allow: own company |
+| store  | allow | deny  | deny | deny |
+| show | allow | allow: own company | allow: own company | allow: own company |
+| update | allow | allow: own company | deny | deny |
+| delete | allow | deny  | deny | deny |
 
-\- DELETE /api/users/{user} destroy()
-superadmin: Yes
-admin: Yes, but in own company only 
-company\_head: No
-user: No
-  
+### Resource: Post
 
-\- GET /api/companies index
-superadmin: Yes
-admin: Yes, but in own company only
-company\_head: No
-user: No
+| Action | superadmin | admin | company_head  | user |
+|--------|---|--------------------|------------------------------------------------------|--------------------|
+| index | allow | allow: own company | allow: own company                                   | allow: own company |
+| store | allow | allow: own company | allow: own post on own company                       | allow: own post on own company, requires approval by higher role |
+| show | allow | allow: own company | allow: own company                                   | allow: own company |
+| update | allow | allow: own company | allow: own company, requires approval by higher role | allow: own post on own company, requires approval by higher role |
+| delete | allow | allow: own company | allow: own company, requires approval by higher role | allow: own post on own company, requires approval by higher role |
  
+---
 
-\- POST /api/companies store()
-superadmin: Yes
-admin: No
-company\_head: No
-user: No
- 
+## 6\. Frontend
 
-\- GET /api/companies/{company} show()
-superadmin: Yes
-admin: Yes, but in own company only
-company\_head: Yes, but in own company only
-user: Yes, but in own company only
- 
+Frontend is built using Alpine.js with a classic layout:
+- header
+- footer
 
-\- PUT /api/companies/{company} update()
-superadmin: Yes
-admin: Yes, but in own company only, need approval by higher role users 
-company\_head: No
-user: No
- 
+Header includes:
+- full-width image (pattern background),
+- navigation menu below,
+- top-right controls:
+    - login/logout
+    - locale switcher
+    - dark mode toggle
 
-\- PATCH /api/companies/{company} update()
-superadmin: Yes
-admin: Yes, but in own company only,need approval by higher role users
-company\_head: No
-user: No
- 
+---
 
-\- DELETE /api/companies/{company} destroy()
-superadmin: Yes
-admin: No
-company\_head: No
-user: No
-  
+### Guest View
 
-\- GET /api/posts index()
-superadmin: Yes
-admin: Yes, but in own company only
-company\_head: Yes, but in own company only
-user: Yes, but in own company only
- 
+- `/info` — public project information page
 
-\- POST /api/posts store()
-superadmin: Yes
-admin: Yes, but in own company only
-company\_head: Yes, but in own company only
-user: Yes, but in own company only,need approval by higher role users
- 
+Top-right controls:
+- `/login`
+- locale switch
+- dark mode toggle
 
-\- GET /api/posts/{post} show()
-superadmin: Yes
-admin: Yes, but in own company only
-company\_head: Yes, but in own company only
-user: Yes, but in own company only
- 
+---
 
-\- PUT /api/posts/{post} update()
-superadmin: Yes
-admin: Yes, but in own company only
-company\_head: Yes, but in own company only where author post is user or company_head roles.
-user: Yes,but  own post only, need approval by higher role users
- 
+### Authenticated Users
 
-\- PATCH /api/posts/{post} update()
-superadmin: Yes
-admin: Yes, but in own company only
-company\_head: Yes, but in own company only. 
-user: Yes, but own post only,need approval by higher role users
- 
+Header navigation depends on role.
 
-\- DELETE /api/posts/{post} destroy()
-superadmin: Yes
-admin: Yes, but in own company only
-company\_head: Yes, but in own company only where author post is user or company_head roles.
-user: Yes, but own post only,need approval by higher role user
-  
+#### Superadmin
 
-**6\. Фронтенд**
+- `/admin` — full access to all Companies, Users, Posts
+- `/dashboard` — profile management
+- `/chat` — AI assistant
+- `/info` — project info
 
-Описание фронтенда ([Alpine.js](http://Alpine.js)) вместе с web маршрутами:
+#### Admin
 
-Фронтенд имеет классический вид с хедером и футером.
+- `/admin` — access limited to own companies
+- `/main` — access to related Companies, Users, Posts
+- `/chat`
+- `/info`
 
-В хедере есть картинка на всю ширину (повторяющийся паттерн \- как в ориентировочном макете, который загружен в проект)  
-Ниже картинки хедера- пункты меню хедера (нижеуказанные кнопки меню).  
-Поверх картинки хедера \- вверху справа (`/login (in/out)` , `locale,dark mode switch` )
+#### company_head / user
 
-**Стартовая страница (гость)**
+- `/main` — access to related Companies, Users, Posts
+- `/chat`
+- `/info`
 
-В хедере доступен topbar со ссылкой на стартовую страницу гостя (`/info),` информация о PET-проекте.
+---
 
-Поверх картинки хедера \- вверху справа:
+### Rules for `/main`
 
-* `/log in` – страница для авторизации  
-* `locale` – локаль (переключатель языка)   
-* `dark mode switch` – переключатель темы (без отдельного маршрута).
+- If User belongs to one Company as `user` → redirect to Company Posts
+- If User belongs to one Company as `company_head` → show Users + Posts
+- If User belongs to multiple Companies → show Companies + Users + Posts
 
-**После авторизации (для всех пользователей)**
+---
 
- В хедере доступен topbar со ссылками на страницы в зависимости от role:
+### Entity List View (Superadmin)
 
-*Superadmin* 
+Structure:
 
-/admin – Отображение трех боксов-ссылок на страницы с перечнем ВСЕХ Companies, Users and Posts соответсвенно (/admin/users, admin/companies, admin/posts)
-/dashboard – личный кабинет (профиль, настройки пользователя). Отображение данных пользователя (show). Кнопки Edit (update). 
-/chat – чат-бот.
-/forum – форум.
-/info – общая информация о PET-проекте.
+1. Title (centered)
+2. Actions row:
+    - Back
+    - Create
+3. Filter panel
+4. Search (by name)
+5. Table
 
-*Admin* (если у User есть хоть одна Company, где у него роль - admin. Если у User  )
+Tables:
 
-/admin – Отображение трех боксов-ссылок на страницы Companies (где user имеет роль admin), Users (в отношении Users в Companies, где user имеет роль admin) and Posts (в отношении Posts в Companies, где user имеет роль admin) соответсвенно (/admin/users, admin/companies, admin/posts)
-/main - отображения перечня Companies, Users and Posts к которой имеет отношение авторизованный User (имеет роли user, company_head).
-/chat – чат-бот.
-/forum – форум.
-/info – общая информация о PET-проекте.
+- Companies: #, Name, City, Actions
+- Users: #, Name, Email, Status, Actions
+- Posts: #, Title, Company, Author, Status, Date, Actions
 
-Company_head, user*
+---
 
-/main - отображения перечня Companies, Users and Posts к которой имеет отношение авторизованный User (имеет роли user, company_head).
-/chat – чат-бот.
-/forum – форум.
-/info – общая информация о PET-проекте.
+### Entity Detail View
 
-**Правила отображения /main в зависимости от User (его ролей, участия в Companies):**
+Includes:
+- Back button
+- Entity data
+- Edit/Delete actions
 
-- User - участник только одной Company с ролью user -> переадресация на список Posts в этой компании с правами простого User.
-- User - участник только одной Company с ролью company_user -> отображение двух боксов-ссылок на страницы Users (перечень user в этой Company) and Posts (перечень Posts в этой Company).
-- User - участник нескольких Company -> отображение трех боксов-ссылок на страницы Companies, Users и Posts (где User имеет роли company_head, user).
+---
 
-**Описание отображение списка любой сущности для Superadmin (отображение элементов для других ролей зависит от наличии прав доступа для функционала, которые зависит от конкретного элемента)** 
+### Filters
 
-1 ряд (ориентация по центру): Заголовок сущности
-2 ряд: (ориентация по бокам) Кнопка Back, Create New Company (User, Post)
-3 ряд: Filter (на весь ряд) - для отображения только части сущностей по определенным критериям
-4 ряд (): поиск по названию (Name)
-5 ряд (и далее): таблица с сущностями:
-Companies: ряды - заголовок и данные Company, строки - #, Name, City, Actions (кнопка Detail) 
-Users: ряды - заголовок и данные User, строки - #, Name (full name), Email, Status,	Actions (кнопка Detail).
-Posts: ряды - заголовок и данные Posts, строки - #,	Title, Company,	Author, Status,	Date, Actions (кнопка Detail).
+- Companies → filter by City
+- Users → filter by Company, Status
+- Posts → filter by Company, Status
 
-**Описание отображения любой сущности для Superadmin после нажатия кнопки Detail в списке**
+---
 
-!! У Users с другими ролями отображение элементов интерфейса зависит от прав доступа (к конкретному ресурсу и действий в отношении этого ресурса).
+## 7. Deployment Requirements
 
-Companies:
+### Core Requirements
 
-1 ряд (ориентация по центру): Заголовок сущности
-2 ряд (ориентация по бокам, лого по центру): Кнопка Back to list, Company Logo, Admin Menu (Main menu)
-3 ряд и далее (таблица): поля и значения Company (ID, Name, Address, City, Description)
-последний ряд (ориентация по бокам): Кнопка Edit Company, Кнопка Delete Company.
+- Application must run only via Docker
+- Services:
+    - PHP/Laravel
+    - Web server
+    - MySQL
+    - Node/Vite
 
-Users:
+- No dependency on local environment
 
-1 ряд (ориентация по центру): Заголовок сущности
-2 ряд (ориентация по бокам, userpic): Кнопка Back to list, Userpic, Admin Menu (Main menu)
-3 ряд и далее (таблица): поля и значения Company (ID, Name (full name), Email, Phone, Status)
-последний ряд (ориентация по бокам): Кнопка Edit User, Кнопка Delete User.
+---
 
-Posts:
+### Repository Requirements
 
-1 ряд (ориентация по центру): Заголовок сущности
-2 ряд (ориентация по бокам, userpic): Кнопка Back to list, Userpic (автора поста), Admin Menu (Main menu)
-3 ряд и далее (таблица): поля и значения Company (ID, Title, Company, Status, Content)
-последний ряд (ориентация по бокам): Кнопка Post, Кнопка Delete Post.
+- Dockerfile(s)
+- docker-compose.yml
+- .env.example
+- README.md with full setup guide
 
-**Описание Filter для каждой сущности (Filter - компонент)**
+---
 
-Filter имеет практически одинаковую реализацию, но отличаеться в зависимости от прав доступа и критериев фильтрации:
+### First Run
 
-Companies: City (выпадающий список уже существующих городов)
-Users: Company, Status (выпадающий список). 
-Posts: Company, Status (выпадающий список).
+1. Clone repository
+2. Copy `.env`
+3. Build and run containers
+4. Generate APP_KEY
+5. Run migrations
+6. Seed database (optional)
+7. Run frontend build/dev server
 
-Поверх картинки хедера \- вверху справа для всех авторизированных Users:
+---
 
-* `/log out` – страница выхода из авторизации  
-* `locale` – локаль (переключатель языка)   
-* `dark mode switch` – переключатель темы (без отдельного маршрута).
+### Environment Independence
 
-**7\. Требования к окружению и развертыванию**
+Project must NOT require:
 
-### Основные требования:
+- local PHP
+- Composer
+- Node.js / npm
+- MySQL
 
-- приложение должно запускаться исключительно через Docker-контейнеры;
-- все ключевые сервисы должны быть вынесены в контейнеры:
-    - PHP/Laravel application;
-    - web server (при необходимости отдельно);
-    - MySQL;
-    - Node/Vite (dev/build-контур);
-- запуск проекта не должен зависеть от локально установленного PHP, Composer, Node.js, npm или MySQL;
-- для старта проекта на новой машине должны быть достаточны только:
-    - Git;
-    - Docker;
-    - Docker Compose.
+All commands must be executed via Docker.
 
-### Требования к репозиторию
-
-В репозитории должны присутствовать:
-
-- Dockerfile (или набор Dockerfile для отдельных сервисов);
-- docker-compose.yml;
-- .env.example с полным перечнем необходимых переменных окружения;
-- README.md с инструкцией по полному сценарию локального развертывания;
-
-### Требования к запуску
-
-Процесс первого запуска должен включать минимальное количество действий и быть воспроизводимым на любой машине (Docker-first подход.).
-
-Минимальный сценарий развертывания должен предусматривать:
-
-1. клонирование репозитория;
-2. создание локального файла окружения на основе .env.example;
-3. сборку и запуск контейнеров;
-4. генерацию APP_KEY;
-5. выполнение миграций;
-6. при необходимости — сидирование тестовых данных;
-7. запуск frontend-сборки или dev-сервера в контейнере.
-
-### Требования к независимости от локального окружения
-
-Проект не должен требовать:
-
-- локальной установки PHP;
-- локальной установки Composer;
-- локальной установки Node.js / npm;
-- локальной установки MySQL;
-- ручной настройки системных зависимостей вне Docker.
-
-Все команды разработки и запуска должны выполняться либо через docker compose, либо через оболочку контейнера приложения.
+---

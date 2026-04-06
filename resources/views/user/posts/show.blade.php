@@ -1,6 +1,6 @@
 @extends('_layouts.app')
 
-@section('title', 'Admin - Post Detail')
+@section('title', 'Main - Post Detail')
 
 @section('content')
 
@@ -13,7 +13,7 @@
             <div class="top-crud-wrapper">
 
                 <div class="button-wrapper">
-                    <x-link text="← Back to list" href="{{ route('') }}" class="button-list"/>
+                    <x-link text="← Back to list" href="{{ route('main.posts.index', $company) }}" class="button-list"/>
                 </div>
 
                 <div>
@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="Admin Menu" href="{{ route('') }}" class="button-list"/>
+                    <x-link text="Main Menu" href="{{ route('main.index') }}" class="button-list"/>
                 </div>
 
             </div>
@@ -36,21 +36,8 @@
 
             <div class="bottom-crud-wrapper">
 
-                <div class="button-wrapper">
-                    @can('update', $post)
-                        <x-link text="Edit Post" href="{{ route('', $post) }}" class="button-edit"/>
-                    @endcan
-                </div>
-
-                <div class="button-wrapper">
-                    @can('delete', $post)
-                        <form method="POST" action="{{ route('', $post) }}">
-                            @csrf
-                            @method('DELETE')
-                            <x-button text="Delete Post" type="submit" class="button-delete"/>
-                        </form>
-                    @endcan
-                </div>
+            <div></div>
+            <div></div>
 
             </div>
 

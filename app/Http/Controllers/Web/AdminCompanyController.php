@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AdminCompanyController extends Controller
 {
@@ -83,8 +85,22 @@ class AdminCompanyController extends Controller
             ->with('success', 'Company deleted successfully.');
     }
 
-    public function logo(Company $company)
+    public function logo(Company $company): BinaryFileResponse
     {
+        $this->authorize('view', $company);
 
+        $default = public_path('images/default-image-company.jpg');
+
+        if (!$company->logo_path || !Storage::disk('public')->exists($company->logo_path)) {
+            return response()->file($default);
+        }
+
+        $path = Storage::disk('public')->path($company->logo_path);
+
+        if (!file_exists($path)) {
+            return response()->file($default);
+        }
+
+        return response()->file($path);
     }
 }

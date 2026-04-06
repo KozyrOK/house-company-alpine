@@ -58,10 +58,28 @@ class UserPolicy
             return true;
         }
 
-        return $user->companies()
-            ->wherePivotIn('role', ['admin', 'company_head'])
-            ->whereIn('company_id', $model->companies()->select('companies.id'))
-            ->exists();
+        $sharedCompanies = $user->companies()
+            ->whereIn('companies.id', $model->companies()->select('companies.id'))
+            ->get();
+
+        foreach ($sharedCompanies as $company) {
+            $actorRole = $user->roleInCompany($company);
+            $targetRole = $model->roleInCompany($company);
+
+            if ($actorRole === 'admin') {
+                if (in_array($targetRole, ['company_head', 'user'], true)) {
+                    return true;
+                }
+            }
+
+            if ($actorRole === 'company_head') {
+                if ($targetRole === 'user') {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
