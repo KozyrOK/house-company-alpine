@@ -28,7 +28,12 @@
 
             </div>
 
-            <table>
+            <table class="table-fixed">
+                <colgroup>
+                    <col class="w-1/3">
+                    <col class="w-1/3">
+                    <col class="w-1/3">
+                </colgroup>
                 <tr><th class="key-content-item">ID</th><td class="value-content-item" colspan="2">{{ $user->id }}</td></tr>
                 <tr><th class="key-content-item">Name</th><td class="value-content-item" colspan="2">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
                 <tr><th class="key-content-item">Email</th><td class="value-content-item" colspan="2">{{ $user->email }}</td></tr>

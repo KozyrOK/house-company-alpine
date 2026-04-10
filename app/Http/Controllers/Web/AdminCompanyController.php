@@ -16,7 +16,13 @@ class AdminCompanyController extends Controller
     {
         $this->authorize('viewAny', Company::class);
 
-        $companies = Company::orderBy('name')->paginate(15);
+        $user = auth()->user();
+        $companies = Company::query()
+            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
+                $query->whereIn('id', $user->adminCompanyIds());
+            })
+            ->orderBy('name')
+            ->paginate(15);
 
         return view('admin.companies.index', compact('companies'));
     }

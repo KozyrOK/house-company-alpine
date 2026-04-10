@@ -24,7 +24,12 @@
 
         <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <table>
+            <table class="table-fixed">
+                <colgroup>
+                    <col class="w-1/3">
+                    <col class="w-1/3">
+                    <col class="w-1/3">
+                </colgroup>
                 <tr><th class="key-content-item">Company</th><td class="value-content-item" colspan="2"><select name="company_id" class="input-field" required>@foreach($companies as $company)<option value="{{ $company->id }}" @selected(old('company_id') == $company->id)>{{ $company->name }}</option>@endforeach</select></td></tr>
                 <tr><th class="key-content-item">Role</th><td class="value-content-item" colspan="2"><select name="role" class="input-field" required>@foreach(['user','company_head','admin'] as $role)<option value="{{ $role }}" @selected(old('role') === $role)>{{ $role }}</option>@endforeach</select></td></tr>
                 <tr><th class="key-content-item">First name</th><td class="value-content-item" colspan="2"><input type="text" name="first_name" class="input-field" value="{{ old('first_name') }}" required></td></tr>

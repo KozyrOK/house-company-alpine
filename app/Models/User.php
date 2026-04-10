@@ -150,7 +150,7 @@ class User extends Authenticatable
         }
 
         return $this->companies()
-            ->wherePivotIn('role', ['user', 'company_head', 'admin'])
+            ->wherePivotIn('role', ['user', 'company_head'])
             ->exists();
     }
 

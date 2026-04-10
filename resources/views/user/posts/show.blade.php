@@ -26,12 +26,12 @@
 
             </div>
 
-            <table>
-                <tr><th class="key-content-item">ID</th><td colspan="2" class="value-content-item">{{ $post->id }}</td></tr>
-                <tr><th class="key-content-item">Title</th><td colspan="2" class="value-content-item">{{ $post->title }}</td></tr>
-                <tr><th class="key-content-item">Company</th><td colspan="2" class="value-content-item">{{ $post->company?->name ?? '-' }}</td></tr>
-                <tr><th class="key-content-item">Status</th><td colspan="2" class="value-content-item">{{ $post->status }}</td></tr>
-                <tr><th class="key-content-item">Content</th><td colspan="2" class="value-content-item">{{ $post->content }}</td></tr>
+            <table class="w-full">
+                <tr><th class="key-content-item">ID</th><td class="value-content-item">{{ $post->id }}</td></tr>
+                <tr><th class="key-content-item">Title</th><td class="value-content-item">{{ $post->title }}</td></tr>
+                <tr><th class="key-content-item">Company</th><td class="value-content-item">{{ $post->company?->name ?? '-' }}</td></tr>
+                <tr><th class="key-content-item">Status</th><td class="value-content-item">{{ $post->status }}</td></tr>
+                <tr><th class="key-content-item">Content</th><td class="value-content-item">{{ $post->content }}</td></tr>
             </table>
 
             <div class="bottom-crud-wrapper">

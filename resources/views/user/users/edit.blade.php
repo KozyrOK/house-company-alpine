@@ -28,7 +28,12 @@
             @csrf
             @method('PATCH')
 
-            <table>
+            <table class="table-fixed">
+                <colgroup>
+                    <col class="w-1/3">
+                    <col class="w-1/3">
+                    <col class="w-1/3">
+                </colgroup>
                 <tr><th class="key-content-item">First name</th><td colspan="2" class="value-content-item"><input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="input-field"></td></tr>
                 <tr><th class="key-content-item">Second name</th><td colspan="2" class="value-content-item"><input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field"></td></tr>
                 <tr><th class="key-content-item">Email</th><td colspan="2" class="value-content-item"><input type="email" name="email" value="{{ old('email', $user->email) }}" class="input-field"></td></tr>

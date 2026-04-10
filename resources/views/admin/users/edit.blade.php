@@ -28,14 +28,14 @@
             @csrf
             @method('PATCH')
 
-            <table>
-                <tr><th class="key-content-item">First name</th><td colspan="2" class="value-content-item"><input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="input-field"></td></tr>
-                <tr><th class="key-content-item">Second name</th><td colspan="2" class="value-content-item"><input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field"></td></tr>
-                <tr><th class="key-content-item">Email</th><td colspan="2" class="value-content-item"><input type="email" name="email" value="{{ old('email', $user->email) }}" class="input-field"></td></tr>
-                <tr><th class="key-content-item">Phone</th><td colspan="2" class="value-content-item"><input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="input-field"></td></tr>
+            <table class="w-full">
+                <tr><th class="key-content-item">First name</th><td class="value-content-item"><input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="input-field"></td></tr>
+                <tr><th class="key-content-item">Second name</th><td class="value-content-item"><input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field"></td></tr>
+                <tr><th class="key-content-item">Email</th><td class="value-content-item"><input type="email" name="email" value="{{ old('email', $user->email) }}" class="input-field"></td></tr>
+                <tr><th class="key-content-item">Phone</th><td class="value-content-item"><input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="input-field"></td></tr>
                 <tr>
                     <th class="key-content-item">Account status</th>
-                    <td colspan="2" class="value-content-item">
+                    <td class="value-content-item">
                         <select name="status_account" class="input-field">
                             @foreach(['pending' => 'Pending', 'active' => 'Active', 'blocked' => 'Blocked'] as $value => $label)
                                 <option value="{{ $value }}" @selected(old('status_account', $user->status_account) === $value)>{{ $label }}</option>
@@ -50,6 +50,8 @@
                 <div class="button-wrapper">
                     <x-button text="Save" type="submit" class="button-edit"/>
                 </div>
+
+                <div></div>
 
                 <div class="button-wrapper">
                     <x-link text="Cancel" href="{{ route('admin.users.show', $user) }}" class="button-delete"/>

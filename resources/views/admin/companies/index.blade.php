@@ -10,7 +10,9 @@
 
         <div class="top-crud-wrapper">
 
-            <div class="button-wrapper"><x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/></div>
+            <div class="button-wrapper">
+                <x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/>
+            </div>
 
             <div></div>
 

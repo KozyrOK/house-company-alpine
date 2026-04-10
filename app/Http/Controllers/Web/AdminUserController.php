@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -17,7 +19,15 @@ class AdminUserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        $users = User::with('companies:id,name')->paginate(15);
+        $actor = auth()->user();
+
+        $users = User::query()
+            ->with('companies:id,name')
+            ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
+                $query->whereHas('companies', fn ($companyQuery) => $companyQuery->whereIn('companies.id', $actor->adminCompanyIds()));
+            })
+            ->latest('id')
+            ->paginate(15);
 
         return view('admin.users.index', compact('users'));
     }
@@ -35,7 +45,21 @@ class AdminUserController extends Controller
     {
         $this->authorize('delete', $user);
 
-        $user->delete();
+        DB::transaction(function () use ($user): void {
+            Post::query()
+                ->where('created_by', $user->id)
+                ->update(['created_by' => auth()->id()]);
+
+            Post::query()
+                ->where('updated_by', $user->id)
+                ->update(['updated_by' => null]);
+
+            Post::query()
+                ->where('deleted_by', $user->id)
+                ->update(['deleted_by' => null]);
+
+            $user->delete();
+        });
 
         return redirect()
             ->route('admin.users.index')

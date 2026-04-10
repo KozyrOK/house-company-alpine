@@ -24,11 +24,11 @@
 
         <form action="{{ route('admin.companies.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <table>
-                <tr><th class="key-content-item">Name</th><td class="value-content-item" colspan="2"><input type="text" name="name" class="input-field" value="{{ old('name') }}" required></td></tr>
-                <tr><th class="key-content-item">Address</th><td class="value-content-item" colspan="2"><input type="text" name="address" class="input-field" value="{{ old('address') }}"></td></tr>
-                <tr><th class="key-content-item">City</th><td class="value-content-item" colspan="2"><input type="text" name="city" class="input-field" value="{{ old('city') }}"></td></tr>
-                <tr><th class="key-content-item">Description</th><td class="value-content-item" colspan="2"><textarea name="description" class="input-field" rows="4">{{ old('description') }}</textarea></td></tr>
+            <table class="w-full">
+                <tr><th class="key-content-item">Name</th><td class="value-content-item"><input type="text" name="name" class="input-field" value="{{ old('name') }}" required></td></tr>
+                <tr><th class="key-content-item">Address</th><td class="value-content-item"><input type="text" name="address" class="input-field" value="{{ old('address') }}"></td></tr>
+                <tr><th class="key-content-item">City</th><td class="value-content-item"><input type="text" name="city" class="input-field" value="{{ old('city') }}"></td></tr>
+                <tr><th class="key-content-item">Description</th><td class="value-content-item"><textarea name="description" class="input-field" rows="4">{{ old('description') }}</textarea></td></tr>
                 <tr>
                     <th class="key-content-item">Company Logo</th>
                     <td class="value-content-item" colspan="2">

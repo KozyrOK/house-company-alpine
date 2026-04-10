@@ -15,7 +15,11 @@ class AdminPostController extends Controller
     {
         $this->authorize('viewAny', Post::class);
 
+        $user = request()->user();
         $posts = Post::with(['company:id,name', 'user:id,first_name,second_name'])
+            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
+                $query->whereIn('company_id', $user->adminCompanyIds());
+            })
             ->latest()
             ->paginate(15);
 

@@ -431,7 +431,7 @@ p {
  }
 
  .bottom-crud-wrapper {
-     @apply grid grid-cols-2 gap-3 pt-4;
+     @apply grid grid-cols-3 gap-3 pt-4;
  }
 
  .content-items-box {
@@ -445,7 +445,7 @@ p {
  /* BUTTON ELEMENTS */
 
  .button-base {
-     @apply text-center hover:bg-white/60 hover:dark:bg-white/30 p-3 rounded my-3 mx-1 w-40;
+     @apply items-center justify-center text-center hover:bg-white/60 hover:dark:bg-white/30 p-3 rounded my-3 mx-1 w-40;
  }
 
  .button-list {
@@ -465,7 +465,7 @@ p {
  }
 
  .button-wrapper {
-     @apply py-4 px-2;
+     @apply py-4 px-2 flex justify-center items-center;
  }
 
  /* DATA TABLE */

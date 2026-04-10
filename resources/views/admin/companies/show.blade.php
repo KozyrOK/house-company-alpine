@@ -26,14 +26,14 @@
 
             </div>
 
-            <table>
-                <tr><th class="key-content-item">ID</th><td colspan="2" class="value-content-item">{{ $company->id }}</td></tr>
-                <tr><th class="key-content-item">Name</th><td colspan="2" class="value-content-item">{{ $company->name }}</td></tr>
-                <tr><th class="key-content-item">Address</th><td colspan="2" class="value-content-item">{{ $company->address ?: '-' }}</td></tr>
-                <tr><th class="key-content-item">City</th><td colspan="2" class="value-content-item">{{ $company->city ?: '-' }}</td></tr>
-                <tr><th class="key-content-item">Description</th><td colspan="2" class="value-content-item">{{ $company->description ?: '-' }}</td></tr>
-                <tr><th class="key-content-item">Users count</th><td colspan="2" class="value-content-item">{{ $company->users_count }}</td></tr>
-                <tr><th class="key-content-item">Posts count</th><td colspan="2" class="value-content-item">{{ $company->posts_count }}</td></tr>
+            <table class="w-full">
+                <tr><th class="key-content-item">ID</th><td class="value-content-item">{{ $company->id }}</td></tr>
+                <tr><th class="key-content-item">Name</th><td class="value-content-item">{{ $company->name }}</td></tr>
+                <tr><th class="key-content-item">Address</th><td class="value-content-item">{{ $company->address ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">City</th><td class="value-content-item">{{ $company->city ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">Description</th><td class="value-content-item">{{ $company->description ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">Users count</th><td class="value-content-item">{{ $company->users_count }}</td></tr>
+                <tr><th class="key-content-item">Posts count</th><td class="value-content-item">{{ $company->posts_count }}</td></tr>
             </table>
 
             <div class="bottom-crud-wrapper">
@@ -43,6 +43,8 @@
                         <x-link text="Edit Company" href="{{ route('admin.companies.edit', $company) }}" class="button-edit"/>
                     @endcan
                 </div>
+
+                <div></div>
 
                 <div class="button-wrapper">
                     @can('delete', $company)

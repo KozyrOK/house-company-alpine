@@ -25,13 +25,12 @@
                 </div>
 
             </div>
-
-            <table>
-                <tr><th class="key-content-item">ID</th><td class="value-content-item" colspan="2">{{ $user->id }}</td></tr>
-                <tr><th class="key-content-item">Name</th><td class="value-content-item" colspan="2">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
-                <tr><th class="key-content-item">Email</th><td class="value-content-item" colspan="2">{{ $user->email }}</td></tr>
-                <tr><th class="key-content-item">Phone</th><td class="value-content-item" colspan="2">{{ $user->phone ?: '-' }}</td></tr>
-                <tr><th class="key-content-item">Status</th><td class="value-content-item" colspan="2">{{ $user->status_account ?: '-' }}</td></tr>
+            <table class="w-full">
+                <tr><th class="key-content-item">ID</th><td class="value-content-item">{{ $user->id }}</td></tr>
+                <tr><th class="key-content-item">Name</th><td class="value-content-item">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
+                <tr><th class="key-content-item">Email</th><td class="value-content-item">{{ $user->email }}</td></tr>
+                <tr><th class="key-content-item">Phone</th><td class="value-content-item">{{ $user->phone ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">Status</th><td class="value-content-item">{{ $user->status_account ?: '-' }}</td></tr>
             </table>
 
             <div class="bottom-crud-wrapper">
@@ -41,6 +40,8 @@
                         <x-link text="Edit User" href="{{ route('admin.users.edit', $user) }}" class="button-edit"/>
                     @endcan
                 </div>
+
+                <div></div>
 
                 <div class="button-wrapper">
                     @can('delete', $user)

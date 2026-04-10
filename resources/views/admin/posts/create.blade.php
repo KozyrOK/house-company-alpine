@@ -22,10 +22,10 @@
 
         <form action="{{ route('admin.posts.store') }}" method="POST">
             @csrf
-            <table>
+            <table class="w-full">
                 <tr>
                     <th class="key-content-item">Company</th>
-                    <td colspan="2" class="value-content-item">
+                    <td class="value-content-item">
                         <select name="company_id" class="input-field" required>
                             @foreach($companies as $company)
                                 <option value="{{ $company->id }}" @selected(old('company_id') == $company->id)>{{ $company->name }}</option>
@@ -33,8 +33,8 @@
                         </select>
                     </td>
                 </tr>
-                <tr><th class="key-content-item">Title</th><td colspan="2" class="value-content-item"><input type="text" name="title" class="input-field" value="{{ old('title') }}" required></td></tr>
-                <tr><th class="key-content-item">Content</th><td colspan="2" class="value-content-item"><textarea name="content" rows="6" class="input-field" required>{{ old('content') }}</textarea></td></tr>
+                <tr><th class="key-content-item">Title</th><td class="value-content-item"><input type="text" name="title" class="input-field" value="{{ old('title') }}" required></td></tr>
+                <tr><th class="key-content-item">Content</th><td class="value-content-item"><textarea name="content" rows="6" class="input-field" required>{{ old('content') }}</textarea></td></tr>
                 <tr>
                     <th class="key-content-item">Status</th>
                     <td colspan="2" class="value-content-item">
