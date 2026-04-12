@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
         ->name('main.posts.index');
 
     Route::get('/main/companies/{company}/posts/{post}', [PostController::class, 'show'])
+        ->scopeBindings()
         ->name('main.posts.show');
 
     // USERS

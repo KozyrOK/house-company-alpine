@@ -16,7 +16,7 @@ class UserController extends Controller
     public function index(Request $request): View
     {
         if ($request->routeIs('main.users.index')) {
-            $company = $request->route('company');
+            $company = Company::query()->findOrFail((int) $request->route('company'));
 
             $this->authorize('view', $company);
 
@@ -53,44 +53,12 @@ class UserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
-    public function show(User $user): View
+    public function show(Company $company, $userId): View
     {
-        if (request()->routeIs('main.users.show')) {
-            $company = request()->route('company');
+        $user = $company->users()->findOrFail($userId);
 
-            $this->authorize('view', $company);
+        return view('user.users.show', compact('user', 'company'));
 
-            if (!$user->belongsToCompany($company->id)) {
-                abort(404);
-            }
-
-            $role = $user->roleInCompany($company);
-            if (!in_array($role, ['user', 'company_head'], true)) {
-                abort(403);
-            }
-
-            $user->load('companies:id,name');
-
-            return view('user.users.show', compact('user', 'company'));
-        }
-
-        $this->authorize('view', $user);
-
-        if (!request()->user()->isSuperAdmin()) {
-            $adminCompanyIds = request()->user()->adminCompanyIds();
-
-            $hasAccess = $user->companies()
-                ->whereIn('companies.id', $adminCompanyIds)
-                ->exists();
-
-            if (!$hasAccess) {
-                abort(403);
-            }
-        }
-
-        $user->load('companies:id,name');
-
-        return view('admin.users.show', compact('user'));
     }
 
     public function create(): View

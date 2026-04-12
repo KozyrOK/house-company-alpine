@@ -14,7 +14,7 @@ class PostController extends Controller
     public function index(Request $request): View
     {
         if ($request->routeIs('main.posts.index')) {
-            $company = $request->route('company');
+            $company = Company::query()->findOrFail((int) $request->route('company'));
 
             $this->authorize('view', $company);
 
@@ -61,29 +61,13 @@ class PostController extends Controller
         return view('admin.posts.index', compact('posts'));
     }
 
-    public function show(Post $post): View
+    public function show(Company $company, Post $post): View
     {
         $this->authorize('view', $post);
 
-        if (request()->routeIs('main.posts.show')) {
-            $company = request()->route('company');
-
-            if ($company && $post->company_id !== $company->id) {
-                abort(404);
-            }
-
-            $post->load(['company:id,name', 'user:id,first_name,second_name']);
-
-            return view('user.posts.show', compact('post', 'company'));
-        }
-
-        if (!request()->user()->isAdminOrHigher($post->company_id)) {
-            abort(403);
-        }
-
         $post->load(['company:id,name', 'user:id,first_name,second_name']);
 
-        return view('admin.posts.show', compact('post'));
+        return view('user.posts.show', compact('post', 'company'));
     }
 
     public function create(): View

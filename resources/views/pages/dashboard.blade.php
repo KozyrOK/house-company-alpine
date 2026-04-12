@@ -20,11 +20,7 @@
                 <form method="POST" action="{{ route('dashboard.update') }}">
                     @csrf
                     @method('PATCH')
-                    <table class="table-fixed">
-                        <colgroup>
-                            <col class="w-1/3">
-                            <col class="w-2/3">
-                        </colgroup>
+                    <table class="w-full">
                         <tr><th class="key-content-item">First name</th><td class="value-content-item"><input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="input-field"></td></tr>
                         <tr><th class="key-content-item">Second name</th><td class="value-content-item"><input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field"></td></tr>
                         <tr><th class="key-content-item">Email</th><td class="value-content-item"><input type="email" name="email" value="{{ old('email', $user->email) }}" class="input-field"></td></tr>
@@ -54,11 +50,7 @@
                     </div>
                 </form>
             @else
-                <table class="table-fixed">
-                    <colgroup>
-                        <col class="w-1/3">
-                        <col class="w-2/3">
-                    </colgroup>
+                <table class="w-full">
                     <tr><th class="key-content-item">ID</th><td class="value-content-item">{{ $user->id }}</td></tr>
                     <tr><th class="key-content-item">Name</th><td class="value-content-item">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
                     <tr><th class="key-content-item">Email</th><td class="value-content-item">{{ $user->email }}</td></tr>
@@ -67,14 +59,10 @@
                 </table>
             @endif
 
-            @if(!$user->isSuperAdmin())
+            @if(!$isEditMode && !$user->isSuperAdmin())
                 <div class="bottom-crud-wrapper">
                     <div class="button-wrapper">
-                        @if($isEditMode)
-                            <x-link text="Edit User" href="{{ route('dashboard') }}" class="button-edit"/>
-                        @else
-                            <x-link text="Edit User" href="{{ route('dashboard', ['edit' => 1]) }}" class="button-edit"/>
-                        @endif
+                        <x-link text="Edit User" href="{{ route('dashboard', ['edit' => 1]) }}" class="button-edit"/>
                     </div>
 
                     <div></div>

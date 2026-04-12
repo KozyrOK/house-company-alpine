@@ -209,7 +209,7 @@ Header navigation depends on role.
 #### Admin
 
 - `/admin` — access limited to own companies
-- `/main` — access to related Companies, Users, Posts
+- `/main` — access to related Companies, Users, Posts (if user has other role in others company)
 - `/chat`
 - `/info`
 

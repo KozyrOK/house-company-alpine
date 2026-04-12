@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class MainController extends Controller
 {
-    public function index(): View|RedirectResponse
+    public function index(): View
     {
         $user = auth()->user();
 
@@ -19,15 +18,6 @@ class MainController extends Controller
         $companies = $user->companies()
             ->orderBy('name')
             ->get();
-
-        if ($companies->count() === 1) {
-            $company = $companies->first();
-            $role = $user->roleInCompany($company);
-
-            if ($role === 'user') {
-                return redirect()->route('main.posts.index', $company);
-            }
-        }
 
         return view('pages.main', [
             'companies' => $companies,
