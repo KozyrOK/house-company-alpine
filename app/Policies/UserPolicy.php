@@ -16,88 +16,78 @@ class UserPolicy
         return null;
     }
 
-    /**
-     * GET /users
-     */
     public function viewAny(User $user): bool
     {
-        return $user->companies()
-            ->wherePivotIn('role', ['admin'])
-            ->exists();
+        return currentCompany() !== null && $user->hasRole(['admin', 'company_head', 'user'], currentCompany()->id);
     }
 
-    /**
-     * GET /users/{user}
-     */
     public function view(User $user, User $model): bool
     {
-        if ($user->id === $model->id) {
-            return true;
+        $current = currentCompany();
+        if (!$current) {
+            return false;
         }
 
-        return $user->companies()
-            ->wherePivotIn('role', ['admin', 'company_head'])
-            ->whereIn('company_id', $model->companies()->select('companies.id'))
-            ->exists();
+        return $model->belongsToCompany($current->id);
     }
 
-    /**
-     * POST /users
-     */
     public function create(User $user, Company $company): bool
     {
-        return $user->hasRole(['admin', 'company_head'], $company->id);
+        $current = currentCompany();
+
+        return $current !== null
+            && $company->id === $current->id
+            && $user->hasRole(['admin', 'company_head'], $company->id);
     }
 
-    /**
-     * PUT/PATCH /users/{user}
-     */
     public function update(User $user, User $model): bool
     {
+        $current = currentCompany();
+        if (!$current || !$model->belongsToCompany($current->id)) {
+            return false;
+        }
+
         if ($user->id === $model->id) {
             return true;
         }
 
-        $sharedCompanies = $user->companies()
-            ->whereIn('companies.id', $model->companies()->select('companies.id'))
-            ->get();
+        $actorRole = $user->roleIn($current);
+        $targetRole = $model->roleIn($current);
 
-        foreach ($sharedCompanies as $company) {
-            $actorRole = $user->roleInCompany($company);
-            $targetRole = $model->roleInCompany($company);
-
-            if ($actorRole === 'admin') {
-                if (in_array($targetRole, ['company_head', 'user'], true)) {
-                    return true;
-                }
-            }
-
-            if ($actorRole === 'company_head') {
-                if ($targetRole === 'user') {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return ($actorRole === 'admin' && in_array($targetRole, ['company_head', 'user'], true))
+            || ($actorRole === 'company_head' && $targetRole === 'user');
     }
 
-    /**
-     * DELETE /users/{user}
-     */
     public function delete(User $user, User $model): bool
     {
-        return $user->companies()
-            ->wherePivotIn('role', ['admin'])
-            ->whereIn('company_id', $model->companies()->select('companies.id'))
-            ->exists();
+        $current = currentCompany();
+
+        return $current !== null
+            && $model->belongsToCompany($current->id)
+            && $user->hasRole('admin', $current->id);
+    }
+
+    public function restore(User $user, User $model): bool
+    {
+        $current = currentCompany();
+
+        if (!$current || !$model->belongsToCompany($current->id)) {
+            return false;
+        }
+
+        if ($model->deleted_by === $user->id) {
+            return true;
+        }
+
+        return $user->hasRole('admin', $current->id);
     }
 
     public function approve(User $user, User $model): bool
     {
-        return $user->companies()
-            ->wherePivotIn('role', ['admin'])
-            ->whereIn('company_id', $model->companies()->select('companies.id'))
-            ->exists();
+        $current = currentCompany();
+
+        return $current !== null
+            && $model->belongsToCompany($current->id)
+            && $user->hasRole('admin', $current->id);
     }
 }

@@ -134,7 +134,7 @@ docker compose exec laravel.test php artisan migrate
 
 ### 6. Optional database seeding
 
-**Seed the database with the minimal initial data set (production-safe):**
+**Seed the database with the minimal initial data set:**
 ```bash
 docker compose exec laravel.test php artisan db:seed
 ```

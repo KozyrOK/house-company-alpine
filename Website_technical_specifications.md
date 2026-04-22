@@ -5,13 +5,13 @@
 ## 1. Project Name and Description
 
 The “Housing Company” project is a PET project and represents a web application designed for associations of co-owners (Users) of apartment buildings (condominiums). Each association (Company entity) has its own dedicated section for publishing posts (Posts).
-The main goal of the project is to practice the full lifecycle of web application development. The implementation should follow modern development principles (e.g., SOLID).
+The main goal of the project is to practice the full lifecycle of web application development. The implementation should follow modern development principles.
 
 ---
 
 ## 2. Technology Stack
 
-### Environment: \- Laravel Sail, Ubuntu 23.4
+### Environment: \- Laravel Sail, Ubuntu
 ### Backend: \- Laravel 13
 ### Frontend: \- Blade, Alpane.js, Vite.
 ### Database: \- MySql
@@ -20,20 +20,18 @@ The main goal of the project is to practice the full lifecycle of web applicatio
 ### Other: Laravel 13 AI SDK, Laravel Breeze, Sanctum.
 
 The application must be developed and run in containers.
-The developer’s local environment (PHP, Node.js, Composer, MySQL, OS) must not be required to run the project.
+The developer’s local environment (PHP, Node.js, Composer, MySQL) must not be required to run the project.
 It is allowed to use Laravel Sail as a base container solution or a custom Docker configuration.
 
 ---
 
 ## 3\. Feature List (Epics):
 
-\- The application must have a public page (`/info`) доступная для both unauthorized and authorized users, with a header link.
+\- AI-powered chat (Laravel 13 AI SDK).
 
-\- Admin panel for **superadmin**: editing informational pages, managing languages, working with resources (CRUD-style admin interface).
+\- The application must have a public page (`/info`) available for unauthorized and authorized users.
 
 \- Main page must include: authentication, password reset, registration (Laravel Breeze).
-
-\- Any delete action must include confirmation. All deletions are soft deletes.
 
 \- Server-side filtering with UI panel: filtering entities, search by entity name.
 
@@ -41,11 +39,11 @@ It is allowed to use Laravel Sail as a base container solution or a custom Docke
 
 \- Multi-language support: English, Russian, Ukrainian.
 
-\- AI-powered chat (Laravel 13 AI SDK).
-
 \- Dark mode: auto-detection for guests, toggle in header, persisted per user.
 
 \- Approval workflow for Posts: posts created by `user` role must have `pending` status, approval required by `company_head`, `admin`, or `superadmin`.
+
+\- Any delete action must include confirmation. All deletions are soft deletes.
 
 ---
 
@@ -89,8 +87,9 @@ User:
 * 'google\_id' (nullable);   
 * 'facebook\_id' (nullable);    
 * 'x\_id' (nullable);    
-* 'image\_path' (nullable);  
-* 'phone' (nullable).
+* 'avatar\_path' (nullable);  
+* 'phone' (nullable);
+* foreignId('deleted_by').
 
 **\- companies table:** 
 
@@ -98,7 +97,8 @@ User:
 * 'name';  
 * 'address';  
 *  'city';   
-* 'description' (nullable).
+* 'description' (nullable);
+* foreignId('deleted_by').
 
 **\- posts table:** 
 
@@ -170,52 +170,63 @@ A User can belong to one or multiple Companies and have different roles per Comp
 
 ## 6\. Frontend
 
-Frontend is built using Alpine.js with a classic layout:
+### Frontend is built using Alpine.js with a classic layout:
 - header
 - footer
 
-Header includes:
+#### Header includes:
 - full-width image (pattern background),
 - navigation menu below,
-- top-right controls:
-    - login/logout
-    - locale switcher
-    - dark mode toggle
+- top-left: company logo, company switcher,
+- top-right controls: login/logout, user avatar, locale switcher, dark mode toggle
 
 ---
 
-### Guest View
+### Guest View Header
 
+#### Top-left header:
+- default company logo
+
+#### Top-center header:
 - `/info` — public project information page
 
-Top-right controls:
+#### Top-right controls:
 - `/login`
 - locale switch
 - dark mode toggle
 
 ---
 
-### Authenticated Users
+### Authenticated Users View Header
 
-Header navigation depends on role.
+#### Top-left header:
+- company logo (current company logo or default company logo)
+- company switcher (drop-down list of companies in which the authorized user participates)
 
-#### Superadmin
+#### Top-right controls:
+- `/logout`
+- avatar
+- locale switch
+- dark mode toggle
+
+#### Top-center header for superadmin
 
 - `/admin` — full access to all Companies, Users, Posts
 - `/dashboard` — profile management
 - `/chat` — AI assistant
 - `/info` — project info
 
-#### Admin
+#### Top-center header for admin
 
-- `/admin` — access limited to own companies
-- `/main` — access to related Companies, Users, Posts (if user has other role in others company)
+- `/admin` — access to related Companies, Users, Posts in own companies
+- `/company` - access to current company
 - `/chat`
 - `/info`
 
-#### company_head / user
+#### Top-center header for company_head / user
 
-- `/main` — access to related Companies, Users, Posts
+- `/main` — access to related Users, Posts in current company
+- `/company` - access to current company
 - `/chat`
 - `/info`
 

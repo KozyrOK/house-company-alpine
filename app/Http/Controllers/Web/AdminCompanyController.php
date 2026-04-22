@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AdminCompanyController extends Controller
@@ -19,12 +19,27 @@ class AdminCompanyController extends Controller
         $user = auth()->user();
         $companies = Company::query()
             ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
-                $query->whereIn('id', $user->adminCompanyIds());
+                $query->where('id', currentCompany()?->id);
             })
             ->orderBy('name')
             ->paginate(15);
 
         return view('admin.companies.index', compact('companies'));
+    }
+
+    public function trash(): View
+    {
+        $this->authorize('viewAny', Company::class);
+
+        $user = auth()->user();
+        $companies = Company::onlyTrashed()
+            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
+                $query->where('id', currentCompany()?->id);
+            })
+            ->orderByDesc('deleted_at')
+            ->paginate(15);
+
+        return view('admin.companies.trash', compact('companies'));
     }
 
     public function create(): View
@@ -84,6 +99,7 @@ class AdminCompanyController extends Controller
     {
         $this->authorize('delete', $company);
 
+        $company->update(['deleted_by' => auth()->id()]);
         $company->delete();
 
         return redirect()
@@ -91,11 +107,24 @@ class AdminCompanyController extends Controller
             ->with('success', 'Company deleted successfully.');
     }
 
+    public function restore(int $company): RedirectResponse
+    {
+        $model = Company::onlyTrashed()->findOrFail($company);
+        $this->authorize('restore', $model);
+
+        $model->restore();
+        $model->update(['deleted_by' => null]);
+
+        return redirect()
+            ->route('admin.companies.trash')
+            ->with('success', 'Company restored successfully.');
+    }
+
     public function logo(Company $company): BinaryFileResponse
     {
         $this->authorize('view', $company);
 
-        $default = public_path('images/default-image-company.jpg');
+        $default = public_path('images/default-image-company.webp');
 
         if (!$company->logo_path || !Storage::disk('public')->exists($company->logo_path)) {
             return response()->file($default);

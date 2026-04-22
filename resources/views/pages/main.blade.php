@@ -11,34 +11,23 @@
         <div class="admin-panel-content-box-wrapper">
 
             @if($showUsersCard)
-                <a href="{{ route('main.users.index', $companies->first()) }}"
+                <a href="{{ route('main.users.index', $company) }}"
                    class="content-items-box">
                     <div class="content-item-box-wrapper">
                         <x-icons.user/>
                         <h2>Users</h2>
-                        <p>Users in your company scope</p>
-                    </div>
-                </a>
-            @endif
-
-            @if($showCompaniesCard)
-                <a href="{{ route('main.companies.index') }}"
-                   class="content-items-box">
-                    <div class="content-item-box-wrapper">
-                        <x-icons.company/>
-                        <h2>Companies</h2>
-                        <p>Companies where you are a member</p>
+                        <p>Users in current company</p>
                     </div>
                 </a>
             @endif
 
             @if($showPostsCard)
-                <a href="{{ route('main.posts.index', $companies->first()) }}"
+                    <a href="{{ route('main.posts.index', $company) }}"
                    class="content-items-box">
                     <div class="content-item-box-wrapper">
                         <x-icons.post/>
                         <h2>Posts</h2>
-                        <p>Posts in your company scope</p>
+                        <p>Posts in current company</p>
                     </div>
                 </a>
             @endif

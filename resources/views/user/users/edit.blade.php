@@ -15,7 +15,7 @@
             </div>
 
             <div>
-                <img class="company-image" src="{{ $user->image_path ?: asset('images/default-image-company.jpg') }}" alt="user image">
+                <img class="company-image" src="{{ $user->avatar_path ? asset('storage/' . $user->avatar_path) : asset('images/default-image-company.webp') }}" alt="user image">
             </div>
 
             <div class="button-wrapper">

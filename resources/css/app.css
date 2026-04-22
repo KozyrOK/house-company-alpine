@@ -229,6 +229,10 @@ progress {
     rounded-bl-2xl shadow-lg z-50 border-b-4 border-l-4 dark:border-[#198666] border-[#0f616d];
 }
 
+ .header-avatar-image {
+     @apply w-8 h-8 rounded-full object-cover border border-gray-300;
+ }
+
 .login-topbar {
     @apply flex items-center;
 }
@@ -331,6 +335,22 @@ progress {
 
  .navbar-header a.active {
      @apply border-b-4 border-amber-500;
+ }
+
+ .company-switcher {
+     @apply relative;
+ }
+
+ .company-switcher-summary {
+     @apply cursor-pointer text-sm px-2 py-1 rounded bg-white/80 dark:bg-gray-800/80;
+ }
+
+ .company-switcher-dropdown {
+     @apply absolute left-0 mt-2 bg-white dark:bg-gray-800 p-2 rounded shadow min-w-44 z-40;
+ }
+
+ .company-switcher-option {
+     @apply block w-full text-left px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded;
  }
 
 /* MAIN */

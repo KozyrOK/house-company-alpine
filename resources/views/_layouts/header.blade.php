@@ -5,6 +5,7 @@
     </div>
 
     <div class="header-topbar">
+        <x-header.avatar/>
         <x-auth.login-button-topbar/>
         <x-header.locale-switch/>
         <x-header.theme-toggle/>

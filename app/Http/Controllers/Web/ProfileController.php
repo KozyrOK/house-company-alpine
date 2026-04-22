@@ -7,6 +7,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -29,7 +30,18 @@ class ProfileController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => 'nullable|string|max:30',
             'status_account' => ['nullable', Rule::in(['pending', 'active', 'blocked'])],
+            'avatar' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,webp,avif|max:5120',
         ]);
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar_path && Storage::disk('public')->exists($user->avatar_path)) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
+
+            $validated['avatar_path'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        unset($validated['avatar']);
 
         $user->update($validated);
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -17,7 +18,7 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'first_name',
@@ -27,9 +28,10 @@ class User extends Authenticatable
         'google_id',
         'facebook_id',
         'x_id',
-        'image_path',
+        'avatar_path',
         'phone',
         'status_account',
+        'deleted_by',
     ];
 
     protected $hidden = [
@@ -49,7 +51,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Company::class)
             ->withPivot('role')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->withTrashed();
     }
 
     public function posts(): HasMany
@@ -154,11 +157,21 @@ class User extends Authenticatable
             ->exists();
     }
 
-    public function roleInCompany(Company $company): ?string
+    public function deleter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by')->withTrashed();
+    }
+
+    public function roleIn(Company $company): string
     {
         return $this->companies()
             ->where('company_id', $company->id)
-            ->first()?->pivot->role;
+            ->first()?->pivot->role ?? 'user';
+    }
+
+    public function roleInCompany(Company $company): ?string
+    {
+        return $this->roleIn($company);
     }
 
 }

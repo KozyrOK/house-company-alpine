@@ -48,12 +48,14 @@ class PostController extends Controller
 
         $targetCompanyId = $company?->id ?? (int) $validated['company_id'];
 
+        $roleIsPrivileged = $request->user()->hasRole(['admin', 'company_head'], $targetCompanyId) || $request->user()->isSuperAdmin();
+
         $post = Post::create([
             'company_id' => $targetCompanyId,
             'user_id' => $request->user()->id,
             'title' => $validated['title'],
             'content' => $validated['content'],
-            'status' => $request->user()->isSuperAdmin() ? ($validated['status'] ?? 'publish') : ($validated['status'] ?? 'pending'),
+            'status' => $roleIsPrivileged ? ($validated['status'] ?? 'publish') : ($validated['status'] ?? 'pending'),
             'created_by' => $request->user()->id,
             'updated_by' => $request->user()->id,
         ]);

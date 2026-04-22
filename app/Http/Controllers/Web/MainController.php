@@ -9,21 +9,16 @@ class MainController extends Controller
 {
     public function index(): View
     {
-        $user = auth()->user();
+        $company = currentCompany();
 
-        if (!$user->canAccessMainPanel()) {
+        if (!auth()->user()->canAccessMainPanel() || !$company) {
             abort(403);
         }
 
-        $companies = $user->companies()
-            ->orderBy('name')
-            ->get();
-
         return view('pages.main', [
-            'companies' => $companies,
-            'showCompaniesCard' => $companies->count() > 1,
-            'showUsersCard' => $companies->isNotEmpty(),
-            'showPostsCard' => $companies->isNotEmpty(),
+            'company' => $company,
+            'showUsersCard' => true,
+            'showPostsCard' => true,
         ]);
     }
 }

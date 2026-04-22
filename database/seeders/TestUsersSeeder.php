@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class TestUsersSeeder extends Seeder
 {
@@ -13,199 +14,130 @@ class TestUsersSeeder extends Seeder
     {
         $password = Hash::make('password');
 
-        $companies = collect([
-            Company::updateOrCreate(
-                ['name' => 'Green Residence'],
-                [
-                    'address' => '12 Oak Street',
-                    'city' => 'Kyiv',
-                    'description' => 'Residential company 1',
-                ]
-            ),
-            Company::updateOrCreate(
-                ['name' => 'Sunset House'],
-                [
-                    'address' => '25 River Road',
-                    'city' => 'Lviv',
-                    'description' => 'Residential company 2',
-                ]
-            ),
-            Company::updateOrCreate(
-                ['name' => 'Central Plaza'],
-                [
-                    'address' => '8 Freedom Ave',
-                    'city' => 'Odesa',
-                    'description' => 'Residential company 3',
-                ]
-            ),
-            Company::updateOrCreate(
-                ['name' => 'Park View'],
-                [
-                    'address' => '41 Garden Lane',
-                    'city' => 'Dnipro',
-                    'description' => 'Residential company 4',
-                ]
-            ),
-        ]);
+        $logoFiles = [
+            base_path('resources/images/company-logo/Company-logo1.webp'),
+            base_path('resources/images/company-logo/Company-logo2.webp'),
+            base_path('resources/images/company-logo/Company-logo3.webp'),
+            base_path('resources/images/company-logo/Company-logo4.webp'),
+        ];
+        shuffle($logoFiles);
 
-        $admin1 = User::updateOrCreate(
-            ['email' => 'admin1@housing.local'],
-            [
-                'first_name' => 'Admin',
-                'second_name' => 'One',
-                'password' => $password,
-                'status_account' => 'active',
-            ]
-        );
+        $companiesData = [
+            ['name' => 'Green Residence', 'address' => '12 Oak Street', 'city' => 'Kyiv', 'description' => 'Residential company 1'],
+            ['name' => 'Sunset House', 'address' => '25 River Road', 'city' => 'Lviv', 'description' => 'Residential company 2'],
+            ['name' => 'Central Plaza', 'address' => '8 Freedom Ave', 'city' => 'Odesa', 'description' => 'Residential company 3'],
+            ['name' => 'Park View', 'address' => '41 Garden Lane', 'city' => 'Dnipro', 'description' => 'Residential company 4'],
+        ];
 
-        $admin2 = User::updateOrCreate(
-            ['email' => 'admin2@housing.local'],
-            [
-                'first_name' => 'Admin',
-                'second_name' => 'Two',
-                'password' => $password,
-                'status_account' => 'active',
-            ]
-        );
+        $companies = [];
+        foreach ($companiesData as $index => $data) {
+            $logoPath = null;
+            $logoSource = $logoFiles[$index] ?? null;
 
-        $head1 = User::updateOrCreate(
-            ['email' => 'head1@housing.local'],
-            [
-                'first_name' => 'Head',
-                'second_name' => 'One',
-                'password' => $password,
-                'status_account' => 'active',
-            ]
-        );
+            if ($logoSource && file_exists($logoSource)) {
+                $logoPath = 'company_logos/seed_company_' . ($index + 1) . '_' . basename($logoSource);
+                Storage::disk('public')->put($logoPath, file_get_contents($logoSource));
+            }
 
-        $head2 = User::updateOrCreate(
-            ['email' => 'head2@housing.local'],
-            [
-                'first_name' => 'Head',
-                'second_name' => 'Two',
-                'password' => $password,
-                'status_account' => 'active',
-            ]
-        );
-
-        $head3 = User::updateOrCreate(
-            ['email' => 'head3@housing.local'],
-            [
-                'first_name' => 'Head',
-                'second_name' => 'Three',
-                'password' => $password,
-                'status_account' => 'active',
-            ]
-        );
-
-        $head4 = User::updateOrCreate(
-            ['email' => 'head4@housing.local'],
-            [
-                'first_name' => 'Head',
-                'second_name' => 'Four',
-                'password' => $password,
-                'status_account' => 'active',
-            ]
-        );
-
-        $users = collect();
-
-        for ($i = 1; $i <= 10; $i++) {
-            $users->push(
-                User::updateOrCreate(
-                    ['email' => "user{$i}@housing.local"],
-                    [
-                        'first_name' => 'User',
-                        'second_name' => (string) $i,
-                        'password' => $password,
-                        'status_account' => 'active',
-                    ]
-                )
+            $companies[] = Company::updateOrCreate(
+                ['name' => $data['name']],
+                [...$data, 'logo_path' => $logoPath]
             );
         }
 
-        $admin1->companies()->sync([
-            $companies[0]->id => ['role' => 'admin'],
-            $companies[1]->id => ['role' => 'admin'],
-        ]);
-
-        $admin2->companies()->sync([
-            $companies[2]->id => ['role' => 'admin'],
-            $companies[3]->id => ['role' => 'admin'],
-        ]);
-
-        $head1->companies()->sync([
-            $companies[0]->id => ['role' => 'company_head'],
-        ]);
-
-        $head2->companies()->sync([
-            $companies[1]->id => ['role' => 'company_head'],
-        ]);
-
-        $head3->companies()->sync([
-            $companies[2]->id => ['role' => 'company_head'],
-        ]);
-
-        $head4->companies()->sync([
-            $companies[3]->id => ['role' => 'company_head'],
-        ]);
-
-        $distribution = [
-            1 => [0],
-            2 => [1],
-            3 => [2],
-            4 => [3],
-            5 => [0, 1],
-            6 => [1, 2],
-            7 => [2, 3],
-            8 => [0, 3],
-            9 => [0],
-            10 => [2],
+        $avatarFiles = [
+            base_path('resources/images/avatar_users/avatar_1.webp'),
+            base_path('resources/images/avatar_users/avatar_2.webp'),
+            base_path('resources/images/avatar_users/avatar_3.webp'),
+            base_path('resources/images/avatar_users/avatar_4.webp'),
+            base_path('resources/images/avatar_users/avatar_5.webp'),
+            base_path('resources/images/avatar_users/avatar_6.webp'),
         ];
 
-        foreach ($users as $index => $user) {
-            $userNumber = $index + 1;
-            $attachData = [];
+        $usersData = [];
 
-            foreach ($distribution[$userNumber] as $companyIndex) {
-                $attachData[$companies[$companyIndex]->id] = ['role' => 'user'];
+        foreach ($companies as $idx => $company) {
+            $n = $idx + 1;
+            $usersData[] = ['email' => "company{$n}.admin1@housing.local", 'first_name' => "Admin{$n}", 'second_name' => 'One', 'roles' => [$company->id => 'admin']];
+            $usersData[] = ['email' => "company{$n}.admin2@housing.local", 'first_name' => "Admin{$n}", 'second_name' => 'Two', 'roles' => [$company->id => 'admin']];
+            $usersData[] = ['email' => "company{$n}.head1@housing.local", 'first_name' => "Head{$n}", 'second_name' => 'One', 'roles' => [$company->id => 'company_head']];
+            $usersData[] = ['email' => "company{$n}.head2@housing.local", 'first_name' => "Head{$n}", 'second_name' => 'Two', 'roles' => [$company->id => 'company_head']];
+            $usersData[] = ['email' => "company{$n}.user1@housing.local", 'first_name' => "User{$n}", 'second_name' => 'One', 'roles' => [$company->id => 'user']];
+            $usersData[] = ['email' => "company{$n}.user2@housing.local", 'first_name' => "User{$n}", 'second_name' => 'Two', 'roles' => [$company->id => 'user']];
+        }
+
+        $usersData[] = ['email' => 'multi.role1@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleOne', 'roles' => [$companies[0]->id => 'admin', $companies[1]->id => 'user']];
+        $usersData[] = ['email' => 'multi.role2@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleTwo', 'roles' => [$companies[1]->id => 'admin', $companies[2]->id => 'user']];
+        $usersData[] = ['email' => 'multi.role3@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleThree', 'roles' => [$companies[2]->id => 'admin', $companies[3]->id => 'user']];
+        $usersData[] = ['email' => 'multi.role4@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleFour', 'roles' => [$companies[3]->id => 'admin', $companies[0]->id => 'user']];
+
+        foreach ($usersData as $index => $data) {
+            $avatarPath = null;
+            $avatarSource = $avatarFiles[array_rand($avatarFiles)] ?? null;
+
+            if ($avatarSource && file_exists($avatarSource)) {
+                $avatarPath = 'avatars/seed_user_' . ($index + 1) . '_' . basename($avatarSource);
+                Storage::disk('public')->put($avatarPath, file_get_contents($avatarSource));
             }
 
-            $user->companies()->sync($attachData);
+            $user = User::updateOrCreate(
+                ['email' => $data['email']],
+                [
+                    'first_name' => $data['first_name'],
+                    'second_name' => $data['second_name'],
+                    'password' => $password,
+                    'status_account' => 'active',
+                    'avatar_path' => $avatarPath,
+                ]
+            );
+
+            $syncRoles = [];
+            foreach ($data['roles'] as $companyId => $role) {
+                $syncRoles[$companyId] = ['role' => $role];
+            }
+
+            $user->companies()->sync($syncRoles);
         }
     }
 }
 
 /*
-|--------------------------------------------------------------------------
-| Test credentials
-|--------------------------------------------------------------------------
-|
-| All test users have password: password
-|
-| Superadmin:
-| - superadmin@housing.local / password
-|
-| Admins:
-| - admin1@housing.local / password
-| - admin2@housing.local / password
-|
-| Company heads:
-| - head1@housing.local / password
-| - head2@housing.local / password
-| - head3@housing.local / password
-| - head4@housing.local / password
-|
-| Regular users:
-| - user1@housing.local / password
-| - user2@housing.local / password
-| - user3@housing.local / password
-| - user4@housing.local / password
-| - user5@housing.local / password
-| - user6@housing.local / password
-| - user7@housing.local / password
-| - user8@housing.local / password
-| - user9@housing.local / password
-| - user10@housing.local / password
-|
+Test credentials
+
+Password for all users below: password
+
+Superadmin:
+superadmin@housing.local
+
+Company users:
+company1.admin1@housing.local
+company1.admin2@housing.local
+company1.head1@housing.local
+company1.head2@housing.local
+company1.user1@housing.local
+company1.user2@housing.local
+company2.admin1@housing.local
+company2.admin2@housing.local
+company2.head1@housing.local
+company2.head2@housing.local
+company2.user1@housing.local
+company2.user2@housing.local
+company3.admin1@housing.local
+company3.admin2@housing.local
+company3.head1@housing.local
+company3.head2@housing.local
+company3.user1@housing.local
+company3.user2@housing.local
+company4.admin1@housing.local
+company4.admin2@housing.local
+company4.head1@housing.local
+company4.head2@housing.local
+company4.user1@housing.local
+company4.user2@housing.local
+
+Cross-company users (4):
+| - multi.role1@housing.local
+| - multi.role2@housing.local
+| - multi.role3@housing.local
+| - multi.role4@housing.local
 */

@@ -14,7 +14,9 @@
                 <x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/>
             </div>
 
-            <div></div>
+            <div class="button-wrapper">
+                <x-link text="Trash" href="{{ route('admin.users.trash') }}" class="button-list"/>
+            </div>
 
             <div class="button-wrapper">
                 <x-link text="Create new user" href="{{ route('admin.users.create') }}" class="button-edit"/>

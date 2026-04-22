@@ -21,7 +21,7 @@ class CompanyController extends Controller
         }
 
         return response()->json([
-            'logo_url' => asset('images/default-image-company.jpg'),
+            'logo_url' => asset('images/default-image-company.webp'),
         ]);
     }
 
@@ -87,6 +87,7 @@ class CompanyController extends Controller
         if (request()->is('api/admin/*') && !request()->user()->isAdminOrHigher($company->id)) {
             abort(403);
         }
+        $company->update(['deleted_by' => auth()->id()]);
         $company->delete();
         return response()->json([], 204);
     }

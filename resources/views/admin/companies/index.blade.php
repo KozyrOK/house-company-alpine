@@ -14,7 +14,9 @@
                 <x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/>
             </div>
 
-            <div></div>
+            <div class="button-wrapper">
+                <x-link text="Trash" href="{{ route('admin.companies.trash') }}" class="button-list"/>
+            </div>
 
             <div class="button-wrapper action-row-end">
                 @can('create', \App\Models\Company::class)

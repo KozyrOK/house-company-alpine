@@ -9,4 +9,4 @@
 
 #
 
-![Housing Company](./resources/images/default-image-company.jpg)
+![Housing Company](./resources/images/default-image-company.webp)

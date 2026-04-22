@@ -1,6 +1,6 @@
 @extends('_layouts.app')
 
-@section('title', 'Company Detail')
+@section('title', 'Company')
 
 @section('content')
 
@@ -13,7 +13,7 @@
             <div class="top-crud-wrapper">
 
                 <div class="button-wrapper">
-                    <x-link text="← Back to list" href="{{ route('main.companies.index') }}" class="button-list"/>
+                    <x-link text="← Back" href="{{ route('main.index') }}" class="button-list"/>
                 </div>
 
                 <div>
@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="Main Menu" href="{{ route('main.index') }}" class="button-list"/>
+                    <x-link text="Dashboard" href="{{ route('dashboard') }}" class="button-list"/>
                 </div>
 
             </div>
@@ -39,9 +39,15 @@
             <div class="bottom-crud-wrapper">
 
                 <div class="button-wrapper">
-                    @can('update', $company)
-                        <x-link text="Company Users" href="{{ route('main.users.index', $company) }}" class="button-edit"/>
-                    @endcan
+                    @if(auth()->user()->hasRole('admin', $company->id))
+                        <x-link text="Edit Company" href="{{ route('admin.companies.edit', $company) }}" class="button-edit"/>
+                    @endif
+                </div>
+
+                <div></div>
+
+                <div class="button-wrapper">
+                    <x-link text="Company Users" href="{{ route('main.users.index', $company) }}" class="button-list"/>
                 </div>
 
             </div>

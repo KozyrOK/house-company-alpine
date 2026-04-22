@@ -27,6 +27,7 @@ class AdminUserController extends Controller
     {
         $this->authorize('delete', $user);
 
+        $user->update(['deleted_by' => auth()->id()]);
         $user->delete();
 
         return response()->noContent();

@@ -10,6 +10,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
 use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\EnsureCurrentCompanyIsSet;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             SetLocale::class,
+            EnsureCurrentCompanyIsSet::class,
         ]);
 
         $middleware->alias([
@@ -33,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.access' => AdminAccess::class,
             'main.access' => MainAccess::class,
             'superadmin.only' => SuperAdminOnly::class,
+            'company.context' => EnsureCurrentCompanyIsSet::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

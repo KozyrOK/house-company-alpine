@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class AdminUserController extends Controller
 {
@@ -24,12 +24,29 @@ class AdminUserController extends Controller
         $users = User::query()
             ->with('companies:id,name')
             ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
-                $query->whereHas('companies', fn ($companyQuery) => $companyQuery->whereIn('companies.id', $actor->adminCompanyIds()));
+                $query->whereHas('companies', fn($companyQuery) => $companyQuery->where('companies.id', currentCompany()?->id));
             })
             ->latest('id')
             ->paginate(15);
 
         return view('admin.users.index', compact('users'));
+    }
+
+    public function trash(): View
+    {
+        $this->authorize('viewAny', User::class);
+
+        $actor = auth()->user();
+
+        $users = User::onlyTrashed()
+            ->with('companies:id,name')
+            ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
+                $query->whereHas('companies', fn ($companyQuery) => $companyQuery->where('companies.id', currentCompany()?->id));
+            })
+            ->latest('deleted_at')
+            ->paginate(15);
+
+        return view('admin.users.trash', compact('users'));
     }
 
     public function show(User $user): View
@@ -58,6 +75,7 @@ class AdminUserController extends Controller
                 ->where('deleted_by', $user->id)
                 ->update(['deleted_by' => null]);
 
+            $user->update(['deleted_by' => auth()->id()]);
             $user->delete();
         });
 
@@ -66,18 +84,30 @@ class AdminUserController extends Controller
             ->with('success', 'User deleted successfully.');
     }
 
+    public function restore(int $user): RedirectResponse
+    {
+        $model = User::onlyTrashed()->with('companies')->findOrFail($user);
+        $this->authorize('restore', $model);
+
+        $model->restore();
+        $model->update(['deleted_by' => null]);
+
+        return redirect()
+            ->route('admin.users.trash')
+            ->with('success', 'User restored successfully.');
+    }
+
     public function create(): View
     {
         $companies = auth()->user()->isSuperAdmin()
             ? Company::query()->orderBy('name')->get()
-            : Company::query()->whereIn('id', auth()->user()->adminCompanyIds())->orderBy('name')->get();
+            : collect([currentCompany()])->filter();
 
         return view('admin.users.create', compact('companies'));
     }
 
     public function store(Request $request): RedirectResponse
     {
-
         $validated = $request->validate([
             'company_id' => 'required|integer|exists:companies,id',
             'first_name' => 'required|string|max:50',
@@ -91,19 +121,24 @@ class AdminUserController extends Controller
         $company = Company::query()->findOrFail((int) $validated['company_id']);
         $this->authorize('create', [User::class, $company]);
 
+        $actor = auth()->user();
+        $requiresApproval = $actor->hasRole('company_head', $company->id) && !$actor->hasRole('admin', $company->id);
+
         $user = User::create([
             'first_name' => $validated['first_name'],
             'second_name' => $validated['second_name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
-            'status_account' => 'pending',
+            'status_account' => $requiresApproval ? 'pending' : 'active',
         ]);
 
         $user->companies()->attach($company->id, ['role' => $validated['role']]);
 
         return redirect()->route('admin.users.show', $user)
-            ->with('success', 'User created successfully.');
+            ->with('success', $requiresApproval
+                ? 'User created and sent for approval.'
+                : 'User created successfully.');
     }
 
     public function edit(User $user): View
@@ -111,7 +146,6 @@ class AdminUserController extends Controller
         $this->authorize('update', $user);
 
         return view('admin.users.edit', compact('user'));
-
     }
 
     public function update(Request $request, User $user): RedirectResponse
@@ -130,6 +164,16 @@ class AdminUserController extends Controller
 
         return redirect()->route('admin.users.show', $user)
             ->with('success', 'User updated successfully.');
+    }
+
+    public function approve(User $user): RedirectResponse
+    {
+        $this->authorize('approve', $user);
+
+        $user->update(['status_account' => 'active']);
+
+        return redirect()->route('admin.users.show', $user)
+            ->with('success', 'User approved successfully.');
 
     }
 }

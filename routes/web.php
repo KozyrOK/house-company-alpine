@@ -34,18 +34,28 @@ Route::post('/locale/{locale}', function ($locale) {
 // START PAGE REDIRECT
 
 Route::get('/', function () {
+
     if (!auth()->check()) {
         return redirect()->route('info');
     }
 
-    if (auth()->user()->canAccessAdminPanel()) {
+    $user = auth()->user();
+
+    if ($user->isSuperAdmin()) {
         return redirect()->route('admin.index');
     }
-    if (auth()->user()->canAccessMainPanel()) {
 
-        return redirect()->route('main.index');
+    if (!currentCompany()) {
+        return redirect()->route('company.select');
     }
-    abort(403);
+
+    $role = $user->roleIn(currentCompany());
+
+    if (in_array($role, ['admin'], true)) {
+        return redirect()->route('admin.index');
+    }
+
+    return redirect()->route('main.index');
 });
 
 // PUBLIC PAGE
@@ -55,6 +65,15 @@ Route::view('/info', 'pages.info')->name('info');
 // AUTHENTICATED
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/company/select', [CompanyController::class, 'select'])
+        ->name('company.select');
+
+    Route::post('/companies/{company}/switch', [CompanyController::class, 'switch'])
+        ->name('companies.switch');
+
+    Route::get('/company', [CompanyController::class, 'current'])
+        ->name('company.current');
 
     // MAIN
 
@@ -87,6 +106,9 @@ Route::middleware('auth')->group(function () {
         ->middleware('admin.access')
         ->name('companies.index');
 
+    Route::get('/companies/trash', [AdminCompanyController::class, 'trash'])
+        ->name('companies.trash');
+
     Route::get('/companies/{company}', [CompanyController::class, 'show'])
         ->middleware('admin.access')
         ->name('companies.show');
@@ -97,30 +119,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('admin.access')
         ->name('companies.posts.index');
 
-    Route::get('/posts/{post}', [PostController::class, 'show'])
-        ->name('posts.show');
-
-    Route::get('/main/companies/{company}/posts', [PostController::class, 'index'])
-        ->name('main.posts.index');
-
-    Route::get('/main/companies/{company}/posts/{post}', [PostController::class, 'show'])
-        ->scopeBindings()
-        ->name('main.posts.show');
-
     // USERS
 
     Route::get('/users', [UserController::class, 'index'])
         ->name('users.index');
-
-    Route::get('/users/{user}', [UserController::class, 'show'])
-        ->name('users.show');
-
-    Route::get('/main/companies/{company}/users', [UserController::class, 'index'])
-        ->name('main.users.index');
-
-    Route::get('/main/companies/{company}/users/{user}', [UserController::class, 'show'])
-        ->name('main.users.show');
-
 
     // PROFILE
 
@@ -149,6 +151,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/companies', [AdminCompanyController::class, 'index'])
             ->name('companies.index');
 
+        Route::get('/companies/trash', [AdminCompanyController::class, 'trash'])
+            ->name('companies.trash');
+
         Route::get('/companies/create', [AdminCompanyController::class, 'create'])
             ->name('companies.create');
 
@@ -169,6 +174,10 @@ Route::middleware('auth')->group(function () {
             ->middleware('superadmin.only')
             ->name('companies.destroy');
 
+        Route::patch('/companies/{company}/restore', [AdminCompanyController::class, 'restore'])
+            ->middleware('superadmin.only')
+            ->name('companies.restore');
+
         Route::get('/companies/{company}/logo', [AdminCompanyController::class, 'logo'])
             ->name('companies.logo');
 
@@ -176,6 +185,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/users', [AdminUserController::class, 'index'])
             ->name('users.index');
+
+        Route::get('/users/trash', [AdminUserController::class, 'trash'])
+            ->name('users.trash');
 
         Route::get('/users/create', [AdminUserController::class, 'create'])
             ->name('users.create');
@@ -195,10 +207,19 @@ Route::middleware('auth')->group(function () {
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])
             ->name('users.destroy');
 
+        Route::patch('/users/{user}/restore', [AdminUserController::class, 'restore'])
+            ->name('users.restore');
+
+        Route::patch('/users/{user}/approve', [AdminUserController::class, 'approve'])
+            ->name('users.approve');
+
         // POSTS
 
         Route::get('/posts', [AdminPostController::class, 'index'])
             ->name('posts.index');
+
+        Route::get('/posts/trash', [AdminPostController::class, 'trash'])
+            ->name('posts.trash');
 
         Route::get('/posts/create', [AdminPostController::class, 'create'])
             ->name('posts.create');
@@ -217,6 +238,12 @@ Route::middleware('auth')->group(function () {
 
         Route::delete('/posts/{post}', [AdminPostController::class, 'destroy'])
             ->name('posts.destroy');
+
+        Route::patch('/posts/{post}/restore', [AdminPostController::class, 'restore'])
+            ->name('posts.restore');
+
+        Route::patch('/posts/{post}/approve', [AdminPostController::class, 'approve'])
+            ->name('posts.approve');
 
     });
 });

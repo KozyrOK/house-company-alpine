@@ -17,7 +17,7 @@
                 </div>
 
                 <div>
-                    <img class="company-image" src="{{ asset('images/default-image-company.jpg') }}" alt="post image">
+                    <img class="company-image" src="{{ asset('images/default-image-company.webp') }}" alt="post image">
                 </div>
 
                 <div class="button-wrapper">

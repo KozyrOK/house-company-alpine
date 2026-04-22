@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('city', 100);
             $table->string('logo_path', 255)->nullable();
             $table->text('description')->nullable();
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

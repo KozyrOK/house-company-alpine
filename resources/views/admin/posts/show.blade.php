@@ -17,7 +17,7 @@
                 </div>
 
                 <div>
-                    <img class="company-image" src="{{ asset('images/default-image-company.jpg') }}" alt="post image">
+                    <img class="company-image" src="{{ asset('images/default-image-company.webp') }}" alt="post image">
                 </div>
 
                 <div class="button-wrapper">
@@ -37,6 +37,15 @@
             <div class="bottom-crud-wrapper">
 
                 <div class="button-wrapper">
+                    @if($post->status === 'pending')
+                        @can('approve', $post)
+                            <form method="POST" action="{{ route('admin.posts.approve', $post) }}">
+                                @csrf
+                                @method('PATCH')
+                                <x-button text="Approve Post" type="submit" class="button-edit"/>
+                            </form>
+                        @endcan
+                    @endif
                     @can('update', $post)
                         <x-link text="Edit Post" href="{{ route('admin.posts.edit', $post) }}" class="button-edit"/>
                     @endcan
@@ -46,7 +55,7 @@
 
                 <div class="button-wrapper">
                     @can('delete', $post)
-                        <form method="POST" action="{{ route('admin.posts.destroy', $post) }}">
+                        <form method="POST" action="{{ route('admin.posts.destroy', $post) }}" onsubmit="return confirm('Are you sure you want to delete this post?');">
                             @csrf
                             @method('DELETE')
                             <x-button text="Delete Post" type="submit" class="button-delete"/>

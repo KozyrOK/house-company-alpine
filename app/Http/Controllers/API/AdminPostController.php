@@ -56,6 +56,7 @@ class AdminPostController extends Controller
     {
         $this->authorize('delete', $post);
 
+        $post->update(['deleted_by' => auth()->id()]);
         $post->delete();
 
         return response()->noContent();

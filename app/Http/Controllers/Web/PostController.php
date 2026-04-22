@@ -14,7 +14,8 @@ class PostController extends Controller
     public function index(Request $request): View
     {
         if ($request->routeIs('main.posts.index')) {
-            $company = Company::query()->findOrFail((int) $request->route('company'));
+            $company = currentCompany();
+            abort_unless($company, 403);
 
             $this->authorize('view', $company);
 
@@ -32,28 +33,13 @@ class PostController extends Controller
         $user = $request->user();
 
         if (!$user->isSuperAdmin()) {
-            $adminCompanyIds = $user->adminCompanyIds();
-            $query->whereIn('company_id', $adminCompanyIds);
-        }
-
-        if ($request->filled('company_id')) {
-            $query->where('company_id', (int) $request->integer('company_id'));
-        }
-
-        if ($request->filled('user_id')) {
-            $query->where('user_id', (int) $request->integer('user_id'));
+            $currentCompany = currentCompany();
+            abort_unless($currentCompany, 403);
+            $query->where('company_id', $currentCompany->id);
         }
 
         if ($request->filled('status')) {
             $query->where('status', $request->string('status'));
-        }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date('date_from'));
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date('date_to'));
         }
 
         $posts = $query->paginate(15);
@@ -72,24 +58,17 @@ class PostController extends Controller
 
     public function create(): View
     {
-        if (!request()->user()->canAccessAdminPanel()) {
-            abort(403);
-        }
-
         $user = request()->user();
-        $companies = Company::query()
-            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
-                $query->whereIn('id', $user->adminCompanyIds());
-            })
-            ->orderBy('name')
-            ->get();
+
+        $companies = $user->isSuperAdmin()
+            ? Company::query()->orderBy('name')->get()
+            : collect([currentCompany()])->filter();
 
         return view('admin.posts.create', compact('companies'));
     }
 
     public function store(Request $request): RedirectResponse
     {
-
         $validated = $request->validate([
             'company_id' => 'required|integer|exists:companies,id',
             'title' => 'required|string|max:255',
@@ -100,22 +79,23 @@ class PostController extends Controller
         $company = Company::query()->findOrFail((int) $validated['company_id']);
         $this->authorize('create', [Post::class, $company]);
 
-        if (!$request->user()->isAdminOrHigher($company->id)) {
-            abort(403);
-        }
+        $role = $request->user()->roleIn($company);
+        $status = in_array($role, ['admin', 'company_head'], true) || $request->user()->isSuperAdmin()
+            ? ($validated['status'] ?? 'publish')
+            : 'pending';
 
         Post::create([
             'company_id' => $company->id,
             'user_id' => $request->user()->id,
             'title' => $validated['title'],
             'content' => $validated['content'],
-            'status' => $validated['status'] ?? 'pending',
+            'status' => $status,
             'created_by' => $request->user()->id,
             'updated_by' => $request->user()->id,
         ]);
 
         return redirect()->route('admin.posts.index')
-            ->with('status', 'Post created successfully');
+            ->with('status', $status === 'pending' ? 'Post created and sent for approval.' : 'Post created successfully');
     }
 
     public function edit(Post $post): View
@@ -123,12 +103,9 @@ class PostController extends Controller
         $this->authorize('update', $post);
 
         $user = request()->user();
-        $companies = Company::query()
-            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
-                $query->whereIn('id', $user->adminCompanyIds());
-            })
-            ->orderBy('name')
-            ->get();
+        $companies = $user->isSuperAdmin()
+            ? Company::query()->orderBy('name')->get()
+            : collect([currentCompany()])->filter();
 
         return view('admin.posts.edit', compact('post', 'companies'));
     }
@@ -144,12 +121,6 @@ class PostController extends Controller
             'status' => 'sometimes|in:draft,future,pending,publish,trash',
         ]);
 
-        $companyId = (int) ($validated['company_id'] ?? $post->company_id);
-
-        if (!$request->user()->isAdminOrHigher($companyId)) {
-            abort(403);
-        }
-
         $validated['updated_by'] = $request->user()->id;
         $post->update($validated);
 
@@ -162,7 +133,6 @@ class PostController extends Controller
         $this->authorize('delete', $post);
 
         $post->update(['deleted_by' => $request->user()->id]);
-
         $post->delete();
 
         return redirect()->route('admin.posts.index')

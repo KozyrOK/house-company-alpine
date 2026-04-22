@@ -16,9 +16,8 @@ class UserController extends Controller
     public function index(Request $request): View
     {
         if ($request->routeIs('main.users.index')) {
-            $company = Company::query()->findOrFail((int) $request->route('company'));
-
-            $this->authorize('view', $company);
+            $company = currentCompany();
+            abort_unless($company, 403);
 
             $users = $company->users()
                 ->wherePivotIn('role', ['user', 'company_head'])
@@ -35,17 +34,9 @@ class UserController extends Controller
         $actor = $request->user();
 
         if (!$actor->isSuperAdmin()) {
-            $adminCompanyIds = $actor->adminCompanyIds();
-            $query->whereHas('companies', fn ($q) => $q->whereIn('companies.id', $adminCompanyIds));
-        }
-
-        if ($request->filled('company_id')) {
-            $companyId = (int) $request->integer('company_id');
-            $query->whereHas('companies', fn ($q) => $q->where('companies.id', $companyId));
-        }
-
-        if ($request->filled('status_account')) {
-            $query->where('status_account', $request->string('status_account'));
+            $company = currentCompany();
+            abort_unless($company, 403);
+            $query->whereHas('companies', fn ($q) => $q->where('companies.id', $company->id));
         }
 
         $users = $query->paginate(15);
@@ -55,22 +46,19 @@ class UserController extends Controller
 
     public function show(Company $company, $userId): View
     {
+        $company = currentCompany() ?? $company;
         $user = $company->users()->findOrFail($userId);
 
         return view('user.users.show', compact('user', 'company'));
-
     }
 
     public function create(): View
     {
         $user = request()->user();
 
-        $companies = Company::query()
-            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
-                $query->whereIn('id', $user->adminCompanyIds());
-            })
-            ->orderBy('name')
-            ->get();
+        $companies = $user->isSuperAdmin()
+            ? Company::query()->orderBy('name')->get()
+            : collect([currentCompany()])->filter();
 
         return view('admin.users.create', compact('companies'));
     }
@@ -109,19 +97,21 @@ class UserController extends Controller
 
         $this->authorize('create', [User::class, $company]);
 
+        $requiresApproval = $request->user()->roleIn($company) === 'company_head';
+
         $user = User::create([
             'first_name' => $validated['first_name'],
             'second_name' => $validated['second_name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
-            'status_account' => 'pending',
+            'status_account' => $requiresApproval ? 'pending' : 'active',
         ]);
 
         $user->companies()->attach($company->id, ['role' => $validated['role']]);
 
         return redirect()->route('admin.users.show', $user)
-            ->with('status', 'User created successfully');
+            ->with('status', $requiresApproval ? 'User created and sent for approval.' : 'User created successfully');
     }
 
     public function edit(User $user): View
@@ -130,10 +120,11 @@ class UserController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
-    public function destroy(User $user): RedirectResponse
+    public function destroy(Request $request, User $user): RedirectResponse
     {
         $this->authorize('delete', $user);
 
+        $user->update(['deleted_by' => $request->user()->id]);
         $user->delete();
 
         return redirect()->route('admin.users.index')

@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Post;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class AdminPostController extends Controller
 {
@@ -18,12 +18,28 @@ class AdminPostController extends Controller
         $user = request()->user();
         $posts = Post::with(['company:id,name', 'user:id,first_name,second_name'])
             ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
-                $query->whereIn('company_id', $user->adminCompanyIds());
+                $query->where('company_id', currentCompany()?->id);
             })
             ->latest()
             ->paginate(15);
 
         return view('admin.posts.index', compact('posts'));
+    }
+
+    public function trash(): View
+    {
+        $this->authorize('viewAny', Post::class);
+
+        $user = request()->user();
+        $posts = Post::onlyTrashed()
+            ->with(['company:id,name', 'user:id,first_name,second_name'])
+            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
+                $query->where('company_id', currentCompany()?->id);
+            })
+            ->latest('deleted_at')
+            ->paginate(15);
+
+        return view('admin.posts.trash', compact('posts'));
     }
 
     public function show(Post $post): View
@@ -39,6 +55,7 @@ class AdminPostController extends Controller
     {
         $this->authorize('delete', $post);
 
+        $post->update(['deleted_by' => auth()->id()]);
         $post->delete();
 
         return redirect()
@@ -46,12 +63,25 @@ class AdminPostController extends Controller
             ->with('success', 'Post deleted successfully.');
     }
 
+    public function restore(int $post): RedirectResponse
+    {
+        $model = Post::onlyTrashed()->findOrFail($post);
+        $this->authorize('restore', $model);
+
+        $model->restore();
+        $model->update(['deleted_by' => null]);
+
+        return redirect()
+            ->route('admin.posts.trash')
+            ->with('success', 'Post restored successfully.');
+    }
+
     public function create(): View
     {
         $user = request()->user();
         $companies = Company::query()
             ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
-                $query->whereIn('id', $user->adminCompanyIds());
+                $query->where('id', currentCompany()?->id);
             })
             ->orderBy('name')
             ->get();
@@ -71,18 +101,27 @@ class AdminPostController extends Controller
         $company = Company::query()->findOrFail((int) $validated['company_id']);
         $this->authorize('create', [Post::class, $company]);
 
+        $actor = $request->user();
+        $status = $validated['status'] ?? 'pending';
+
+        if ($actor->hasRole(['admin', 'company_head'], $company->id) || $actor->isSuperAdmin()) {
+            $status = $validated['status'] ?? 'publish';
+        }
+
         Post::create([
             'company_id' => $company->id,
-            'user_id' => $request->user()->id,
+            'user_id' => $actor->id,
             'title' => $validated['title'],
             'content' => $validated['content'],
-            'status' => $validated['status'] ?? 'pending',
-            'created_by' => $request->user()->id,
-            'updated_by' => $request->user()->id,
+            'status' => $status,
+            'created_by' => $actor->id,
+            'updated_by' => $actor->id,
         ]);
 
         return redirect()->route('admin.posts.index')
-            ->with('success', 'Post created successfully.');
+            ->with('success', $status === 'pending'
+                ? 'Post created and sent for approval.'
+                : 'Post created successfully.');
 
     }
 
@@ -93,13 +132,12 @@ class AdminPostController extends Controller
         $user = request()->user();
         $companies = Company::query()
             ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
-                $query->whereIn('id', $user->adminCompanyIds());
+                $query->where('id', currentCompany()?->id);
             })
             ->orderBy('name')
             ->get();
 
         return view('admin.posts.edit', compact('post', 'companies'));
-
     }
 
     public function update(Request $request, Post $post): RedirectResponse
@@ -115,7 +153,7 @@ class AdminPostController extends Controller
 
         $companyId = (int) ($validated['company_id'] ?? $post->company_id);
         if (!$request->user()->isAdminOrHigher($companyId)) {
-            abort(403);
+            $validated['status'] = 'pending';
         }
 
         $validated['updated_by'] = $request->user()->id;
@@ -123,7 +161,19 @@ class AdminPostController extends Controller
 
         return redirect()->route('admin.posts.show', $post)
             ->with('success', 'Post updated successfully.');
+    }
 
+    public function approve(Post $post): RedirectResponse
+    {
+        $this->authorize('approve', $post);
+
+        $post->update([
+            'status' => 'publish',
+            'updated_by' => auth()->id(),
+        ]);
+
+        return redirect()->route('admin.posts.show', $post)
+            ->with('success', 'Post approved successfully.');
     }
 
 }

@@ -13,11 +13,11 @@
 
         <div class="content-item-wrapper">
             <div>
-                <img class="company-image" src="{{ $user->image_path ?: asset('images/default-image-company.jpg') }}" alt="user image">
+                <img class="company-image" src="{{ $user->avatar_path ? asset('storage/' . $user->avatar_path) : asset('images/default_avatar.webp') }}" alt="user image">
             </div>
 
             @if($isEditMode)
-                <form method="POST" action="{{ route('dashboard.update') }}">
+                <form method="POST" action="{{ route('dashboard.update') }}" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
                     <table class="w-full">
@@ -25,6 +25,7 @@
                         <tr><th class="key-content-item">Second name</th><td class="value-content-item"><input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field"></td></tr>
                         <tr><th class="key-content-item">Email</th><td class="value-content-item"><input type="email" name="email" value="{{ old('email', $user->email) }}" class="input-field"></td></tr>
                         <tr><th class="key-content-item">Phone</th><td class="value-content-item"><input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="input-field"></td></tr>
+                        <tr><th class="key-content-item">Avatar</th><td class="value-content-item"><input type="file" name="avatar" accept="image/*" class="input-field"></td></tr>
                         <tr>
                             <th class="key-content-item">Account status</th>
                             <td class="value-content-item">
@@ -68,12 +69,11 @@
                     <div></div>
 
                     <div class="button-wrapper">
-                        <form method="POST" action="{{ route('dashboard.destroy') }}">
+                        <form method="POST" action="{{ route('dashboard.destroy') }}" onsubmit="return confirm('Are you sure you want to delete your profile?');">
                             @csrf
                             @method('DELETE')
                             <x-button text="Delete User" type="submit" class="button-delete"/>
                         </form>
-
                     </div>
                 </div>
             @endif

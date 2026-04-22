@@ -12,7 +12,17 @@ class MainAccess
     {
         $user = $request->user();
 
-        if (!$user || !$user->canAccessMainPanel()) {
+        if (!$user) {
+            abort(403);
+        }
+
+        if ($user->isSuperAdmin()) {
+            abort(403);
+        }
+
+        $company = currentCompany();
+
+        if (!$company || !in_array($user->roleIn($company), ['company_head', 'user'], true)) {
             abort(403);
         }
 

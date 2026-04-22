@@ -17,7 +17,7 @@
                 </div>
 
                 <div>
-                    <img class="company-image" src="{{ $user->image_path ?: asset('images/default-image-company.jpg') }}" alt="user image">
+                    <img class="company-image" src="{{ $user->avatar_path ? asset('storage/' . $user->avatar_path) : asset('images/default-image-company.webp') }}" alt="user image">
                 </div>
 
                 <div class="button-wrapper">
@@ -36,6 +36,16 @@
             <div class="bottom-crud-wrapper">
 
                 <div class="button-wrapper">
+                    @if($user->status_account === 'pending')
+                        @can('approve', $user)
+                            <form method="POST" action="{{ route('admin.users.approve', $user) }}">
+                                @csrf
+                                @method('PATCH')
+                                <x-button text="Approve User" type="submit" class="button-edit"/>
+                            </form>
+                        @endcan
+                    @endif
+
                     @can('update', $user)
                         <x-link text="Edit User" href="{{ route('admin.users.edit', $user) }}" class="button-edit"/>
                     @endcan
@@ -45,7 +55,7 @@
 
                 <div class="button-wrapper">
                     @can('delete', $user)
-                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}">
+                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Are you sure you want to delete this user?');">
                             @csrf
                             @method('DELETE')
                             <x-button text="Delete User" type="submit" class="button-delete"/>

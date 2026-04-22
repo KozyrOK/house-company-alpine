@@ -49,6 +49,7 @@ class AdminCompanyController extends Controller
     {
         $this->authorize('delete', $company);
 
+        $company->update(['deleted_by' => auth()->id()]);
         $company->delete();
 
         return response()->noContent();

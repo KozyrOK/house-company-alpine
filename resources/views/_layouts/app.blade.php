@@ -18,7 +18,6 @@
 <x-layouts::header/>
 
 <div class="navbar-header-wrapper">
-    <x-header.company-image/>
     <x-layouts::navbar-header/>
 </div>
 

@@ -49,13 +49,17 @@ class UserController extends Controller
             'role' => ['sometimes', Rule::in(['user', 'company_head', 'admin'])],
         ]);
 
+        $requiresApproval = $request->user()->hasRole('company_head', $company->id)
+            && !$request->user()->hasRole('admin', $company->id)
+            && !$request->user()->isSuperAdmin();
+
         $user = User::create([
             'first_name' => $validated['first_name'],
             'second_name' => $validated['second_name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'] ?? null,
-            'status_account' => 'pending',
+            'status_account' => $requiresApproval ? 'pending' : 'active',
         ]);
 
         $user->companies()->attach($company->id, ['role' => $validated['role'] ?? 'user']);
@@ -139,6 +143,7 @@ class UserController extends Controller
             }
         }
 
+        $user->update(['deleted_by' => auth()->id()]);
         $user->delete();
 
         return response()->json([], 204);

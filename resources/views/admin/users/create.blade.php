@@ -13,7 +13,7 @@
             </div>
 
             <div>
-                <img alt="user preview" class="company-image" :src="preview || '{{ asset('images/default-image-company.jpg') }}'">
+                <img alt="user preview" class="company-image" :src="preview || '{{ asset('images/default-image-company.webp') }}'">
             </div>
 
             <div class="button-wrapper">

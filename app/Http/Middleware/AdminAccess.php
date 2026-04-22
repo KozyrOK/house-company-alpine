@@ -16,7 +16,13 @@ class AdminAccess
             abort(403);
         }
 
-        if (!$user->canAccessAdminPanel()) {
+        if ($user->isSuperAdmin()) {
+            return $next($request);
+        }
+
+        $company = currentCompany();
+
+        if (!$company || $user->roleIn($company) !== 'admin') {
             abort(403);
         }
 

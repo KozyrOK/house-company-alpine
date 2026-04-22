@@ -13,24 +13,55 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class CompanyController extends Controller
 {
 
-    public function index(Request $request): View
+    public function select(Request $request): View
     {
-        if ($request->routeIs('main.companies.index')) {
-            $companies = $request->user()
-                ->companies()
-                ->withCount(['users', 'posts'])
-                ->orderBy('name')
-                ->paginate(15);
-            return view('user.companies.index', compact('companies'));
+        $user = $request->user();
+
+        if ($user->isSuperAdmin()) {
+            return view('user.companies.index', ['companies' => Company::orderBy('name')->paginate(15)]);
         }
 
+        $companies = $user->companies()->orderBy('name')->get();
+
+        return view('pages.company-select', compact('companies'));
+    }
+
+    public function switch(Request $request, Company $company): RedirectResponse
+    {
+        if (!$request->user()->isSuperAdmin() && !$request->user()->belongsToCompany($company->id)) {
+            abort(403);
+        }
+
+        $request->session()->put('current_company_id', $company->id);
+
+        return back()->with('success', 'Current company switched.');
+    }
+
+    public function current(Request $request): RedirectResponse|View
+    {
+        if ($request->user()->isSuperAdmin()) {
+            return redirect()->route('admin.companies.index');
+        }
+
+        $company = currentCompany();
+
+        if (!$company) {
+            return redirect()->route('company.select');
+        }
+
+        $company->loadCount(['users', 'posts']);
+
+        return view('user.companies.show', compact('company'));
+    }
+
+    public function index(Request $request): View
+    {
         $this->authorize('viewAny', Company::class);
 
         $query = Company::query()->orderBy('name');
 
         if (!$request->user()->isSuperAdmin()) {
-            $adminCompanyIds = $request->user()->adminCompanyIds();
-            $query->whereIn('id', $adminCompanyIds);
+            $query->whereIn('id', [$request->session()->get('current_company_id')]);
         }
 
         if ($request->filled('city')) {
@@ -45,21 +76,6 @@ class CompanyController extends Controller
     public function show(Request $request, Company $company): View
     {
         $this->authorize('view', $company);
-
-        if ($request->routeIs('main.companies.show')) {
-            $company->load([
-                'users' => fn ($query) => $query->orderBy('first_name'),
-                'posts' => fn ($query) => $query->latest()->with('user:id,first_name,second_name'),
-            ]);
-
-            $company->loadCount(['users', 'posts']);
-
-            return view('user.companies.show', compact('company'));
-        }
-
-        if (!$request->user()->isAdminOrHigher($company->id)) {
-            abort(403);
-        }
 
         $company->loadCount(['users', 'posts']);
 
@@ -118,10 +134,11 @@ class CompanyController extends Controller
             ->with('status', 'Company updated successfully');
     }
 
-    public function destroy(Company $company): RedirectResponse
+    public function destroy(Request $request, Company $company): RedirectResponse
     {
         $this->authorize('delete', $company);
 
+        $company->update(['deleted_by' => $request->user()->id]);
         $company->delete();
 
         return redirect()->route('admin.companies.index')
@@ -132,7 +149,7 @@ class CompanyController extends Controller
     {
         $this->authorize('view', $company);
 
-        $default = public_path('images/default-image-company.jpg');
+        $default = public_path('images/default-image-company.webp');
 
         if (!$company->logo_path || !Storage::disk('public')->exists($company->logo_path)) {
             return response()->file($default);

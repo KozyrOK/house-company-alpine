@@ -16,48 +16,39 @@ class CompanyPolicy
         return null;
     }
 
-    /**
-     * GET /companies
-     */
     public function viewAny(User $user): bool
     {
-        return $user->companies()
-            ->wherePivotIn('role', ['admin'])
-            ->exists();
+        return currentCompany() !== null;
     }
 
-    /**
-     * GET /companies/{company}
-     */
     public function view(User $user, Company $company): bool
     {
-        return $user->belongsToCompany($company->id);
+        $current = currentCompany();
+
+        return $current !== null && $company->id === $current->id;
     }
 
-    /**
-     * POST /companies
-     * Only superadmin (by before)
-     */
     public function create(User $user): bool
     {
         return false;
     }
 
-    /**
-     * PUT/PATCH /companies/{company}
-     * admin own company
-     */
     public function update(User $user, Company $company): bool
     {
-        return $user->hasRole('admin', $company->id);
+        return $this->view($user, $company) && $user->hasRole('admin', $company->id);
     }
 
-    /**
-     * DELETE /companies/{company}
-     * only superadmin
-     */
     public function delete(User $user, Company $company): bool
     {
         return false;
+    }
+
+    public function restore(User $user, Company $company): bool
+    {
+        if (!$this->view($user, $company)) {
+            return false;
+        }
+
+        return $company->deleted_by === $user->id;
     }
 }
