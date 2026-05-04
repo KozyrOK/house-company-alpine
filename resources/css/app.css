@@ -226,7 +226,7 @@ progress {
 .header-topbar {
     @apply absolute top-0 right-0 flex items-center justify-end space-x-8
     px-4 py-2 bg-[#198666] dark:bg-[#0f616d]
-    rounded-bl-2xl shadow-lg z-50 border-b-4 border-l-4 dark:border-[#198666] border-[#0f616d];
+    rounded-bl-2xl shadow-lg z-50 border-b-4 border-l-4 dark:border-[#198666] border-[#0f616d] transition-opacity duration-300;
 }
 
  .header-avatar-image {
@@ -315,7 +315,7 @@ progress {
  .company-image-header {
      @apply w-28 h-28 rounded-2xl border-4
      dark:border-[#198666] border-[#0f616d]
-     transition-opacity duration-300 ease-in-out
+     transition-opacity duration-500 ease-in-out
      object-cover block bg-[#0f616d];
  }
 
@@ -326,7 +326,7 @@ progress {
 }
 
 .navbar-header ul {
-    @apply flex justify-center md:justify-end space-x-14 py-4 px-8;
+    @apply flex items-center justify-center md:justify-end space-x-8 py-4 px-8;
 }
 
  .navbar-header a {
@@ -342,7 +342,7 @@ progress {
  }
 
  .company-switcher-summary {
-     @apply cursor-pointer text-sm px-2 py-1 rounded bg-white/80 dark:bg-gray-800/80;
+     @apply cursor-pointer text-white uppercase tracking-wide font-medium relative transition-all duration-300 pb-2;
  }
 
  .company-switcher-dropdown {
@@ -367,7 +367,7 @@ progress {
  }
 
  .main-container {
-     @apply relative z-10 justify-start transition-opacity duration-300 ease-in-out overflow-hidden;
+     @apply relative z-10 justify-start transition-opacity duration-500 ease-in-out overflow-hidden;
  }
 
  .main-container.fade-out {
@@ -450,6 +450,10 @@ p {
      @apply grid grid-cols-3 gap-3 py-4;
  }
 
+ .top-crud-wrapper-four {
+     @apply grid grid-cols-4 gap-2 py-4;
+ }
+
  .bottom-crud-wrapper {
      @apply grid grid-cols-3 gap-3 pt-4;
  }
@@ -478,6 +482,14 @@ p {
 
  .button-edit {
      @apply button-base bg-yellow-600;
+ }
+
+ .button-approve {
+     @apply button-base bg-cyan-600;
+ }
+
+ .button-trash {
+     @apply button-base bg-orange-600;
  }
 
  .button-delete {
@@ -526,4 +538,29 @@ p {
  .input-field {
      @apply bg-[#cffaee] dark:bg-[#506fa1] text-black dark:text-white w-full rounded
      focus:outline-none focus:border-[#1fbf8a] focus:ring-2 focus:ring-[#1fbf8a] dark:focus:border-[#198666] dark:focus:ring-[#198666];
+ }
+
+ .confirm-modal-overlay {
+     @apply fixed inset-0 bg-black/50 flex items-center justify-center z-[100];
+ }
+
+ .confirm-modal-overlay.hidden {
+     display: none;
+ }
+
+ .confirm-modal-card {
+     @apply bg-white dark:bg-slate-800 p-6 rounded-xl shadow-xl min-w-[320px] border border-slate-300 dark:border-slate-600;
+ }
+
+ .confirm-modal-message {
+     @apply text-base mb-4;
+ }
+
+ .confirm-modal-actions {
+     @apply flex justify-end gap-2;
+ }
+
+ .content-item-wrapper + nav,
+ .pagination {
+     @apply my-4;
  }

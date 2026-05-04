@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('x_id', 45)->nullable();
             $table->string('avatar_path', 255)->nullable();
             $table->string('phone', 20)->nullable();
-            $table->enum('status_account', ['pending', 'active', 'blocked'])->default('pending');
+            $table->enum('status_account', ['pending', 'active', 'blocked', 'deleted'])->default('pending');
             $table->foreignId('deleted_by')->nullable()->constrained('users');
             $table->rememberToken();
             $table->softDeletes();

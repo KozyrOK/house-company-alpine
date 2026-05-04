@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('city', 100);
             $table->string('logo_path', 255)->nullable();
             $table->text('description')->nullable();
+            $table->enum('status_company', ['active', 'deleted'])->default('active');
             $table->foreignId('deleted_by')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();

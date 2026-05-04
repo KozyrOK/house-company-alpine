@@ -27,7 +27,7 @@ class AdminUserController extends Controller
                 $query->whereHas('companies', fn($companyQuery) => $companyQuery->where('companies.id', currentCompany()?->id));
             })
             ->latest('id')
-            ->paginate(15);
+            ->paginate(5);
 
         return view('admin.users.index', compact('users'));
     }
@@ -44,9 +44,27 @@ class AdminUserController extends Controller
                 $query->whereHas('companies', fn ($companyQuery) => $companyQuery->where('companies.id', currentCompany()?->id));
             })
             ->latest('deleted_at')
-            ->paginate(15);
+            ->paginate(5);
 
         return view('admin.users.trash', compact('users'));
+    }
+
+    public function pending(): View
+    {
+        $this->authorize('viewAny', User::class);
+
+        $actor = auth()->user();
+
+        $users = User::query()
+            ->with('companies:id,name')
+            ->where('status_account', 'pending')
+            ->when(!$actor->isSuperAdmin(), function ($query) {
+                $query->whereHas('companies', fn($companyQuery) => $companyQuery->where('companies.id', currentCompany()?->id));
+            })
+            ->latest('id')
+            ->paginate(5);
+
+        return view('admin.users.pending', compact('users'));
     }
 
     public function show(User $user): View

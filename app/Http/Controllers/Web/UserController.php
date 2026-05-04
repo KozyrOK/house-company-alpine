@@ -23,7 +23,7 @@ class UserController extends Controller
                 ->wherePivotIn('role', ['user', 'company_head'])
                 ->with('companies:id,name')
                 ->latest('users.id')
-                ->paginate(15);
+                ->paginate(5);
 
             return view('user.users.index', compact('users', 'company'));
         }
@@ -39,7 +39,7 @@ class UserController extends Controller
             $query->whereHas('companies', fn ($q) => $q->where('companies.id', $company->id));
         }
 
-        $users = $query->paginate(15);
+        $users = $query->paginate(5);
 
         return view('admin.users.index', compact('users'));
     }

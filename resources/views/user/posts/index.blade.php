@@ -8,15 +8,20 @@
 
         <h1>Posts</h1>
 
-        <div class="top-crud-wrapper">
+        @php $role = auth()->user()->roleIn($company); @endphp
+        <div class="top-crud-wrapper-four">
 
             <div class="button-wrapper">
                 <x-link text="← Back to Main Panel" href="{{ route('main.index') }}" class="button-list"/>
             </div>
 
-            <div></div>
-
-            <div></div>
+            @if(in_array($role, ['admin','company_head'], true))
+                <div class="button-wrapper"><x-link text="Approve" href="{{ route('action-approve.posts-approve') }}" class="button-list"/></div>
+                <div class="button-wrapper"><x-link text="Trash" href="{{ route('admin.posts.trash') }}" class="button-trash"/></div>
+                <div class="button-wrapper"><x-link text="Create Post" href="{{ route('admin.posts.create') }}" class="button-edit"/></div>
+            @else
+                <div></div><div></div><div></div>
+            @endif
 
         </div>
 
@@ -48,6 +53,8 @@
             @endforelse
             </tbody>
         </table>
+
+        <div class="mt-4">{{ $posts->links() }}</div>
 
     </section>
 

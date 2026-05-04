@@ -22,7 +22,7 @@ class PostController extends Controller
             $posts = $company->posts()
                 ->with(['user:id,first_name,second_name'])
                 ->latest()
-                ->paginate(15);
+                ->paginate(5);
 
             return view('user.posts.index', compact('company', 'posts'));
         }
@@ -42,7 +42,7 @@ class PostController extends Controller
             $query->where('status', $request->string('status'));
         }
 
-        $posts = $query->paginate(15);
+        $posts = $query->paginate(5);
 
         return view('admin.posts.index', compact('posts'));
     }

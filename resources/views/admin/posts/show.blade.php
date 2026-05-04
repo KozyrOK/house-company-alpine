@@ -16,9 +16,7 @@
                     <x-link text="← Back to list" href="{{ route('admin.posts.index') }}" class="button-list"/>
                 </div>
 
-                <div>
-                    <img class="company-image" src="{{ asset('images/default-image-company.webp') }}" alt="post image">
-                </div>
+                <div></div>
 
                 <div class="button-wrapper">
                     <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
@@ -55,7 +53,7 @@
 
                 <div class="button-wrapper">
                     @can('delete', $post)
-                        <form method="POST" action="{{ route('admin.posts.destroy', $post) }}" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                        <form method="POST" action="{{ route('admin.posts.destroy', $post) }}" class="confirmable-form" data-confirm-message="Are you sure you want to delete this post?">
                             @csrf
                             @method('DELETE')
                             <x-button text="Delete Post" type="submit" class="button-delete"/>
@@ -67,6 +65,7 @@
 
         </div>
 
+        <div class="mt-4">{{ $posts->links() }}</div>
     </section>
 
 @endsection

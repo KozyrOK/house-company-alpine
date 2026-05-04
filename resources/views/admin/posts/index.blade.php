@@ -8,15 +8,21 @@
 
         <h1>Posts</h1>
 
-        <div class="top-crud-wrapper">
+        <div class="top-crud-wrapper-four">
 
             <div class="button-wrapper">
                 <x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/>
             </div>
 
-            <div></div>
+            <div class="button-wrapper">
+                <x-link text="Approve" href="{{ route('action-approve.posts-approve') }}" class="button-approve"/>
+            </div>
 
-            <div class="button-wrapper action-row-end">
+            <div class="button-wrapper">
+                <x-link text="Trash" href="{{ route('admin.posts.trash') }}" class="button-trash"/>
+            </div>
+
+            <div class="button-wrapper">
                 <x-link text="Create Post" href="{{ route('admin.posts.create') }}" class="button-edit"/>
             </div>
 
@@ -50,6 +56,8 @@
             @endforelse
             </tbody>
         </table>
+
+        <div class="mt-4">{{ $posts->links() }}</div>
 
     </section>
 

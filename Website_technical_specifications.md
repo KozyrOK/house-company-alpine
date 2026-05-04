@@ -29,9 +29,7 @@ It is allowed to use Laravel Sail as a base container solution or a custom Docke
 
 \- AI-powered chat (Laravel 13 AI SDK).
 
-\- The application must have a public page (`/info`) available for unauthorized and authorized users.
-
-\- Main page must include: authentication, password reset, registration (Laravel Breeze).
+\- App must include: authentication, password reset, registration (Laravel Breeze).
 
 \- Server-side filtering with UI panel: filtering entities, search by entity name.
 

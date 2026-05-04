@@ -22,7 +22,7 @@ class AdminCompanyController extends Controller
                 $query->where('id', currentCompany()?->id);
             })
             ->orderBy('name')
-            ->paginate(15);
+            ->paginate(5);
 
         return view('admin.companies.index', compact('companies'));
     }
@@ -37,7 +37,7 @@ class AdminCompanyController extends Controller
                 $query->where('id', currentCompany()?->id);
             })
             ->orderByDesc('deleted_at')
-            ->paginate(15);
+            ->paginate(5);
 
         return view('admin.companies.trash', compact('companies'));
     }
@@ -55,7 +55,17 @@ class AdminCompanyController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'logo' => 'nullable|image|max:4096',
         ]);
+
+        if ($request->hasFile('logo')) {
+            $validated['logo_path'] = $request->file('logo')->store('company_logos', 'public');
+        }
+
+        unset($validated['logo']);
 
         $company = Company::create($validated);
 
@@ -86,7 +96,26 @@ class AdminCompanyController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'logo' => 'nullable|image|max:4096',
+            'remove_logo' => 'nullable|boolean',
         ]);
+
+        if ($request->boolean('remove_logo') && $company->logo_path) {
+            Storage::disk('public')->delete($company->logo_path);
+            $validated['logo_path'] = null;
+        }
+
+        if ($request->hasFile('logo')) {
+            if ($company->logo_path) {
+                Storage::disk('public')->delete($company->logo_path);
+            }
+            $validated['logo_path'] = $request->file('logo')->store('company_logos', 'public');
+        }
+
+        unset($validated['logo'], $validated['remove_logo']);
 
         $company->update($validated);
 
@@ -98,6 +127,9 @@ class AdminCompanyController extends Controller
     public function destroy(Company $company): RedirectResponse
     {
         $this->authorize('delete', $company);
+
+        $company->posts()->whereNull('deleted_at')->update(['deleted_by' => auth()->id()]);
+        $company->posts()->delete();
 
         $company->update(['deleted_by' => auth()->id()]);
         $company->delete();

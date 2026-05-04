@@ -29,6 +29,7 @@
             <table class="w-full">
                 <tr><th class="key-content-item">ID</th><td class="value-content-item">{{ $company->id }}</td></tr>
                 <tr><th class="key-content-item">Name</th><td class="value-content-item">{{ $company->name }}</td></tr>
+                <tr><th class="key-content-item">Your role in company</th><td class="value-content-item">{{ auth()->user()->roleIn($company) }}</td></tr>
                 <tr><th class="key-content-item">Address</th><td class="value-content-item">{{ $company->address ?: '-' }}</td></tr>
                 <tr><th class="key-content-item">City</th><td class="value-content-item">{{ $company->city ?: '-' }}</td></tr>
                 <tr><th class="key-content-item">Description</th><td class="value-content-item">{{ $company->description ?: '-' }}</td></tr>

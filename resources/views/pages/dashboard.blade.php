@@ -69,7 +69,7 @@
                     <div></div>
 
                     <div class="button-wrapper">
-                        <form method="POST" action="{{ route('dashboard.destroy') }}" onsubmit="return confirm('Are you sure you want to delete your profile?');">
+                        <form method="POST" action="{{ route('dashboard.destroy') }}" class="confirmable-form" data-confirm-message="Are you sure you want to delete your profile?">
                             @csrf
                             @method('DELETE')
                             <x-button text="Delete User" type="submit" class="button-delete"/>

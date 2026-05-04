@@ -48,7 +48,7 @@
 
                 <div class="button-wrapper">
                     @can('delete', $company)
-                        <form method="POST" action="{{ route('admin.companies.destroy', $company) }}" onsubmit="return confirm('Are you sure you want to delete this company?');">
+                        <form method="POST" action="{{ route('admin.companies.destroy', $company) }}" class="confirmable-form" data-confirm-message="Are you sure you want to delete this company?">
                             @csrf
                             @method('DELETE')
                             <x-button text="Delete Company" type="submit" class="button-delete"/>

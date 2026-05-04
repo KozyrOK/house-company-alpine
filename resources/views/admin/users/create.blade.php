@@ -44,6 +44,10 @@
             <div class="bottom-crud-wrapper">
 
                 <div class="button-wrapper">
+                    <x-link text="Cancel" href="{{ route('admin.users.index') }}" class="button-list"/>
+                </div>
+
+                <div class="button-wrapper">
                     <x-button text="Create user" type="submit" class="button-edit"/>
                 </div>
 

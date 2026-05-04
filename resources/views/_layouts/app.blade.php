@@ -35,6 +35,8 @@
     </div>
 </main>
 
+<x-confirm-modal/>
+
 <x-layouts::footer/>
 
 </body>

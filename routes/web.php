@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\AdminCompanyController;
 use App\Http\Controllers\Web\AdminUserController;
 use App\Http\Controllers\Web\AdminPostController;
 use App\Http\Controllers\Web\MainController;
+use App\Http\Controllers\Web\ActionApproveController;
 
 // LOCALE SWITCHER
 
@@ -139,6 +140,12 @@ Route::middleware('auth')->group(function () {
 
     Route::view('/chat', 'pages.chat')->name('chat');
 
+    Route::prefix('action-approve')->middleware('admin.access')->name('action-approve.')->group(function () {
+        Route::get('/', [ActionApproveController::class, 'index'])->name('index');
+        Route::get('/users-approve', [ActionApproveController::class, 'usersApprove'])->name('users-approve');
+        Route::get('/posts-approve', [ActionApproveController::class, 'postsApprove'])->name('posts-approve');
+    });
+
     // ADMIN
 
     Route::prefix('admin')->middleware('admin.access')->name('admin.')->group(function () {
@@ -189,6 +196,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/trash', [AdminUserController::class, 'trash'])
             ->name('users.trash');
 
+        Route::get('/users/pending', [AdminUserController::class, 'pending'])
+            ->name('users.pending');
+
         Route::get('/users/create', [AdminUserController::class, 'create'])
             ->name('users.create');
 
@@ -220,6 +230,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/posts/trash', [AdminPostController::class, 'trash'])
             ->name('posts.trash');
+
+        Route::get('/posts/pending', [AdminPostController::class, 'pending'])
+            ->name('posts.pending');
 
         Route::get('/posts/create', [AdminPostController::class, 'create'])
             ->name('posts.create');

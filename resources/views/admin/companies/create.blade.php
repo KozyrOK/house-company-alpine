@@ -13,7 +13,7 @@
             </div>
 
             <div>
-                <img alt="logo preview" :src="preview ?? '/images/default-image-company.jpg'" class="company-image">
+                <img alt="logo preview" :src="preview ?? '/images/default-image-company.webp'" class="company-image">
             </div>
 
             <div class="button-wrapper">

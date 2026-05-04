@@ -8,13 +8,18 @@
 
         <h1>Users</h1>
 
+        @php $role = auth()->user()->roleIn($company); @endphp
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
                 <x-link text="← Back to Main Panel" href="{{ route('main.index') }}" class="button-list"/>
             </div>
 
-            <div></div>
+            @if(in_array($role, ['admin','company_head'], true))
+                <div class="button-wrapper"><x-link text="Approve" href="{{ route('action-approve.users-approve') }}" class="button-list"/></div>
+            @else
+                <div></div>
+            @endif
 
             <div></div>
 
@@ -48,6 +53,8 @@
             @endforelse
             </tbody>
         </table>
+
+        <div class="mt-4">{{ $users->links() }}</div>
 
     </section>
 

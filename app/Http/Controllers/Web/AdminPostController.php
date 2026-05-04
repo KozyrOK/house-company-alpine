@@ -21,7 +21,7 @@ class AdminPostController extends Controller
                 $query->where('company_id', currentCompany()?->id);
             })
             ->latest()
-            ->paginate(15);
+            ->paginate(5);
 
         return view('admin.posts.index', compact('posts'));
     }
@@ -37,9 +37,25 @@ class AdminPostController extends Controller
                 $query->where('company_id', currentCompany()?->id);
             })
             ->latest('deleted_at')
-            ->paginate(15);
+            ->paginate(5);
 
         return view('admin.posts.trash', compact('posts'));
+    }
+
+    public function pending(): View
+    {
+        $this->authorize('viewAny', Post::class);
+
+        $user = request()->user();
+        $posts = Post::with(['company:id,name', 'user:id,first_name,second_name'])
+            ->where('status', 'pending')
+            ->when(!$user->isSuperAdmin(), function ($query) {
+                $query->where('company_id', currentCompany()?->id);
+            })
+            ->latest()
+            ->paginate(5);
+
+        return view('admin.posts.pending', compact('posts'));
     }
 
     public function show(Post $post): View

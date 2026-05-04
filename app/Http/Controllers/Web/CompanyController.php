@@ -18,7 +18,7 @@ class CompanyController extends Controller
         $user = $request->user();
 
         if ($user->isSuperAdmin()) {
-            return view('user.companies.index', ['companies' => Company::orderBy('name')->paginate(15)]);
+            return view('user.companies.index', ['companies' => Company::orderBy('name')->paginate(5)]);
         }
 
         $companies = $user->companies()->orderBy('name')->get();
@@ -34,7 +34,10 @@ class CompanyController extends Controller
 
         $request->session()->put('current_company_id', $company->id);
 
-        return back()->with('success', 'Current company switched.');
+        $role = $request->user()->roleIn($company);
+        $targetRoute = in_array($role, ['admin'], true) ? 'admin.index' : 'main.index';
+
+        return redirect()->route($targetRoute)->with('success', 'Current company switched.');
     }
 
     public function current(Request $request): RedirectResponse|View
@@ -68,7 +71,7 @@ class CompanyController extends Controller
             $query->where('city', 'like', '%' . $request->string('city') . '%');
         }
 
-        $companies = $query->paginate(15);
+        $companies = $query->paginate(5);
 
         return view('admin.companies.index', compact('companies'));
     }

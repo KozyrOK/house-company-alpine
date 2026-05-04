@@ -16,9 +16,7 @@
                     <x-link text="← Back to list" href="{{ route('main.posts.index', $company) }}" class="button-list"/>
                 </div>
 
-                <div>
-                    <img class="company-image" src="{{ asset('images/default-image-company.webp') }}" alt="post image">
-                </div>
+                <div></div>
 
                 <div class="button-wrapper">
                     <x-link text="Main Menu" href="{{ route('main.index') }}" class="button-list"/>
