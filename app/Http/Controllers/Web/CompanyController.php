@@ -57,6 +57,22 @@ class CompanyController extends Controller
         return view('user.companies.show', compact('company'));
     }
 
+    public function requestMembership(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'company_id' => ['required', 'exists:companies,id'],
+        ]);
+
+        $request->user()->companies()->syncWithoutDetaching([
+            $validated['company_id'] => [
+                'role' => 'user',
+                'status_membership' => 'pending',
+            ],
+        ]);
+
+        return redirect()->route('dashboard')->with('status', 'Company request sent for approval.');
+    }
+
     public function index(Request $request): View
     {
         $this->authorize('viewAny', Company::class);
@@ -141,8 +157,8 @@ class CompanyController extends Controller
     {
         $this->authorize('delete', $company);
 
-        $company->update(['deleted_by' => $request->user()->id]);
-        $company->delete();
+        $company->posts()->where('status', '!=', 'trash')->update(['deleted_by' => $request->user()->id, 'status' => 'trash']);
+        $company->update(['deleted_by' => $request->user()->id, 'status_company' => 'deleted']);
 
         return redirect()->route('admin.companies.index')
             ->with('status', 'Company deleted successfully');

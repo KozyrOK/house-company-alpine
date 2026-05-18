@@ -342,7 +342,7 @@ progress {
  }
 
  .company-switcher-summary {
-     @apply cursor-pointer text-white uppercase tracking-wide font-medium relative transition-all duration-300 pb-2;
+     @apply cursor-pointer text-white uppercase tracking-wide font-medium relative transition-all duration-300 pb-2 mt-2;
  }
 
  .company-switcher-dropdown {
@@ -498,6 +498,10 @@ p {
 
  .button-wrapper {
      @apply py-4 px-2 flex justify-center items-center;
+ }
+
+ .button-extend {
+     @apply w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 transition text-gray-700 text-xl leading-none;
  }
 
  /* DATA TABLE */

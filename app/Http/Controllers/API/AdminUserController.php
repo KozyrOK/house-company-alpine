@@ -27,8 +27,7 @@ class AdminUserController extends Controller
     {
         $this->authorize('delete', $user);
 
-        $user->update(['deleted_by' => auth()->id()]);
-        $user->delete();
+        $user->update(['status_account' => 'deleted']);
 
         return response()->noContent();
     }
@@ -42,7 +41,7 @@ class AdminUserController extends Controller
             'second_name' => 'sometimes|required|string|max:50',
             'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => 'sometimes|nullable|string|max:30',
-            'status_account' => ['sometimes', Rule::in(['pending', 'active', 'blocked'])],
+            'status_account' => ['sometimes', Rule::in(['pending', 'active', 'deleted'])],
            ]);
 
         $user->update($validated);

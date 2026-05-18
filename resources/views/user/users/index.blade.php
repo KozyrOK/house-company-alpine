@@ -16,7 +16,7 @@
             </div>
 
             @if(in_array($role, ['admin','company_head'], true))
-                <div class="button-wrapper"><x-link text="Approve" href="{{ route('action-approve.users-approve') }}" class="button-list"/></div>
+
             @else
                 <div></div>
             @endif

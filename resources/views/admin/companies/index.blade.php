@@ -15,7 +15,7 @@
             </div>
 
             <div class="button-wrapper">
-                <x-link text="Trash" href="{{ route('admin.companies.trash') }}" class="button-list"/>
+                <x-link text="Trash" href="{{ route('admin.companies.trash') }}" class="button-trash"/>
             </div>
 
             <div class="button-wrapper action-row-end">

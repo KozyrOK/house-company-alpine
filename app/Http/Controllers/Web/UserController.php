@@ -72,7 +72,7 @@ class UserController extends Controller
             'second_name' => 'sometimes|required|string|max:50',
             'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => 'sometimes|nullable|string|max:30',
-            'status_account' => ['sometimes', Rule::in(['pending', 'active', 'blocked'])],
+            'status_account' => ['sometimes', Rule::in(['pending', 'active', 'deleted'])],
         ]);
 
         $user->update($validated);
@@ -124,8 +124,7 @@ class UserController extends Controller
     {
         $this->authorize('delete', $user);
 
-        $user->update(['deleted_by' => $request->user()->id]);
-        $user->delete();
+        $user->update(['deleted_by' => $request->user()->id, 'status_account' => 'deleted']);
 
         return redirect()->route('admin.users.index')
             ->with('status', 'User deleted successfully');

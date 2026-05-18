@@ -58,18 +58,18 @@ class TestUsersSeeder extends Seeder
 
         foreach ($companies as $idx => $company) {
             $n = $idx + 1;
-            $usersData[] = ['email' => "company{$n}.admin1@housing.local", 'first_name' => "Admin{$n}", 'second_name' => 'One', 'roles' => [$company->id => 'admin']];
-            $usersData[] = ['email' => "company{$n}.admin2@housing.local", 'first_name' => "Admin{$n}", 'second_name' => 'Two', 'roles' => [$company->id => 'admin']];
-            $usersData[] = ['email' => "company{$n}.head1@housing.local", 'first_name' => "Head{$n}", 'second_name' => 'One', 'roles' => [$company->id => 'company_head']];
-            $usersData[] = ['email' => "company{$n}.head2@housing.local", 'first_name' => "Head{$n}", 'second_name' => 'Two', 'roles' => [$company->id => 'company_head']];
-            $usersData[] = ['email' => "company{$n}.user1@housing.local", 'first_name' => "User{$n}", 'second_name' => 'One', 'roles' => [$company->id => 'user']];
-            $usersData[] = ['email' => "company{$n}.user2@housing.local", 'first_name' => "User{$n}", 'second_name' => 'Two', 'roles' => [$company->id => 'user']];
+            $usersData[] = ['email' => "company{$n}.admin1@housing.local", 'first_name' => "Admin{$n}", 'second_name' => 'One', 'memberships' => [$company->id => ['role' => 'admin', 'status_membership' => 'active']]];
+            $usersData[] = ['email' => "company{$n}.admin2@housing.local", 'first_name' => "Admin{$n}", 'second_name' => 'Two', 'memberships' => [$company->id => ['role' => 'admin', 'status_membership' => 'active']]];
+            $usersData[] = ['email' => "company{$n}.head1@housing.local", 'first_name' => "Head{$n}", 'second_name' => 'One', 'memberships' => [$company->id => ['role' => 'company_head', 'status_membership' => 'active']]];
+            $usersData[] = ['email' => "company{$n}.head2@housing.local", 'first_name' => "Head{$n}", 'second_name' => 'Two', 'memberships' => [$company->id => ['role' => 'company_head', 'status_membership' => 'active']]];
+            $usersData[] = ['email' => "company{$n}.user1@housing.local", 'first_name' => "User{$n}", 'second_name' => 'One', 'memberships' => [$company->id => ['role' => 'user', 'status_membership' => 'active']]];
+            $usersData[] = ['email' => "company{$n}.user2@housing.local", 'first_name' => "User{$n}", 'second_name' => 'Two', 'memberships' => [$company->id => ['role' => 'user', 'status_membership' => 'pending']]];
         }
 
-        $usersData[] = ['email' => 'multi.role1@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleOne', 'roles' => [$companies[0]->id => 'admin', $companies[1]->id => 'user']];
-        $usersData[] = ['email' => 'multi.role2@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleTwo', 'roles' => [$companies[1]->id => 'admin', $companies[2]->id => 'user']];
-        $usersData[] = ['email' => 'multi.role3@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleThree', 'roles' => [$companies[2]->id => 'admin', $companies[3]->id => 'user']];
-        $usersData[] = ['email' => 'multi.role4@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleFour', 'roles' => [$companies[3]->id => 'admin', $companies[0]->id => 'user']];
+        $usersData[] = ['email' => 'multi.role1@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleOne', 'memberships' => [$companies[0]->id => ['role' => 'admin', 'status_membership' => 'active'], $companies[1]->id => ['role' => 'user', 'status_membership' => 'pending']]];
+        $usersData[] = ['email' => 'multi.role2@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleTwo', 'memberships' => [$companies[1]->id => ['role' => 'admin', 'status_membership' => 'active'], $companies[2]->id => ['role' => 'user', 'status_membership' => 'rejected']]];
+        $usersData[] = ['email' => 'multi.role3@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleThree', 'memberships' => [$companies[2]->id => ['role' => 'admin', 'status_membership' => 'active'], $companies[3]->id => ['role' => 'user', 'status_membership' => 'deleted']]];
+        $usersData[] = ['email' => 'multi.role4@housing.local', 'first_name' => 'Multi', 'second_name' => 'RoleFour', 'memberships' => [$companies[3]->id => ['role' => 'admin', 'status_membership' => 'active'], $companies[0]->id => ['role' => 'user', 'status_membership' => 'invited']], 'status_account' => 'deleted'];
 
         foreach ($usersData as $index => $data) {
             $avatarPath = null;
@@ -86,17 +86,12 @@ class TestUsersSeeder extends Seeder
                     'first_name' => $data['first_name'],
                     'second_name' => $data['second_name'],
                     'password' => $password,
-                    'status_account' => 'active',
+                    'status_account' => $data['status_account'] ?? 'active',
                     'avatar_path' => $avatarPath,
                 ]
             );
 
-            $syncRoles = [];
-            foreach ($data['roles'] as $companyId => $role) {
-                $syncRoles[$companyId] = ['role' => $role];
-            }
-
-            $user->companies()->sync($syncRoles);
+            $user->companies()->sync($data['memberships']);
         }
     }
 }

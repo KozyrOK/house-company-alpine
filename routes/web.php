@@ -76,6 +76,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/company', [CompanyController::class, 'current'])
         ->name('company.current');
 
+    Route::post('/company/request-membership', [CompanyController::class, 'requestMembership'])
+        ->name('company.request-membership');
+
     // MAIN
 
     Route::middleware('main.access')->group(function () {
@@ -143,7 +146,13 @@ Route::middleware('auth')->group(function () {
     Route::prefix('action-approve')->middleware('admin.access')->name('action-approve.')->group(function () {
         Route::get('/', [ActionApproveController::class, 'index'])->name('index');
         Route::get('/users-approve', [ActionApproveController::class, 'usersApprove'])->name('users-approve');
+        Route::get('/users-approve/{user}', [ActionApproveController::class, 'showUser'])->name('users-show');
+        Route::patch('/users-approve/{user}/approve', [ActionApproveController::class, 'approveUser'])->name('users-approve-do');
+        Route::patch('/users-approve/{user}/reject', [ActionApproveController::class, 'rejectUser'])->name('users-reject-do');
         Route::get('/posts-approve', [ActionApproveController::class, 'postsApprove'])->name('posts-approve');
+        Route::get('/posts-approve/{post}', [ActionApproveController::class, 'showPost'])->name('posts-show');
+        Route::patch('/posts-approve/{post}/approve', [ActionApproveController::class, 'approvePost'])->name('posts-approve-do');
+        Route::patch('/posts-approve/{post}/reject', [ActionApproveController::class, 'rejectPost'])->name('posts-reject-do');
     });
 
     // ADMIN

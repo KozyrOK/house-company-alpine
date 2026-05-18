@@ -16,7 +16,8 @@ class CompanyUser extends Pivot
     protected $fillable = [
         'user_id',
         'company_id',
-        'role'
+        'role',
+        'status_membership'
     ];
 
     public static function hasRole(int $userId, int $companyId, array|string $roles): bool

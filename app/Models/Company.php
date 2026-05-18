@@ -31,7 +31,7 @@ class Company extends Model
     {
         return $this->belongsToMany(User::class, 'company_user')
             ->using(CompanyUser::class)
-            ->withPivot('role')
+            ->withPivot('role', 'status_membership')
             ->withTimestamps()
             ->withTrashed();
     }

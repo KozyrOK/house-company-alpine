@@ -8,14 +8,10 @@
 
         <h1>Users</h1>
 
-        <div class="top-crud-wrapper-four">
+        <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
                 <x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/>
-            </div>
-
-            <div class="button-wrapper">
-                <x-link text="Approve" href="{{ route('action-approve.users-approve') }}" class="button-approve"/>
             </div>
 
             <div class="button-wrapper">

@@ -60,26 +60,12 @@ class UserPolicy
 
     public function delete(User $user, User $model): bool
     {
-        $current = currentCompany();
-
-        return $current !== null
-            && $model->belongsToCompany($current->id)
-            && $user->hasRole('admin', $current->id);
+        return false;
     }
 
     public function restore(User $user, User $model): bool
     {
-        $current = currentCompany();
-
-        if (!$current || !$model->belongsToCompany($current->id)) {
-            return false;
-        }
-
-        if ($model->deleted_by === $user->id) {
-            return true;
-        }
-
-        return $user->hasRole('admin', $current->id);
+        return false;
     }
 
     public function approve(User $user, User $model): bool

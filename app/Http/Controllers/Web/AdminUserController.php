@@ -8,7 +8,6 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -80,22 +79,7 @@ class AdminUserController extends Controller
     {
         $this->authorize('delete', $user);
 
-        DB::transaction(function () use ($user): void {
-            Post::query()
-                ->where('created_by', $user->id)
-                ->update(['created_by' => auth()->id()]);
-
-            Post::query()
-                ->where('updated_by', $user->id)
-                ->update(['updated_by' => null]);
-
-            Post::query()
-                ->where('deleted_by', $user->id)
-                ->update(['deleted_by' => null]);
-
-            $user->update(['deleted_by' => auth()->id()]);
-            $user->delete();
-        });
+        $user->update(['status_account' => 'deleted']);
 
         return redirect()
             ->route('admin.users.index')
@@ -104,14 +88,13 @@ class AdminUserController extends Controller
 
     public function restore(int $user): RedirectResponse
     {
-        $model = User::onlyTrashed()->with('companies')->findOrFail($user);
+        $model = User::query()->findOrFail($user);
         $this->authorize('restore', $model);
 
-        $model->restore();
-        $model->update(['deleted_by' => null]);
+        $model->update(['status_account' => 'active']);
 
         return redirect()
-            ->route('admin.users.trash')
+            ->route('admin.users.index')
             ->with('success', 'User restored successfully.');
     }
 
@@ -175,7 +158,7 @@ class AdminUserController extends Controller
             'second_name' => 'sometimes|required|string|max:50',
             'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => 'sometimes|nullable|string|max:30',
-            'status_account' => ['sometimes', Rule::in(['pending', 'active', 'blocked'])],
+            'status_account' => ['sometimes', Rule::in(['pending', 'active', 'deleted'])],
         ]);
 
         $user->update($validated);

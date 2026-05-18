@@ -31,12 +31,12 @@ class AdminPostController extends Controller
         $this->authorize('viewAny', Post::class);
 
         $user = request()->user();
-        $posts = Post::onlyTrashed()
+        $posts = Post::query()->where("status", "trash")
             ->with(['company:id,name', 'user:id,first_name,second_name'])
             ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
                 $query->where('company_id', currentCompany()?->id);
             })
-            ->latest('deleted_at')
+            ->latest('updated_at')
             ->paginate(5);
 
         return view('admin.posts.trash', compact('posts'));
@@ -71,8 +71,7 @@ class AdminPostController extends Controller
     {
         $this->authorize('delete', $post);
 
-        $post->update(['deleted_by' => auth()->id()]);
-        $post->delete();
+        $post->update(['deleted_by' => auth()->id(), 'status' => 'trash']);
 
         return redirect()
             ->route('admin.posts.index')
@@ -81,11 +80,10 @@ class AdminPostController extends Controller
 
     public function restore(int $post): RedirectResponse
     {
-        $model = Post::onlyTrashed()->findOrFail($post);
+        $model = Post::query()->where("status", "trash")->findOrFail($post);
         $this->authorize('restore', $model);
 
-        $model->restore();
-        $model->update(['deleted_by' => null]);
+        $model->update(['deleted_by' => null, 'status' => 'draft']);
 
         return redirect()
             ->route('admin.posts.trash')

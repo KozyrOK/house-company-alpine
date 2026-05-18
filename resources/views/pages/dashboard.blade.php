@@ -13,7 +13,7 @@
 
         <div class="content-item-wrapper">
             <div>
-                <img class="company-image" src="{{ $user->avatar_path ? asset('storage/' . $user->avatar_path) : asset('images/default_avatar.webp') }}" alt="user image">
+                <img class="company-image" src="{{ $user->avatar_url }}" alt="user image">
             </div>
 
             @if($isEditMode)
@@ -30,7 +30,7 @@
                             <th class="key-content-item">Account status</th>
                             <td class="value-content-item">
                                 <select name="status_account" class="input-field">
-                                    @foreach(['pending' => 'Pending', 'active' => 'Active', 'blocked' => 'Blocked'] as $value => $label)
+                                    @foreach(['pending' => 'Pending', 'active' => 'Active', 'deleted' => 'Deleted'] as $value => $label)
                                         <option value="{{ $value }}" @selected(old('status_account', $user->status_account) === $value)>{{ $label }}</option>
                                     @endforeach
                                 </select>
@@ -57,16 +57,17 @@
                     <tr><th class="key-content-item">Email</th><td class="value-content-item">{{ $user->email }}</td></tr>
                     <tr><th class="key-content-item">Phone</th><td class="value-content-item">{{ $user->phone ?: '-' }}</td></tr>
                     <tr><th class="key-content-item">Status</th><td class="value-content-item">{{ $user->status_account ?: '-' }}</td></tr>
+                    <tr><th class="key-content-item">Companies</th><td class="value-content-item">{{ $user->companies->pluck('name')->implode(', ') ?: '-' }}</td></tr>
                 </table>
             @endif
 
             @if(!$isEditMode && !$user->isSuperAdmin())
                 <div class="bottom-crud-wrapper">
+
                     <div class="button-wrapper">
                         <x-link text="Edit User" href="{{ route('dashboard', ['edit' => 1]) }}" class="button-edit"/>
                     </div>
 
-                    <div></div>
 
                     <div class="button-wrapper">
                         <form method="POST" action="{{ route('dashboard.destroy') }}" class="confirmable-form" data-confirm-message="Are you sure you want to delete your profile?">
@@ -75,8 +76,100 @@
                             <x-button text="Delete User" type="submit" class="button-delete"/>
                         </form>
                     </div>
+
+                    <div class="button-wrapper">
+                        <x-link text="Users Companies" href="{{ route('company.select') }}" class="button-list"/>
+                    </div>
+
                 </div>
+
+
+            <div x-data="{ open: false }">
+
+                {{-- Header row --}}
+                <div class="flex items-center justify-evenly mb-3">
+
+                    <h3>Request company membership</h3>
+
+                    <button
+                        type="button"
+                        @click="open = !open"
+                        class="button-extend"
+                    >
+                        <span x-show="!open">+</span>
+                        <span x-show="open">×</span>
+                    </button>
+
+                </div>
+
+                {{-- Expandable content --}}
+                <div x-show="open" x-transition>
+
+                    <form method="POST" action="{{ route('company.request-membership') }}">
+                        @csrf
+
+                        <select name="company_id" class="input-field" required>
+                            <option value="">Select company</option>
+
+                            @foreach(($companies ?? collect()) as $company)
+                                <option value="{{ $company->id }}">
+                                    {{ $company->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <div class="button-wrapper">
+                            <x-button
+                                text="Add Company"
+                                type="submit"
+                                class="button-edit "
+                            />
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+
             @endif
+
+{{--            <div x-data="{ open: false }" class="button-wrapper">--}}
+
+{{--                <div>--}}
+{{--                    <h3>--}}
+{{--                        Request company membership--}}
+{{--                    </h3>--}}
+
+{{--                    <button type="button" @click="open = !open" class="button-extend">--}}
+{{--                        <span x-show="!open">+</span>--}}
+{{--                        <span x-show="open">×</span>--}}
+{{--                    </button>--}}
+{{--                </div>--}}
+
+{{--                <div x-show="open" x-transition>--}}
+{{--                    <form method="POST" action="{{ route('company.request-membership') }}">--}}
+{{--                        @csrf--}}
+
+{{--                        <select name="company_id" class="input-field" required>--}}
+{{--                            <option value="">Select company</option>--}}
+
+{{--                            @foreach(($companies ?? collect()) as $company)--}}
+{{--                                <option value="{{ $company->id }}">--}}
+{{--                                    {{ $company->name }}--}}
+{{--                                </option>--}}
+{{--                            @endforeach--}}
+{{--                        </select>--}}
+
+{{--                        <x-button--}}
+{{--                            text="Add Company"--}}
+{{--                            type="submit"--}}
+{{--                            class="button-edit"--}}
+{{--                        />--}}
+{{--                    </form>--}}
+{{--                </div>--}}
+
+{{--            </div>--}}
+
         </div>
 
     </section>

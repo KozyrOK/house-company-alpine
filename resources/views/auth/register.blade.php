@@ -44,11 +44,21 @@
                 />
 
                 <x-auth.input-field-auth
-                    name="confirm_password"
+                    name="password_confirmation"
                     text="Confirm Password"
                     type="password"
                     required
                 />
+
+                <div class="wrapper-input-auth">
+                    <label for="company_id" class="label-text-auth">Company (optional)</label>
+                    <select name="company_id" id="company_id" class="input-field">
+                        <option value="">Without company</option>
+                        @foreach(($companies ?? collect()) as $company)
+                            <option value="{{ $company->id }}" @selected(old('company_id') == $company->id)>{{ $company->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
                 <x-auth.input-field-auth
                     name="phone"

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +20,9 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $companies = Company::orderBy('name')->get(['id', 'name']);
+
+        return view('auth.register', compact('companies'));
     }
 
     /**
@@ -34,6 +37,7 @@ class RegisteredUserController extends Controller
             'second_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'company_id' => ['nullable', 'exists:companies,id'],
         ]);
 
         $user = User::create([
@@ -42,6 +46,13 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        if ($request->filled('company_id')) {
+            $user->companies()->attach((int) $request->integer('company_id'), [
+                'role' => 'user',
+                'status_membership' => 'pending',
+            ]);
+        }
 
         event(new Registered($user));
 

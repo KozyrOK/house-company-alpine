@@ -132,8 +132,7 @@ class PostController extends Controller
     {
         $this->authorize('delete', $post);
 
-        $post->update(['deleted_by' => $request->user()->id]);
-        $post->delete();
+        $post->update(['deleted_by' => $request->user()->id, 'status' => 'trash']);
 
         return redirect()->route('admin.posts.index')
             ->with('status', 'Post deleted successfully');

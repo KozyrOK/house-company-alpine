@@ -32,11 +32,11 @@ class AdminCompanyController extends Controller
         $this->authorize('viewAny', Company::class);
 
         $user = auth()->user();
-        $companies = Company::onlyTrashed()
+        $companies = Company::query()->where("status_company", "deleted")
             ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
                 $query->where('id', currentCompany()?->id);
             })
-            ->orderByDesc('deleted_at')
+            ->orderByDesc('updated_at')
             ->paginate(5);
 
         return view('admin.companies.trash', compact('companies'));
@@ -128,11 +128,8 @@ class AdminCompanyController extends Controller
     {
         $this->authorize('delete', $company);
 
-        $company->posts()->whereNull('deleted_at')->update(['deleted_by' => auth()->id()]);
-        $company->posts()->delete();
-
-        $company->update(['deleted_by' => auth()->id()]);
-        $company->delete();
+        $company->posts()->where('status', '!=', 'trash')->update(['deleted_by' => auth()->id(), 'status' => 'trash']);
+        $company->update(['deleted_by' => auth()->id(), 'status_company' => 'deleted']);
 
         return redirect()
             ->route('admin.companies.index')
@@ -141,11 +138,11 @@ class AdminCompanyController extends Controller
 
     public function restore(int $company): RedirectResponse
     {
-        $model = Company::onlyTrashed()->findOrFail($company);
+        $model = Company::query()->where("status_company", "deleted")->findOrFail($company);
         $this->authorize('restore', $model);
 
-        $model->restore();
-        $model->update(['deleted_by' => null]);
+        $model->update(['deleted_by' => null, 'status_company' => 'active']);
+        $model->posts()->where('status', 'trash')->update(['deleted_by' => null, 'status' => 'draft']);
 
         return redirect()
             ->route('admin.companies.trash')

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -50,10 +51,30 @@ class User extends Authenticatable
     public function companies(): BelongsToMany
     {
         return $this->belongsToMany(Company::class)
-            ->withPivot('role')
+            ->withPivot('role', 'status_membership')
             ->withTimestamps()
             ->withTrashed();
     }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        $path = $this->avatar_path;
+
+        if (!$path) {
+            return asset('images/default_avatar.webp');
+        }
+
+        if (str_starts_with($path, '/') && file_exists($path)) {
+            return asset('images/default_avatar.webp');
+        }
+
+        if (Storage::disk('public')->exists($path)) {
+            return Storage::disk('public')->url($path);
+        }
+
+        return asset('images/default_avatar.webp');
+    }
+
 
     public function posts(): HasMany
     {
@@ -85,6 +106,7 @@ class User extends Authenticatable
 
         return $this->companies()
             ->where('company_id', $companyId)
+            ->wherePivot('status_membership', 'active')
             ->exists();
     }
 

@@ -178,6 +178,53 @@ docker compose logs -f
 docker compose exec laravel.test sh
 ```
 
+## Mail configuration (development)
+
+### The application uses Laravel Breeze authentication features:
+
+* password reset;
+* email verification;
+* notifications.
+
+### For local development without a real SMTP server, Mailpit is used. Configure:
+```
+.env
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="noreply@housing-company.test"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+### Start Sail containers:
+```bash
+./vendor/bin/sail up -d
+```
+
+### Open Mailpit UI:
+```
+http://localhost:8025
+```
+All outgoing emails will be available in the Mailpit interface.
+
+### Alternative development mode
+Instead of Mailpit, Laravel log mail driver can be used.
+
+Configure .env
+```
+.env
+MAIL_MAILER=log
+```
+
+Emails will be written into:
+```
+storage/logs/laravel.log
+```
+
 ### ⚙️ Notes:
 * All commands are executed inside Docker containers.
 * The project does not depend on the local development environment.

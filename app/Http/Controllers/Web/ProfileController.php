@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -16,8 +17,9 @@ class ProfileController extends Controller
     public function edit(Request $request)
     {
         $user = $request->user()->load('companies:id,name');
+        $companies = Company::orderBy('name')->get(['id','name']);
 
-        return view('pages.dashboard', compact('user'));
+        return view('pages.dashboard', compact('user', 'companies'));
     }
 
     public function update(Request $request): RedirectResponse
@@ -29,7 +31,7 @@ class ProfileController extends Controller
             'second_name' => 'required|string|max:50',
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => 'nullable|string|max:30',
-            'status_account' => ['nullable', Rule::in(['pending', 'active', 'blocked'])],
+            'status_account' => ['nullable', Rule::in(['pending', 'active', 'deleted'])],
             'avatar' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,webp,avif|max:5120',
         ]);
 
@@ -56,8 +58,9 @@ class ProfileController extends Controller
         Post::query()->where('deleted_by', $user->id)->update(['deleted_by' => null]);
         Post::query()->where('created_by', $user->id)->delete();
 
+        $user->update(['status_account' => 'deleted']);
+
         Auth::logout();
-        $user->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

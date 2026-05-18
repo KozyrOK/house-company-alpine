@@ -37,7 +37,7 @@
                     <th class="key-content-item">Account status</th>
                     <td class="value-content-item">
                         <select name="status_account" class="input-field">
-                            @foreach(['pending' => 'Pending', 'active' => 'Active', 'blocked' => 'Blocked'] as $value => $label)
+                            @foreach(['pending' => 'Pending', 'active' => 'Active', 'deleted' => 'Deleted'] as $value => $label)
                                 <option value="{{ $value }}" @selected(old('status_account', $user->status_account) === $value)>{{ $label }}</option>
                             @endforeach
                         </select>

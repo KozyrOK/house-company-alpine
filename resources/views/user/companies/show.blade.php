@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="Dashboard" href="{{ route('dashboard') }}" class="button-list"/>
+{{--                    <x-link text="Dashboard" href="{{ route('dashboard') }}" class="button-list"/>--}}
                 </div>
 
             </div>

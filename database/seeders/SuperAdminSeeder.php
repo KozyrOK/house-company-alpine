@@ -6,7 +6,6 @@ use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class SuperAdminSeeder extends Seeder
@@ -43,7 +42,7 @@ class SuperAdminSeeder extends Seeder
         );
 
         $superAdmin->companies()->syncWithoutDetaching([
-            $systemCompany->id => ['role' => 'superadmin'],
+            $systemCompany->id => ['role' => 'superadmin', 'status_membership' => 'active'],
         ]);
     }
 }

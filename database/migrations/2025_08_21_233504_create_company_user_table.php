@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('company_user', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
-            $table->enum('role', ['superadmin', 'admin', 'company_head', 'user']);
+            $table->enum('role', ['superadmin', 'admin', 'company_head', 'user'])->default('user');
+            $table->enum('status_membership', ['pending', 'active', 'invited', 'deleted', 'rejected'])->default('pending');
             $table->unique(['user_id', 'company_id']);
             $table->timestamps();
         });
