@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -30,7 +31,10 @@ class UserController extends Controller
 
         $this->authorize('viewAny', User::class);
 
-        $query = User::query()->with('companies:id,name')->latest('id');
+        $query = User::query()
+            ->where('status_account', '!=', 'deleted')
+            ->with('companies:id,name')
+            ->latest('id');
         $actor = $request->user();
 
         if (!$actor->isSuperAdmin()) {
@@ -108,7 +112,7 @@ class UserController extends Controller
             'status_account' => $requiresApproval ? 'pending' : 'active',
         ]);
 
-        $user->companies()->attach($company->id, ['role' => $validated['role']]);
+        $user->companies()->attach($company->id, ['role' => $validated['role'], 'status_membership' => $requiresApproval ? 'pending' : 'active']);
 
         return redirect()->route('admin.users.show', $user)
             ->with('status', $requiresApproval ? 'User created and sent for approval.' : 'User created successfully');
@@ -124,7 +128,13 @@ class UserController extends Controller
     {
         $this->authorize('delete', $user);
 
-        $user->update(['deleted_by' => $request->user()->id, 'status_account' => 'deleted']);
+        DB::transaction(function () use ($user) {
+            $user->update(['status_account' => 'deleted']);
+            DB::table('company_user')
+                ->where('user_id', $user->id)
+                ->where('status_membership', 'active')
+                ->update(['status_membership' => 'deleted']);
+        });
 
         return redirect()->route('admin.users.index')
             ->with('status', 'User deleted successfully');

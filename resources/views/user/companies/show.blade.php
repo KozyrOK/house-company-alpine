@@ -12,12 +12,10 @@
 
             <div class="top-crud-wrapper">
 
-                <div class="button-wrapper">
-                    <x-link text="← Back" href="{{ route('main.index') }}" class="button-list"/>
-                </div>
+                <div class="button-wrapper"></div>
 
                 <div>
-                    <img alt="logo" src="{{ $company->logo_url }}" class="company-image">
+                    <img alt="logo" src="{{ $company->getLogoUrlAttribute() }}" class="company-image">
                 </div>
 
                 <div class="button-wrapper">
@@ -48,7 +46,11 @@
                 <div></div>
 
                 <div class="button-wrapper">
-                    <x-link text="Company Users" href="{{ route('main.users.index', $company) }}" class="button-list"/>
+                    @if(auth()->user()->hasRole('admin', $company->id))
+                        <x-link text="Company Users" href="{{ route('admin.users.index') }}" class="button-list"/>
+                    @else
+                        <x-link text="Company Users" href="{{ route('main.users.index', $company) }}" class="button-list"/>
+                    @endif
                 </div>
 
             </div>

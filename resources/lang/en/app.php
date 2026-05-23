@@ -67,6 +67,7 @@ return [
         'info_text1' => 'About the Housing Company Project',
         'info_text2' => "This is a PET project for managing condominium associations.\n The project allows residents and administrators to manage posts,\n users, and company information in one place.",
         'admin_panel' => 'Admin Panel',
+        'action_aprrove_panel' => 'Approve Panel',
     ],
 
 ];

@@ -15,7 +15,9 @@
             </div>
 
             <div class="button-wrapper">
-                <x-link text="Trash" href="{{ route('admin.companies.trash') }}" class="button-trash"/>
+                @if(auth()->user()->isSuperAdmin())
+                    <x-link text="Trash" href="{{ route('admin.companies.trash') }}" class="button-trash"/>
+                @endif
             </div>
 
             <div class="button-wrapper action-row-end">

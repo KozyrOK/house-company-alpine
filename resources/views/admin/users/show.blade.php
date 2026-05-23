@@ -52,13 +52,12 @@
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="Users Company" href="{{ route('main.companies.index') }}" class="button-list"/>
-                </div>
-
-                <div class="button-wrapper">
                     @if($user->companies->count() > 1)
                         <x-link text="User`s companies" href="{{ route('admin.users.index') }}" class="button-list"/>
                     @endif
+                    </div>
+
+                    <div class="button-wrapper">
                     @can('delete', $user)
                         <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="confirmable-form" data-confirm-message="Are you sure you want to delete this user?">
                             @csrf

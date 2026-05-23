@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -18,6 +19,7 @@ class AdminCompanyController extends Controller
 
         $user = auth()->user();
         $companies = Company::query()
+            ->where('status_company', 'active')
             ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
                 $query->where('id', currentCompany()?->id);
             })
@@ -32,10 +34,9 @@ class AdminCompanyController extends Controller
         $this->authorize('viewAny', Company::class);
 
         $user = auth()->user();
+        abort_unless($user->isSuperAdmin(), 403);
+
         $companies = Company::query()->where("status_company", "deleted")
-            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
-                $query->where('id', currentCompany()?->id);
-            })
             ->orderByDesc('updated_at')
             ->paginate(5);
 
@@ -103,14 +104,16 @@ class AdminCompanyController extends Controller
             'remove_logo' => 'nullable|boolean',
         ]);
 
-        if ($request->boolean('remove_logo') && $company->logo_path) {
-            Storage::disk('public')->delete($company->logo_path);
+            $currentLogoPath = $company->getAttribute('logo_path');
+
+            if ($request->boolean('remove_logo') && $currentLogoPath) {
+                Storage::disk('public')->delete($currentLogoPath);
             $validated['logo_path'] = null;
         }
 
         if ($request->hasFile('logo')) {
-            if ($company->logo_path) {
-                Storage::disk('public')->delete($company->logo_path);
+            if ($currentLogoPath) {
+                Storage::disk('public')->delete($currentLogoPath);
             }
             $validated['logo_path'] = $request->file('logo')->store('company_logos', 'public');
         }
@@ -119,8 +122,11 @@ class AdminCompanyController extends Controller
 
         $company->update($validated);
 
+        $route = $request->user()->isSuperAdmin() ? 'admin.companies.show' : 'company.current';
+        $parameters = $request->user()->isSuperAdmin() ? [$company] : [];
+
         return redirect()
-            ->route('admin.companies.show', $company)
+            ->route($route, $parameters)
             ->with('success', 'Company updated successfully.');
     }
 
@@ -128,8 +134,14 @@ class AdminCompanyController extends Controller
     {
         $this->authorize('delete', $company);
 
-        $company->posts()->where('status', '!=', 'trash')->update(['deleted_by' => auth()->id(), 'status' => 'trash']);
-        $company->update(['deleted_by' => auth()->id(), 'status_company' => 'deleted']);
+        DB::transaction(function () use ($company) {
+            $company->posts()->where('status', '!=', 'trash')->update(['deleted_by' => auth()->id(), 'status' => 'trash']);
+            DB::table('company_user')
+                ->where('company_id', $company->id)
+                ->where('status_membership', 'active')
+                ->update(['status_membership' => 'deleted']);
+            $company->update(['deleted_by' => auth()->id(), 'status_company' => 'deleted']);
+        });
 
         return redirect()
             ->route('admin.companies.index')
@@ -141,8 +153,14 @@ class AdminCompanyController extends Controller
         $model = Company::query()->where("status_company", "deleted")->findOrFail($company);
         $this->authorize('restore', $model);
 
-        $model->update(['deleted_by' => null, 'status_company' => 'active']);
-        $model->posts()->where('status', 'trash')->update(['deleted_by' => null, 'status' => 'draft']);
+        DB::transaction(function () use ($model) {
+            $model->update(['deleted_by' => null, 'status_company' => 'active']);
+            $model->posts()->where('status', 'trash')->update(['deleted_by' => null, 'status' => 'draft']);
+            DB::table('company_user')
+                ->where('company_id', $model->id)
+                ->where('status_membership', 'deleted')
+                ->update(['status_membership' => 'active']);
+        });
 
         return redirect()
             ->route('admin.companies.trash')
@@ -155,16 +173,18 @@ class AdminCompanyController extends Controller
 
         $default = public_path('images/default-image-company.webp');
 
-        if (!$company->logo_path || !Storage::disk('public')->exists($company->logo_path)) {
-            return response()->file($default);
-        }
+            $logoPath = $company->getAttribute('logo_path');
 
-        $path = Storage::disk('public')->path($company->logo_path);
+            if (!$logoPath || !Storage::disk('public')->exists($logoPath)) {
+                return response()->file($default);
+            }
 
-        if (!file_exists($path)) {
-            return response()->file($default);
-        }
+            $path = Storage::disk('public')->path($logoPath);
 
-        return response()->file($path);
+            if (!file_exists($path)) {
+                return response()->file($default);
+            }
+
+            return response()->file($path);
     }
 }

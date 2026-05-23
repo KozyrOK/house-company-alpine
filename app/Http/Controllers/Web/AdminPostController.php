@@ -17,6 +17,7 @@ class AdminPostController extends Controller
 
         $user = request()->user();
         $posts = Post::with(['company:id,name', 'user:id,first_name,second_name'])
+            ->where('status', '!=', 'trash')
             ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
                 $query->where('company_id', currentCompany()?->id);
             })

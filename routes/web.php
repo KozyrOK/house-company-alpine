@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
         ->name('companies.index');
 
     Route::get('/companies/trash', [AdminCompanyController::class, 'trash'])
+        ->middleware('superadmin.only')
         ->name('companies.trash');
 
     Route::get('/companies/{company}', [CompanyController::class, 'show'])
@@ -165,9 +166,11 @@ Route::middleware('auth')->group(function () {
         // COMPANIES
 
         Route::get('/companies', [AdminCompanyController::class, 'index'])
+            ->middleware('superadmin.only')
             ->name('companies.index');
 
         Route::get('/companies/trash', [AdminCompanyController::class, 'trash'])
+            ->middleware('superadmin.only')
             ->name('companies.trash');
 
         Route::get('/companies/create', [AdminCompanyController::class, 'create'])

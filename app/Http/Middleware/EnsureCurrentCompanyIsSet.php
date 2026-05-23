@@ -17,7 +17,10 @@ class EnsureCurrentCompanyIsSet
         }
 
         $currentCompanyId = (int) $request->session()->get('current_company_id');
-        $companyIds = $user->companies()->pluck('companies.id');
+        $companyIds = $user->companies()
+            ->where('companies.status_company', 'active')
+            ->wherePivot('status_membership', 'active')
+            ->pluck('companies.id');
 
         if ($currentCompanyId > 0 && $companyIds->contains($currentCompanyId)) {
             return $next($request);

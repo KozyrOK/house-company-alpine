@@ -8,10 +8,12 @@
 
         <h1>Edit Company</h1>
 
+        @php($backRoute = auth()->user()->isSuperAdmin() ? route('admin.companies.show', $company) : route('company.current'))
+
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to detail" href="{{ route('admin.companies.show', $company) }}" class="button-list"/>
+                <x-link text="← Back" href="{{ $backRoute }}" class="button-list"/>
             </div>
 
             <div>
@@ -19,7 +21,9 @@
             </div>
 
             <div class="button-wrapper">
-                <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+                @if(auth()->user()->isSuperAdmin())
+                    <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+                @endif
             </div>
 
         </div>
@@ -51,7 +55,7 @@
                 <div></div>
 
                 <div class="button-wrapper">
-                    <x-link text="Cancel" href="{{ route('admin.companies.show', $company) }}" class="button-delete"/>
+                    <x-link text="Cancel" href="{{ $backRoute }}" class="button-delete"/>
                 </div>
 
             </div>

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -18,6 +19,10 @@ class UserController extends Controller
         $isAdminRoute = $request->is('api/admin/*');
 
         $query = User::query()->with('companies:id,name')->latest('id');
+
+        if (!$request->filled('status_account')) {
+            $query->where('status_account', '!=', 'deleted');
+        }
 
         if (!$actor->isSuperAdmin()) {
             $companyIds = $isAdminRoute
@@ -62,7 +67,7 @@ class UserController extends Controller
             'status_account' => $requiresApproval ? 'pending' : 'active',
         ]);
 
-        $user->companies()->attach($company->id, ['role' => $validated['role'] ?? 'user']);
+        $user->companies()->attach($company->id, ['role' => $validated['role'] ?? 'user', 'status_membership' => $requiresApproval ? 'pending' : 'active']);
 
         return response()->json($user->load('companies:id,name'), 201);
     }
@@ -143,8 +148,13 @@ class UserController extends Controller
             }
         }
 
-        $user->update(['deleted_by' => auth()->id()]);
-        $user->delete();
+        DB::transaction(function () use ($user) {
+            $user->update(['status_account' => 'deleted']);
+            DB::table('company_user')
+                ->where('user_id', $user->id)
+                ->where('status_membership', 'active')
+                ->update(['status_membership' => 'deleted']);
+        });
 
         return response()->json([], 204);
     }

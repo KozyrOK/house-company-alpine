@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -19,7 +18,7 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'first_name',
@@ -32,7 +31,6 @@ class User extends Authenticatable
         'avatar_path',
         'phone',
         'status_account',
-        'deleted_by',
     ];
 
     protected $hidden = [
@@ -52,8 +50,7 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Company::class)
             ->withPivot('role', 'status_membership')
-            ->withTimestamps()
-            ->withTrashed();
+            ->withTimestamps();
     }
 
     public function getAvatarUrlAttribute(): string
@@ -94,6 +91,7 @@ class User extends Authenticatable
 
         return $this->companies()
             ->where('company_id', $companyId)
+            ->wherePivot('status_membership', 'active')
             ->wherePivotIn('role', $roles)
             ->exists();
     }
@@ -113,6 +111,7 @@ class User extends Authenticatable
     public function isSuperAdmin(): bool
     {
         return $this->companies()
+            ->wherePivot('status_membership', 'active')
             ->wherePivot('role', 'superadmin')
             ->exists();
     }
@@ -135,6 +134,7 @@ class User extends Authenticatable
     public function isAdminInAnyCompany(): bool
     {
         return $this->companies()
+            ->wherePivot('status_membership', 'active')
             ->wherePivotIn('role', ['admin', 'superadmin'])
             ->exists();
     }
@@ -146,6 +146,7 @@ class User extends Authenticatable
         }
 
         return $this->companies()
+            ->wherePivot('status_membership', 'active')
             ->wherePivot('role', 'admin')
             ->pluck('companies.id')
             ->all();
@@ -158,6 +159,7 @@ class User extends Authenticatable
         }
 
         return $this->companies()
+            ->wherePivot('status_membership', 'active')
             ->wherePivotIn('role', ['admin', 'company_head'])
             ->pluck('companies.id')
             ->all();
@@ -175,19 +177,16 @@ class User extends Authenticatable
         }
 
         return $this->companies()
+            ->wherePivot('status_membership', 'active')
             ->wherePivotIn('role', ['user', 'company_head'])
             ->exists();
-    }
-
-    public function deleter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(User::class, 'deleted_by')->withTrashed();
     }
 
     public function roleIn(Company $company): string
     {
         return $this->companies()
             ->where('company_id', $company->id)
+            ->wherePivot('status_membership', 'active')
             ->first()?->pivot->role ?? 'user';
     }
 

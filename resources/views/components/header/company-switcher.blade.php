@@ -1,5 +1,5 @@
 @auth
-    @php($companies = auth()->user()->isSuperAdmin() ? collect() : auth()->user()->companies()->orderBy('name')->get())
+    @php($companies = auth()->user()->isSuperAdmin() ? collect() : auth()->user()->companies()->where('companies.status_company', 'active')->wherePivot('status_membership', 'active')->orderBy('name')->get())
     @if($companies->count() > 1)
         <details class="company-switcher">
             <summary class="company-switcher-summary">Company Switcher ▼</summary>

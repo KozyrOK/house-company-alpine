@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -12,15 +11,17 @@ use Illuminate\Support\Facades\Storage;
  */
 class Company extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     public mixed $logo_path;
+    public mixed $logo_url;
     protected $fillable = [
         'name',
         'address',
         'city',
         'logo_path',
         'description',
+        'status_company',
         'deleted_by'
 ];
     public function getCompanyId(): int
@@ -32,8 +33,7 @@ class Company extends Model
         return $this->belongsToMany(User::class, 'company_user')
             ->using(CompanyUser::class)
             ->withPivot('role', 'status_membership')
-            ->withTimestamps()
-            ->withTrashed();
+            ->withTimestamps();
     }
     public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
@@ -42,7 +42,7 @@ class Company extends Model
 
     public function deleter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(User::class, 'deleted_by')->withTrashed();
+        return $this->belongsTo(User::class, 'deleted_by');
     }
 
     public function getLogoUrlAttribute(): string

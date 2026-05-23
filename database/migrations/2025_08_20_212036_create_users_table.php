@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('phone', 20)->nullable();
             $table->enum('status_account', ['pending', 'active', 'deleted'])->default('pending');
             $table->rememberToken();
-            $table->softDeletes();
             $table->timestamps();
         });
     }

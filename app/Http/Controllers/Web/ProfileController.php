@@ -8,6 +8,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -56,9 +57,15 @@ class ProfileController extends Controller
 
         Post::query()->where('updated_by', $user->id)->update(['updated_by' => null]);
         Post::query()->where('deleted_by', $user->id)->update(['deleted_by' => null]);
-        Post::query()->where('created_by', $user->id)->delete();
+        Post::query()->where('created_by', $user->id)->update(['deleted_by' => $user->id, 'status' => 'trash']);
 
-        $user->update(['status_account' => 'deleted']);
+        DB::transaction(function () use ($user) {
+            $user->update(['status_account' => 'deleted']);
+            DB::table('company_user')
+                ->where('user_id', $user->id)
+                ->where('status_membership', 'active')
+                ->update(['status_membership' => 'deleted']);
+        });
 
         Auth::logout();
 

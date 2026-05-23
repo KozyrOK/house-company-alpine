@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('company_user', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('company_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('company_id')->constrained();
             $table->enum('role', ['superadmin', 'admin', 'company_head', 'user'])->default('user');
             $table->enum('status_membership', ['pending', 'active', 'invited', 'deleted', 'rejected'])->default('pending');
             $table->unique(['user_id', 'company_id']);

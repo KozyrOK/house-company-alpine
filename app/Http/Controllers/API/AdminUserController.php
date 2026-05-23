@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class AdminUserController extends Controller
@@ -13,7 +14,7 @@ class AdminUserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        return User::with('companies:id,name')->paginate();
+        return User::where('status_account', '!=', 'deleted')->with('companies:id,name')->paginate();
     }
 
     public function show(User $user)
@@ -27,7 +28,13 @@ class AdminUserController extends Controller
     {
         $this->authorize('delete', $user);
 
-        $user->update(['status_account' => 'deleted']);
+        DB::transaction(function () use ($user) {
+            $user->update(['status_account' => 'deleted']);
+            DB::table('company_user')
+                ->where('user_id', $user->id)
+                ->where('status_membership', 'active')
+                ->update(['status_membership' => 'deleted']);
+        });
 
         return response()->noContent();
     }

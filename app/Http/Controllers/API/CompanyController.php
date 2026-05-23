@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
@@ -31,10 +32,10 @@ class CompanyController extends Controller
         $isAdminRoute = $request->is('api/admin/*');
 
         $companies = $user->isSuperAdmin()
-            ? Company::query()->orderBy('name')->paginate(15)
-            : ($isAdminRoute
-                ? Company::query()->whereIn('id', $user->adminCompanyIds())->orderBy('name')->paginate(15)
-                : $user->companies()->orderBy('name')->paginate(15));
+                ? Company::query()->where('status_company', 'active')->orderBy('name')->paginate(5)
+                : ($isAdminRoute
+        ? Company::query()->where('status_company', 'active')->whereIn('id', $user->adminCompanyIds())->orderBy('name')->paginate(5)
+                : $user->companies()->where('companies.status_company', 'active')->wherePivot('status_membership', 'active')->orderBy('name')->paginate(15));
         return response()->json($companies);
     }
 
@@ -87,8 +88,16 @@ class CompanyController extends Controller
         if (request()->is('api/admin/*') && !request()->user()->isAdminOrHigher($company->id)) {
             abort(403);
         }
-        $company->update(['deleted_by' => auth()->id()]);
-        $company->delete();
+
+        DB::transaction(function () use ($company) {
+            $company->posts()->where('status', '!=', 'trash')->update(['deleted_by' => auth()->id(), 'status' => 'trash']);
+            DB::table('company_user')
+                ->where('company_id', $company->id)
+                ->where('status_membership', 'active')
+                ->update(['status_membership' => 'deleted']);
+            $company->update(['deleted_by' => auth()->id(), 'status_company' => 'deleted']);
+        });
+
         return response()->json([], 204);
     }
 
@@ -107,8 +116,11 @@ class CompanyController extends Controller
 
         $path = $file->storeAs('company_logos', $filename, 'public');
 
-        if ($company->logo_path && Storage::disk('public')->exists($company->logo_path)) {
-            Storage::disk('public')->delete($company->logo_path);
+        $currentLogoPath = $company->getAttribute('logo_path');
+
+        if ($currentLogoPath && Storage::disk('public')->exists($currentLogoPath)) {
+            Storage::disk('public')->delete($currentLogoPath);
+
         }
 
         $company->update(['logo_path' => $path]);
@@ -126,8 +138,10 @@ class CompanyController extends Controller
             abort(403);
         }
 
-        if ($company->logo_path && Storage::disk('public')->exists($company->logo_path)) {
-            Storage::disk('public')->delete($company->logo_path);
+        $currentLogoPath = $company->getAttribute('logo_path');
+
+        if ($currentLogoPath && Storage::disk('public')->exists($currentLogoPath)) {
+            Storage::disk('public')->delete($currentLogoPath);
         }
 
         $company->update(['logo_path' => null]);

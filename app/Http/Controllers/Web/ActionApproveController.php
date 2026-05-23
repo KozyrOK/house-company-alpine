@@ -22,7 +22,7 @@ class ActionApproveController extends Controller
         $users = User::query()
             ->with(['companies' => fn($q) => $q->withPivot('role', 'status_membership')])
             ->whereHas('companies', function ($q) use ($actor) {
-                $q->wherePivot('status_membership', 'pending');
+                $q->where('company_user.status_membership', 'pending');
                 if (!$actor->isSuperAdmin()) {
                     $q->where('companies.id', currentCompany()?->id);
                 }

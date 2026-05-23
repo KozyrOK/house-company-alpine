@@ -20,6 +20,7 @@ class PostController extends Controller
             $this->authorize('view', $company);
 
             $posts = $company->posts()
+                ->where('status', '!=', 'trash')
                 ->with(['user:id,first_name,second_name'])
                 ->latest()
                 ->paginate(5);
@@ -40,6 +41,8 @@ class PostController extends Controller
 
         if ($request->filled('status')) {
             $query->where('status', $request->string('status'));
+        } else {
+            $query->where('status', '!=', 'trash');
         }
 
         $posts = $query->paginate(5);

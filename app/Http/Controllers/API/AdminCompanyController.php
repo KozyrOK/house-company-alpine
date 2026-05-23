@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class AdminCompanyController extends Controller
@@ -13,7 +14,7 @@ class AdminCompanyController extends Controller
     {
         $this->authorize('viewAny', Company::class);
 
-        return Company::orderBy('name')->paginate();
+        return Company::where('status_company', 'active')->orderBy('name')->paginate();
     }
 
     public function show(Company $company)
@@ -49,8 +50,14 @@ class AdminCompanyController extends Controller
     {
         $this->authorize('delete', $company);
 
-        $company->update(['deleted_by' => auth()->id()]);
-        $company->delete();
+        DB::transaction(function () use ($company) {
+            $company->posts()->where('status', '!=', 'trash')->update(['deleted_by' => auth()->id(), 'status' => 'trash']);
+            DB::table('company_user')
+                ->where('company_id', $company->id)
+                ->where('status_membership', 'active')
+                ->update(['status_membership' => 'deleted']);
+            $company->update(['deleted_by' => auth()->id(), 'status_company' => 'deleted']);
+        });
 
         return response()->noContent();
     }
@@ -67,8 +74,10 @@ class AdminCompanyController extends Controller
         $filename = 'company_' . $company->id . '_' . time() . '.' . $file->getClientOriginalExtension();
         $path = $file->storeAs('company_logos', $filename, 'public');
 
-        if ($company->logo_path && Storage::disk('public')->exists($company->logo_path)) {
-            Storage::disk('public')->delete($company->logo_path);
+        $currentLogoPath = $company->getAttribute('logo_path');
+
+        if ($currentLogoPath && Storage::disk('public')->exists($currentLogoPath)) {
+            Storage::disk('public')->delete($currentLogoPath);
         }
 
         $company->update(['logo_path' => $path]);
@@ -85,8 +94,10 @@ class AdminCompanyController extends Controller
     {
         $this->authorize('update', $company);
 
-        if ($company->logo_path && Storage::disk('public')->exists($company->logo_path)) {
-            Storage::disk('public')->delete($company->logo_path);
+        $currentLogoPath = $company->getAttribute('logo_path');
+
+        if ($currentLogoPath && Storage::disk('public')->exists($currentLogoPath)) {
+            Storage::disk('public')->delete($currentLogoPath);
         }
 
         $company->update(['logo_path' => null]);

@@ -19,14 +19,16 @@
                 </div>
             </a>
 
-            <a href="{{ route('admin.companies.index') }}"
-               class="content-items-box">
-                <div class="content-item-box-wrapper">
-                    <x-icons.company/>
-                    <h2>Companies</h2>
-                    <p>View and edit company data</p>
-                </div>
-            </a>
+            @if(auth()->user()->isSuperAdmin())
+                <a href="{{ route('admin.companies.index') }}"
+                   class="content-items-box">
+                    <div class="content-item-box-wrapper">
+                        <x-icons.company/>
+                        <h2>Companies</h2>
+                        <p>View and edit company data</p>
+                    </div>
+                </a>
+            @endif
 
             <a href="{{ route('admin.posts.index') }}"
                class="content-items-box">

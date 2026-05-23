@@ -20,6 +20,10 @@ if (!function_exists('currentCompany')) {
             return null;
         }
 
-        return $user->companies()->where('companies.id', $companyId)->first();
+        return $user->companies()
+            ->where('companies.id', $companyId)
+            ->where('companies.status_company', 'active')
+            ->wherePivot('status_membership', 'active')
+            ->first();
     }
 }

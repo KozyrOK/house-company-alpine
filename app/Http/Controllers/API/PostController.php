@@ -12,6 +12,11 @@ class PostController extends Controller
     public function index(Request $request, ?Company $company = null): JsonResponse
     {
         $query = Post::query()->with(['company:id,name', 'user:id,first_name,second_name'])->latest();
+
+        if (!$request->filled('status')) {
+            $query->where('status', '!=', 'trash');
+        }
+
         $isAdminRoute = $request->is('api/admin/*');
 
         if ($company) {
@@ -112,8 +117,7 @@ class PostController extends Controller
             abort(403);
         }
 
-        $post->update(['deleted_by' => auth()->id()]);
-        $post->delete();
+        $post->update(['deleted_by' => auth()->id(), 'status' => 'trash']);
 
         return response()->json([], 204);
     }

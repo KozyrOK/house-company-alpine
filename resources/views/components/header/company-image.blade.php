@@ -2,7 +2,7 @@
     $logo = asset('images/default-image-company.webp');
 
     if (auth()->check() && !auth()->user()->isSuperAdmin() && currentCompany()) {
-        $logo = currentCompany()->logo_url;
+        $logo = currentCompany()->getLogoUrlAttribute();
     }
 @endphp
 

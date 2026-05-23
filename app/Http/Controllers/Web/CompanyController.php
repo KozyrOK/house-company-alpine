@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -21,14 +22,18 @@ class CompanyController extends Controller
             return view('user.companies.index', ['companies' => Company::orderBy('name')->paginate(5)]);
         }
 
-        $companies = $user->companies()->orderBy('name')->get();
+        $companies = $user->companies()
+            ->where('companies.status_company', 'active')
+            ->wherePivot('status_membership', 'active')
+            ->orderBy('name')
+            ->get();
 
         return view('pages.company-select', compact('companies'));
     }
 
     public function switch(Request $request, Company $company): RedirectResponse
     {
-        if (!$request->user()->isSuperAdmin() && !$request->user()->belongsToCompany($company->id)) {
+        if ($company->status_company !== 'active') {
             abort(403);
         }
 
@@ -77,7 +82,7 @@ class CompanyController extends Controller
     {
         $this->authorize('viewAny', Company::class);
 
-        $query = Company::query()->orderBy('name');
+        $query = Company::query()->where('status_company', 'active')->orderBy('name');
 
         if (!$request->user()->isSuperAdmin()) {
             $query->whereIn('id', [$request->session()->get('current_company_id')]);
@@ -158,6 +163,9 @@ class CompanyController extends Controller
         $this->authorize('delete', $company);
 
         $company->posts()->where('status', '!=', 'trash')->update(['deleted_by' => $request->user()->id, 'status' => 'trash']);
+        DB::table('company_user')
+            ->where('company_id', $company->id)
+            ->update(['status_membership' => 'deleted']);
         $company->update(['deleted_by' => $request->user()->id, 'status_company' => 'deleted']);
 
         return redirect()->route('admin.companies.index')
@@ -170,16 +178,18 @@ class CompanyController extends Controller
 
         $default = public_path('images/default-image-company.webp');
 
-        if (!$company->logo_path || !Storage::disk('public')->exists($company->logo_path)) {
-            return response()->file($default);
-        }
+            $logoPath = $company->getAttribute('logo_path');
 
-        $path = Storage::disk('public')->path($company->logo_path);
+            if (!$logoPath || !Storage::disk('public')->exists($logoPath)) {
+                return response()->file($default);
+            }
 
-        if (!file_exists($path)) {
-            return response()->file($default);
-        }
+            $path = Storage::disk('public')->path($logoPath);
 
-        return response()->file($path);
+            if (!file_exists($path)) {
+                return response()->file($default);
+            }
+
+            return response()->file($path);
     }
 }

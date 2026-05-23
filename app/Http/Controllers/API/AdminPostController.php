@@ -13,6 +13,7 @@ class AdminPostController extends Controller
         $this->authorize('viewAny', Post::class);
 
         return Post::with(['company:id,name', 'user:id,first_name,second_name'])
+                ->where('status', '!=', 'trash')
                 ->latest()
                 ->paginate();
     }
@@ -56,8 +57,7 @@ class AdminPostController extends Controller
     {
         $this->authorize('delete', $post);
 
-        $post->update(['deleted_by' => auth()->id()]);
-        $post->delete();
+        $post->update(['deleted_by' => auth()->id(), 'status' => 'trash']);
 
         return response()->noContent();
     }

@@ -21,7 +21,6 @@ return new class extends Migration
             $table->enum('status_company', ['active', 'deleted'])->default('active');
             $table->foreignId('deleted_by')->nullable()->constrained('users');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -21,6 +22,7 @@ class AdminUserController extends Controller
         $actor = auth()->user();
 
         $users = User::query()
+            ->where('status_account', '!=', 'deleted')
             ->with('companies:id,name')
             ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
                 $query->whereHas('companies', fn($companyQuery) => $companyQuery->where('companies.id', currentCompany()?->id));
@@ -37,12 +39,13 @@ class AdminUserController extends Controller
 
         $actor = auth()->user();
 
-        $users = User::onlyTrashed()
+        $users = User::query()
+            ->where('status_account', 'deleted')
             ->with('companies:id,name')
             ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
                 $query->whereHas('companies', fn ($companyQuery) => $companyQuery->where('companies.id', currentCompany()?->id));
             })
-            ->latest('deleted_at')
+            ->latest('updated_at')
             ->paginate(5);
 
         return view('admin.users.trash', compact('users'));
@@ -55,6 +58,7 @@ class AdminUserController extends Controller
         $actor = auth()->user();
 
         $users = User::query()
+            ->where('status_account', '!=', 'deleted')
             ->with('companies:id,name')
             ->where('status_account', 'pending')
             ->when(!$actor->isSuperAdmin(), function ($query) {
@@ -79,7 +83,13 @@ class AdminUserController extends Controller
     {
         $this->authorize('delete', $user);
 
-        $user->update(['status_account' => 'deleted']);
+        DB::transaction(function () use ($user) {
+            $user->update(['status_account' => 'deleted']);
+            DB::table('company_user')
+                ->where('user_id', $user->id)
+                ->where('status_membership', 'active')
+                ->update(['status_membership' => 'deleted']);
+        });
 
         return redirect()
             ->route('admin.users.index')
@@ -88,10 +98,16 @@ class AdminUserController extends Controller
 
     public function restore(int $user): RedirectResponse
     {
-        $model = User::query()->findOrFail($user);
+        $model = User::query()->where('status_account', 'deleted')->findOrFail($user);
         $this->authorize('restore', $model);
 
-        $model->update(['status_account' => 'active']);
+        DB::transaction(function () use ($model) {
+            $model->update(['status_account' => 'active']);
+            DB::table('company_user')
+                ->where('user_id', $model->id)
+                ->where('status_membership', 'deleted')
+                ->update(['status_membership' => 'active']);
+        });
 
         return redirect()
             ->route('admin.users.index')
@@ -134,7 +150,7 @@ class AdminUserController extends Controller
             'status_account' => $requiresApproval ? 'pending' : 'active',
         ]);
 
-        $user->companies()->attach($company->id, ['role' => $validated['role']]);
+        $user->companies()->attach($company->id, ['role' => $validated['role'], 'status_membership' => $requiresApproval ? 'pending' : 'active']);
 
         return redirect()->route('admin.users.show', $user)
             ->with('success', $requiresApproval

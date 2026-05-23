@@ -6,7 +6,11 @@
                 $user = auth()->user();
                 $currentCompany = currentCompany();
                 $role = $currentCompany ? $user->roleIn($currentCompany) : null;
-                $hasMultipleCompanies = !$user->isSuperAdmin() && $user->companies()->count() > 1;
+                $hasMultipleCompanies = !$user->isSuperAdmin()
+                    && $user->companies()
+                        ->where('companies.status_company', 'active')
+                        ->wherePivot('status_membership', 'active')
+                        ->count() > 1;
             @endphp
 
             @if($hasMultipleCompanies)
@@ -17,9 +21,10 @@
                 <li><a href="{{ route('admin.index') }}" class="{{ request()->routeIs('admin.*') ? 'active' : '' }}">{{ __('app.layouts.admin') }}</a></li>
                 <li><a href="{{ route('action-approve.index') }}" class="{{ request()->routeIs('action-approve.*') ? 'active' : '' }}">Action Approve</a></li>
             @elseif($role === 'admin')
-                <li><a href="{{ route('admin.index') }}" class="{{ request()->routeIs('admin.*') ? 'active' : '' }}">{{ __('app.layouts.admin') }}</a></li>
+                @php($companyTabActive = request()->routeIs('company.current') || request()->routeIs('admin.companies.edit'))
+                <li><a href="{{ route('admin.index') }}" class="{{ request()->routeIs('admin.*') && !$companyTabActive ? 'active' : '' }}">{{ __('app.layouts.admin') }}</a></li>
                 <li><a href="{{ route('action-approve.index') }}" class="{{ request()->routeIs('action-approve.*') ? 'active' : '' }}">Action Approve</a></li>
-                <li><a href="{{ route('company.current') }}" class="{{ request()->routeIs('company.current') ? 'active' : '' }}">Company</a></li>
+                <li><a href="{{ route('company.current') }}" class="{{ $companyTabActive ? 'active' : '' }}">Company</a></li>
             @elseif($role === 'company_head')
                 <li><a href="{{ route('main.index') }}" class="{{ request()->routeIs('main.*') ? 'active' : '' }}">{{ __('app.layouts.main') }}</a></li>
                 <li><a href="{{ route('company.current') }}" class="{{ request()->routeIs('company.current') ? 'active' : '' }}">Company</a></li>
