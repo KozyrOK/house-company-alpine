@@ -15,11 +15,15 @@
             </div>
 
             <div class="button-wrapper">
-                <x-link text="Trash" href="{{ route('admin.users.trash') }}" class="button-trash"/>
+                @if(auth()->user()->isSuperAdmin())
+                    <x-link text="Trash" href="{{ route('admin.users.trash') }}" class="button-trash"/>
+                @endif
             </div>
 
             <div class="button-wrapper">
-                <x-link text="Create new user" href="{{ route('admin.users.create') }}" class="button-edit"/>
+                @can('create', \App\Models\User::class)
+                    <x-link text="Create new user" href="{{ route('admin.users.create') }}" class="button-edit"/>
+                @endcan
             </div>
 
         </div>

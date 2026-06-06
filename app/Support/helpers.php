@@ -23,7 +23,7 @@ if (!function_exists('currentCompany')) {
         return $user->companies()
             ->where('companies.id', $companyId)
             ->where('companies.status_company', 'active')
-            ->wherePivot('status_membership', 'active')
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
             ->first();
     }
 }

@@ -24,7 +24,7 @@ class CompanyController extends Controller
 
         $companies = $user->companies()
             ->where('companies.status_company', 'active')
-            ->wherePivot('status_membership', 'active')
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
             ->orderBy('name')
             ->get();
 
@@ -33,7 +33,7 @@ class CompanyController extends Controller
 
     public function switch(Request $request, Company $company): RedirectResponse
     {
-        if ($company->status_company !== 'active') {
+        if ($company->status_company !== 'active' || !$request->user()->belongsToCompany($company->id)) {
             abort(403);
         }
 
@@ -58,8 +58,13 @@ class CompanyController extends Controller
         }
 
         $company->loadCount(['users', 'posts']);
+        $adminCandidates = $company->users()
+            ->wherePivot('status_membership', 'active')
+            ->wherePivotIn('role', ['user', 'company_head'])
+            ->orderBy('first_name')
+            ->get(['users.id', 'first_name', 'second_name', 'email']);
 
-        return view('user.companies.show', compact('company'));
+        return view('user.companies.show', compact('company', 'adminCandidates'));
     }
 
     public function requestMembership(Request $request): RedirectResponse
@@ -68,14 +73,66 @@ class CompanyController extends Controller
             'company_id' => ['required', 'exists:companies,id'],
         ]);
 
-        $request->user()->companies()->syncWithoutDetaching([
-            $validated['company_id'] => [
+        $company = Company::query()
+            ->where('status_company', 'active')
+            ->findOrFail((int) $validated['company_id']);
+
+        $existing = DB::table('company_user')
+            ->where('user_id', $request->user()->id)
+            ->where('company_id', $company->id)
+            ->first();
+
+        if ($existing && in_array($existing->status_membership, ['active', 'pending', 'pending_admin'], true)) {
+            return redirect()->route('dashboard')->with('status', 'Company request already exists.');
+        }
+
+        if ($existing) {
+            DB::table('company_user')
+                ->where('user_id', $request->user()->id)
+                ->where('company_id', $company->id)
+                ->update([
+                    'status_membership' => 'pending',
+                    'role' => 'user',
+                    'updated_at' => now(),
+                ]);
+        } else {
+            $request->user()->companies()->attach($company->id, [
                 'role' => 'user',
                 'status_membership' => 'pending',
-            ],
-        ]);
+            ]);
+        }
+
+        if ($request->user()->status_account === 'rejected') {
+            $request->user()->update(['status_account' => 'pending']);
+        }
 
         return redirect()->route('dashboard')->with('status', 'Company request sent for approval.');
+    }
+
+    public function requestAdmin(Request $request): RedirectResponse
+    {
+        $company = currentCompany();
+        abort_unless($company && $request->user()->hasRole('admin', $company->id), 403);
+
+        $validated = $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+        ]);
+
+        $member = DB::table('company_user')
+            ->where('company_id', $company->id)
+            ->where('user_id', $validated['user_id'])
+            ->where('status_membership', 'active')
+            ->whereIn('role', ['user', 'company_head'])
+            ->first();
+
+        abort_unless($member, 404);
+
+        DB::table('company_user')
+            ->where('company_id', $company->id)
+            ->where('user_id', $validated['user_id'])
+            ->update(['status_membership' => 'pending_admin', 'updated_at' => now()]);
+
+        return redirect()->route('company.current')->with('status', 'Admin role request sent for superadmin approval.');
     }
 
     public function index(Request $request): View
@@ -93,6 +150,10 @@ class CompanyController extends Controller
         }
 
         $companies = $query->paginate(5);
+
+        if ($request->routeIs('main.companies.index')) {
+            return view('user.companies.index', compact('companies'));
+        }
 
         return view('admin.companies.index', compact('companies'));
     }

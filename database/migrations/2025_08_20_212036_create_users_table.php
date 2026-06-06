@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('avatar_path', 255)->nullable();
             $table->string('phone', 20)->nullable();
             $table->enum('status_account', ['pending', 'active', 'deleted'])->default('pending');
+            $table->enum('locale', ['en', 'uk','ru'])->default('en');
+            $table->enum('theme', ['light', 'dark', 'system'])->default('system');
             $table->rememberToken();
             $table->timestamps();
         });

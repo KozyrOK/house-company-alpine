@@ -1,16 +1,41 @@
 @extends('_layouts.app')
-@section('title','Action Approve - Users')
+@section('title','Action Approve')
 @section('content')
 
     <section>
-        <h1>Users Approve</h1>
-        <div class="bottom-crud-wrapper"><div class="button-wrapper"><x-link text="← Back to Approve Panel" href="{{ route('action-approve.index') }}" class="button-list"/></div></div>
-        <table class="content-item-wrapper"><thead><tr><th class="key-content-item-center">№</th><th class="key-content-item-center">Name</th><th class="key-content-item-center">Email</th><th class="key-content-item-center">Actions</th></tr></thead><tbody>
-            @forelse($users as $index => $u)
-                <tr><td class="key-content-item">{{ $users->firstItem() + $index }}</td><td class="value-content-item">{{ $u->first_name }} {{ $u->second_name }}</td><td class="value-content-item">{{ $u->email }}</td><td class="value-content-item"><x-link text="Detail" class="button-edit" href="{{ route('action-approve.users-show', $u) }}"/></td></tr>
-            @empty <tr><td colspan="4" class="value-content-item">No users pending approval.</td></tr> @endforelse
-            </tbody></table>
-        <div class="pagination">{{ $users->links() }}</div>
+
+    <h1>Action Approve</h1>
+
+    <x-filter.filterUser/>
+
+    <table class="content-item-wrapper">
+        <thead>
+        <tr>
+            <th class="key-content-item-center">№</th>
+            <th class="key-content-item-center">Approve type</th>
+            <th class="key-content-item-center">Name</th>
+            <th class="key-content-item-center">Email</th>
+            <th class="key-content-item-center">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @forelse($approvals as $index => $approval)
+            <tr>
+                <td class="key-content-item">{{ $approvals->firstItem() + $index }}</td>
+                <td class="value-content-item">{{ $approval->status_membership === 'pending_admin' ? 'add admin' : 'add user' }}</td>
+                <td class="value-content-item">{{ $approval->first_name }} {{ $approval->second_name }}</td>
+                <td class="value-content-item">{{ $approval->email }}</td>
+                <td class="value-content-item">
+                    <x-link text="Detail" class="button-edit" href="{{ route('action-approve.users-show', ['user' => $approval->user_id, 'company_id' => $approval->company_id]) }}"/>
+                </td>
+            </tr>
+        @empty
+            <tr><td colspan="5" class="value-content-item">No approvals found.</td></tr>
+        @endforelse
+        </tbody>
+    </table>
+    <div class="pagination">{{ $approvals->links() }}</div>
+
     </section>
 
 @endsection

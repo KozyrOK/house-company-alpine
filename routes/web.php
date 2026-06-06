@@ -19,11 +19,15 @@ use App\Http\Controllers\Web\ActionApproveController;
 
 // LOCALE SWITCHER
 
-Route::post('/locale/{locale}', function ($locale) {
+Route::post('/locale/{locale}', function (string $locale) {
     $available = ['en', 'uk', 'ru'];
 
-    if (!in_array($locale, $available)) {
+    if (!in_array($locale, $available, true)) {
         $locale = 'en';
+    }
+
+    if (auth()->check()) {
+        auth()->user()->update(['locale' => $locale]);
     }
 
     Session::put('locale', $locale);
@@ -31,6 +35,22 @@ Route::post('/locale/{locale}', function ($locale) {
 
     return Response::noContent();
 })->name('locale.switch');
+
+Route::post('/theme/{theme}', function (string $theme) {
+    $available = ['light', 'dark', 'system'];
+
+    if (!in_array($theme, $available, true)) {
+        $theme = 'system';
+    }
+
+    if (auth()->check()) {
+        auth()->user()->update(['theme' => $theme]);
+    }
+
+    Session::put('theme', $theme);
+
+    return Response::noContent();
+})->name('theme.switch');
 
 // START PAGE REDIRECT
 
@@ -47,7 +67,14 @@ Route::get('/', function () {
     }
 
     if (!currentCompany()) {
-        return redirect()->route('company.select');
+        $activeCompaniesCount = $user->companies()
+            ->where('companies.status_company', 'active')
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
+            ->count();
+
+        return $activeCompaniesCount > 0
+            ? redirect()->route('company.select')
+            : redirect()->route('dashboard');
     }
 
     $role = $user->roleIn(currentCompany());
@@ -77,7 +104,12 @@ Route::middleware('auth')->group(function () {
         ->name('company.current');
 
     Route::post('/company/request-membership', [CompanyController::class, 'requestMembership'])
+        ->middleware('verified')
         ->name('company.request-membership');
+
+    Route::post('/company/request-admin', [CompanyController::class, 'requestAdmin'])
+        ->middleware('admin.access')
+        ->name('company.request-admin');
 
     // MAIN
 
@@ -88,19 +120,37 @@ Route::middleware('auth')->group(function () {
         Route::get('/main/companies', [CompanyController::class, 'index'])
             ->name('main.companies.index');
 
-        Route::get('/main/companies/{company}', [CompanyController::class, 'show'])
+        Route::get('/main/company', [CompanyController::class, 'current'])
             ->name('main.companies.show');
 
-        Route::get('/main/companies/{company}/posts', [PostController::class, 'index'])
+        Route::get('/main/posts', [PostController::class, 'index'])
             ->name('main.posts.index');
 
-        Route::get('/main/companies/{company}/posts/{post}', [PostController::class, 'show'])
+        Route::get('/main/posts/create', [PostController::class, 'create'])
+            ->name('main.posts.create');
+
+        Route::post('/main/posts', [PostController::class, 'store'])
+            ->name('main.posts.store');
+
+        Route::get('/main/posts/trash', [PostController::class, 'trash'])
+            ->name('main.posts.trash');
+
+        Route::patch('/main/posts/{post}/restore', [PostController::class, 'restore'])
+            ->name('main.posts.restore');
+
+        Route::get('/main/posts/{post}', [PostController::class, 'show'])
             ->name('main.posts.show');
 
-        Route::get('/main/companies/{company}/users', [UserController::class, 'index'])
+        Route::get('/main/posts/{post}/edit', [PostController::class, 'edit'])
+            ->name('main.posts.edit');
+
+        Route::patch('/main/posts/{post}', [PostController::class, 'update'])
+            ->name('main.posts.update');
+
+        Route::get('/main/users', [UserController::class, 'index'])
             ->name('main.users.index');
 
-        Route::get('/main/companies/{company}/users/{user}', [UserController::class, 'show'])
+        Route::get('/main/users/{user}', [UserController::class, 'show'])
             ->name('main.users.show');
     });
 
@@ -120,9 +170,9 @@ Route::middleware('auth')->group(function () {
 
     // POSTS
 
-    Route::get('/companies/{company}/posts', [PostController::class, 'index'])
+    Route::get('/posts', [PostController::class, 'index'])
         ->middleware('admin.access')
-        ->name('companies.posts.index');
+        ->name('posts.index');
 
     // USERS
 
@@ -132,9 +182,11 @@ Route::middleware('auth')->group(function () {
     // PROFILE
 
     Route::get('/dashboard', [ProfileController::class, 'edit'])
+        ->middleware('verified')
         ->name('dashboard');
 
     Route::patch('/dashboard/update', [ProfileController::class, 'update'])
+        ->middleware('verified')
         ->name('dashboard.update');
 
     Route::delete('/dashboard/destroy', [ProfileController::class, 'destroy'])
@@ -219,6 +271,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/users/{user}', [AdminUserController::class, 'show'])
             ->name('users.show');
+
+        Route::get('/users/{user}/companies', [AdminUserController::class, 'companies'])
+            ->middleware('superadmin.only')
+            ->name('users.companies');
 
         Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])
             ->name('users.edit');

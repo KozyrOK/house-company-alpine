@@ -39,10 +39,6 @@ export default () => ({
     },
 
     init() {
-        const saved = localStorage.getItem('locale');
-        if (saved) {
-            this.locale = saved;
-            document.documentElement.lang = saved;
-        }
+        this.locale = document.documentElement.lang || 'en';
     }
 });

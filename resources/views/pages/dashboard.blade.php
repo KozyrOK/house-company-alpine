@@ -30,7 +30,7 @@
                             <th class="key-content-item">Account status</th>
                             <td class="value-content-item">
                                 <select name="status_account" class="input-field">
-                                    @foreach(['pending' => 'Pending', 'active' => 'Active', 'deleted' => 'Deleted'] as $value => $label)
+                                    @foreach(['pending' => 'Pending', 'active' => 'Active', 'rejected' => 'Rejected', 'deleted' => 'Deleted'] as $value => $label)
                                         <option value="{{ $value }}" @selected(old('status_account', $user->status_account) === $value)>{{ $label }}</option>
                                     @endforeach
                                 </select>
@@ -56,8 +56,7 @@
                     <tr><th class="key-content-item">Name</th><td class="value-content-item">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
                     <tr><th class="key-content-item">Email</th><td class="value-content-item">{{ $user->email }}</td></tr>
                     <tr><th class="key-content-item">Phone</th><td class="value-content-item">{{ $user->phone ?: '-' }}</td></tr>
-                    <tr><th class="key-content-item">Status</th><td class="value-content-item">{{ $user->status_account ?: '-' }}</td></tr>
-                    <tr><th class="key-content-item">Companies</th><td class="value-content-item">{{ $user->companies->pluck('name')->implode(', ') ?: '-' }}</td></tr>
+                    <tr><th class="key-content-item">Status account</th><td class="value-content-item">{{ $user->status_account ?: '-' }}</td></tr>
                 </table>
             @endif
 
@@ -118,13 +117,32 @@
                             @endforeach
                         </select>
 
-                        <div class="button-wrapper">
-                            <x-button
-                                text="Add Company"
-                                type="submit"
-                                class="button-edit "
-                            />
+                        <div class="bottom-crud-wrapper">
+
+                            <div class="button-wrapper">
+                                <x-button
+                                    text="Send Request"
+                                    type="submit"
+                                    class="button-edit"
+                                />
+                            </div>
+
+                            <div class="button-wrapper">
+                                <x-button
+                                    text="Request list"
+                                    type="submit"
+                                    class="button-approve"
+                                />
+                            </div>
+
+                            <div class="button-wrapper">
+                                <button type="button" @click="open = false" class="button-delete">
+                                    Cancel
+                                </button>
+                            </div>
+
                         </div>
+
                     </form>
 
                 </div>

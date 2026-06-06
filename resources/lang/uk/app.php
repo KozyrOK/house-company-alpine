@@ -65,4 +65,11 @@ return [
         'admin_panel' => 'Адмін-панель',
     ],
 
+    'pagination' => [
+        'showing' => 'Показано :first–:last із :total результатів',
+        'empty' => 'Результатів не знайдено',
+        'previous' => 'Попередня',
+        'next' => 'Наступна',
+    ],
+
 ];

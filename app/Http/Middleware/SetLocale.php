@@ -11,7 +11,7 @@ class SetLocale
     public function handle($request, Closure $next)
     {
         $available = ['en', 'uk', 'ru'];
-        $locale = Session::get('locale', config('app.locale', 'en'));
+        $locale = $request->user()?->locale ?? Session::get('locale', config('app.locale', 'en'));
 
         if (!in_array($locale, $available)) {
             $locale = 'en';

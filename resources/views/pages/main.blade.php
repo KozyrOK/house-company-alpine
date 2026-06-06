@@ -11,7 +11,7 @@
         <div class="admin-panel-content-box-wrapper">
 
             @if($showUsersCard)
-                <a href="{{ route('main.users.index', $company) }}"
+                <a href="{{ route('main.users.index') }}"
                    class="content-items-box">
                     <div class="content-item-box-wrapper">
                         <x-icons.user/>
@@ -22,7 +22,7 @@
             @endif
 
             @if($showPostsCard)
-                    <a href="{{ route('main.posts.index', $company) }}"
+                    <a href="{{ route('main.posts.index') }}"
                    class="content-items-box">
                     <div class="content-item-box-wrapper">
                         <x-icons.post/>

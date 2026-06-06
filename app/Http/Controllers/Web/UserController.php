@@ -21,6 +21,7 @@ class UserController extends Controller
             abort_unless($company, 403);
 
             $users = $company->users()
+                ->wherePivotIn('status_membership', ['active', 'pending_admin'])
                 ->wherePivotIn('role', ['user', 'company_head'])
                 ->with('companies:id,name')
                 ->latest('users.id')
@@ -40,7 +41,9 @@ class UserController extends Controller
         if (!$actor->isSuperAdmin()) {
             $company = currentCompany();
             abort_unless($company, 403);
-            $query->whereHas('companies', fn ($q) => $q->where('companies.id', $company->id));
+            $query->whereHas('companies', fn ($q) => $q
+                ->where('companies.id', $company->id)
+                ->whereIn('company_user.status_membership', ['active', 'pending_admin']));
         }
 
         $users = $query->paginate(5);
@@ -48,16 +51,19 @@ class UserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
-    public function show(Company $company, $userId): View
+    public function show(User $user): View
     {
-        $company = currentCompany() ?? $company;
-        $user = $company->users()->findOrFail($userId);
+        $company = currentCompany();
+        abort_unless($company, 403);
+        abort_unless($user->belongsToCompany($company->id), 403);
 
         return view('user.users.show', compact('user', 'company'));
     }
 
     public function create(): View
     {
+        $this->authorize('create', User::class);
+
         $user = request()->user();
 
         $companies = $user->isSuperAdmin()
@@ -132,7 +138,7 @@ class UserController extends Controller
             $user->update(['status_account' => 'deleted']);
             DB::table('company_user')
                 ->where('user_id', $user->id)
-                ->where('status_membership', 'active')
+                ->whereIn('status_membership', ['active', 'pending_admin'])
                 ->update(['status_membership' => 'deleted']);
         });
 

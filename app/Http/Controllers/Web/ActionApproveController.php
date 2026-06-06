@@ -6,37 +6,61 @@ use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ActionApproveController extends Controller
 {
     public function index(): View
     {
-        return view('pages.action-approve');
+        return $this->usersApprove();
     }
 
     public function usersApprove(): View
     {
         $actor = auth()->user();
 
-        $users = User::query()
-            ->with(['companies' => fn($q) => $q->withPivot('role', 'status_membership')])
-            ->whereHas('companies', function ($q) use ($actor) {
-                $q->where('company_user.status_membership', 'pending');
-                if (!$actor->isSuperAdmin()) {
-                    $q->where('companies.id', currentCompany()?->id);
-                }
+        $approvals = DB::table('company_user')
+            ->join('users', 'users.id', '=', 'company_user.user_id')
+            ->join('companies', 'companies.id', '=', 'company_user.company_id')
+            ->select([
+                'users.id as user_id',
+                'users.first_name',
+                'users.second_name',
+                'users.email',
+                'companies.id as company_id',
+                'companies.name as company_name',
+                'company_user.role',
+                'company_user.status_membership',
+            ])
+            ->whereIn('company_user.status_membership', ['pending', 'pending_admin'])
+            ->when(!$actor->isSuperAdmin(), function ($query) {
+                $query->where('company_user.company_id', currentCompany()?->id)
+                    ->where('company_user.status_membership', 'pending');
             })
-            ->latest('id')
+            ->orderByDesc('company_user.updated_at')
             ->paginate(5);
 
-        return view('action-approve.users-approve', compact('users'));
+        return view('action-approve.users-approve', compact('approvals'));
     }
 
     public function showUser(User $user): View
     {
-        $user->load(['companies' => fn($q) => $q->withPivot('role', 'status_membership')]);
-        return view('action-approve.users-show', compact('user'));
+        $actor = auth()->user();
+        $companyId = $actor->isSuperAdmin() ? request()->integer('company_id') : currentCompany()?->id;
+
+        $approval = DB::table('company_user')
+            ->join('companies', 'companies.id', '=', 'company_user.company_id')
+            ->where('company_user.user_id', $user->id)
+            ->where('company_user.company_id', $companyId)
+            ->whereIn('company_user.status_membership', ['pending', 'pending_admin'])
+            ->select('company_user.*', 'companies.name as company_name')
+            ->first();
+
+        abort_unless($approval, 404);
+        abort_unless($actor->isSuperAdmin() || $approval->status_membership === 'pending', 403);
+
+        return view('action-approve.users-show', compact('user', 'approval'));
     }
 
     public function approveUser(User $user): RedirectResponse
@@ -44,19 +68,44 @@ class ActionApproveController extends Controller
         $actor = auth()->user();
         $companyId = $actor->isSuperAdmin() ? request()->integer('company_id') : currentCompany()?->id;
 
-        $user->companies()->updateExistingPivot($companyId, ['status_membership' => 'active']);
+        $approval = $this->approvalFor($user, $companyId);
 
-        return redirect()->route('action-approve.users-show', $user)->with('status', 'User membership approved.');
+        if ($approval->status_membership === 'pending_admin') {
+            abort_unless($actor->isSuperAdmin(), 403);
+            $user->companies()->updateExistingPivot($companyId, [
+                'status_membership' => 'active',
+                'role' => 'admin',
+            ]);
+        } else {
+            $user->companies()->updateExistingPivot($companyId, ['status_membership' => 'active']);
+            $user->update(['status_account' => 'active']);
+        }
+
+        return redirect()->route('action-approve.users-approve')->with('status', 'Approval accepted.');
     }
 
     public function rejectUser(User $user): RedirectResponse
     {
         $actor = auth()->user();
         $companyId = $actor->isSuperAdmin() ? request()->integer('company_id') : currentCompany()?->id;
+        $approval = $this->approvalFor($user, $companyId);
 
-        $user->companies()->updateExistingPivot($companyId, ['status_membership' => 'rejected']);
+        if ($approval->status_membership === 'pending_admin') {
+            abort_unless($actor->isSuperAdmin(), 403);
+            $user->companies()->updateExistingPivot($companyId, ['status_membership' => 'active']);
+        } else {
+            $user->companies()->updateExistingPivot($companyId, ['status_membership' => 'rejected']);
 
-        return redirect()->route('action-approve.users-show', $user)->with('status', 'User membership rejected.');
+            $hasActiveMembership = $user->companies()
+                ->wherePivotIn('status_membership', ['active', 'pending_admin'])
+                ->exists();
+
+            if (!$hasActiveMembership) {
+                $user->update(['status_account' => 'rejected']);
+            }
+        }
+
+        return redirect()->route('action-approve.users-approve')->with('status', 'Approval rejected.');
     }
 
     public function postsApprove(): View
@@ -93,4 +142,15 @@ class ActionApproveController extends Controller
         return redirect()->route('action-approve.posts-show', $post)->with('status', 'Post rejected and moved to draft.');
     }
 
+    private function approvalFor(User $user, int $companyId): object
+    {
+        $approval = DB::table('company_user')
+            ->where('user_id', $user->id)
+            ->where('company_id', $companyId)
+            ->whereIn('status_membership', ['pending', 'pending_admin'])
+            ->first();
+
+        abort_unless($approval, 404);
+        return $approval;
+    }
 }

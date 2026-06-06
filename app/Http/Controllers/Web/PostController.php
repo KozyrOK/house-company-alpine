@@ -21,7 +21,7 @@ class PostController extends Controller
 
             $posts = $company->posts()
                 ->where('status', '!=', 'trash')
-                ->with(['user:id,first_name,second_name'])
+                ->with(['company:id,name', 'user:id,first_name,second_name'])
                 ->latest()
                 ->paginate(5);
 
@@ -50,13 +50,40 @@ class PostController extends Controller
         return view('admin.posts.index', compact('posts'));
     }
 
-    public function show(Company $company, Post $post): View
+    public function show(Post $post): View
     {
         $this->authorize('view', $post);
 
         $post->load(['company:id,name', 'user:id,first_name,second_name']);
+        $company = currentCompany();
 
         return view('user.posts.show', compact('post', 'company'));
+    }
+
+    public function trash(Request $request): View
+    {
+        $company = currentCompany();
+        abort_unless($company, 403);
+        $this->authorize('viewAny', Post::class);
+
+        $posts = Post::query()
+            ->where('company_id', $company->id)
+            ->where('status', 'trash')
+            ->with(['company:id,name', 'user:id,first_name,second_name'])
+            ->latest('updated_at')
+            ->paginate(5);
+
+        return view('user.posts.trash', compact('posts', 'company'));
+    }
+
+    public function restore(int $post): RedirectResponse
+    {
+        $model = Post::query()->where('status', 'trash')->findOrFail($post);
+        $this->authorize('restore', $model);
+
+        $model->update(['deleted_by' => null, 'status' => 'draft', 'updated_by' => auth()->id()]);
+
+        return redirect()->route('main.posts.trash')->with('success', 'Post restored successfully.');
     }
 
     public function create(): View
@@ -67,19 +94,25 @@ class PostController extends Controller
             ? Company::query()->orderBy('name')->get()
             : collect([currentCompany()])->filter();
 
-        return view('admin.posts.create', compact('companies'));
+        $view = request()->routeIs('main.*') ? 'user.posts.create' : 'admin.posts.create';
+
+        return view($view, compact('companies'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'company_id' => 'required|integer|exists:companies,id',
+            'company_id' => $request->routeIs('main.*') ? 'nullable|integer|exists:companies,id' : 'required|integer|exists:companies,id',
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'status' => 'sometimes|in:draft,future,pending,publish,trash',
         ]);
 
-        $company = Company::query()->findOrFail((int) $validated['company_id']);
+        $company = $request->routeIs('main.*')
+            ? currentCompany()
+            : Company::query()->findOrFail((int) $validated['company_id']);
+        abort_unless($company, 403);
+
         $this->authorize('create', [Post::class, $company]);
 
         $role = $request->user()->roleIn($company);
@@ -97,7 +130,9 @@ class PostController extends Controller
             'updated_by' => $request->user()->id,
         ]);
 
-        return redirect()->route('admin.posts.index')
+        $route = $request->routeIs('main.*') ? 'main.posts.index' : 'admin.posts.index';
+
+        return redirect()->route($route)
             ->with('status', $status === 'pending' ? 'Post created and sent for approval.' : 'Post created successfully');
     }
 
@@ -110,7 +145,9 @@ class PostController extends Controller
             ? Company::query()->orderBy('name')->get()
             : collect([currentCompany()])->filter();
 
-        return view('admin.posts.edit', compact('post', 'companies'));
+        $view = request()->routeIs('main.*') ? 'user.posts.edit' : 'admin.posts.edit';
+
+        return view($view, compact('post', 'companies'));
     }
 
     public function update(Request $request, Post $post): RedirectResponse
@@ -118,16 +155,26 @@ class PostController extends Controller
         $this->authorize('update', $post);
 
         $validated = $request->validate([
-            'company_id' => 'sometimes|required|integer|exists:companies,id',
+            'company_id' => $request->routeIs('main.*') ? 'sometimes|nullable|integer|exists:companies,id' : 'sometimes|required|integer|exists:companies,id',
             'title' => 'sometimes|required|string|max:255',
             'content' => 'sometimes|required|string',
             'status' => 'sometimes|in:draft,future,pending,publish,trash',
         ]);
 
+        if ($request->routeIs('main.*')) {
+            $validated['company_id'] = currentCompany()?->id;
+        }
+
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasRole(['admin', 'company_head'], (int) ($validated['company_id'] ?? $post->company_id))) {
+            $validated['status'] = 'pending';
+        }
+
         $validated['updated_by'] = $request->user()->id;
         $post->update($validated);
 
-        return redirect()->route('admin.posts.show', $post)
+        $route = $request->routeIs('main.*') ? 'main.posts.show' : 'admin.posts.show';
+
+        return redirect()->route($route, $post)
             ->with('status', 'Post updated successfully');
     }
 
@@ -135,9 +182,9 @@ class PostController extends Controller
     {
         $this->authorize('delete', $post);
 
-        $post->update(['deleted_by' => $request->user()->id, 'status' => 'trash']);
+        $route = $request->routeIs('main.*') ? 'main.posts.index' : 'admin.posts.index';
 
-        return redirect()->route('admin.posts.index')
+        return redirect()->route($route)
             ->with('status', 'Post deleted successfully');
     }
 }

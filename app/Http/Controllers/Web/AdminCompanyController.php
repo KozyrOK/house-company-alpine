@@ -138,7 +138,7 @@ class AdminCompanyController extends Controller
             $company->posts()->where('status', '!=', 'trash')->update(['deleted_by' => auth()->id(), 'status' => 'trash']);
             DB::table('company_user')
                 ->where('company_id', $company->id)
-                ->where('status_membership', 'active')
+                ->whereIn('status_membership', ['active', 'pending_admin'])
                 ->update(['status_membership' => 'deleted']);
             $company->update(['deleted_by' => auth()->id(), 'status_company' => 'deleted']);
         });

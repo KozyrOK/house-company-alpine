@@ -9,24 +9,24 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to list" href="{{ route('main.index') }}" class="button-list"/>
+                <x-link text="← Back to list" href="{{ route('main.posts.index') }}" class="button-list"/>
             </div>
 
             <div></div>
 
             <div class="button-wrapper">
-                <x-link text="Admin Menu" href="{{ route('main.index') }}" class="button-list"/>
+                <x-link text="Main Menu" href="{{ route('main.index') }}" class="button-list"/>
             </div>
 
         </div>
 
-        <form action="{{ route('admin.posts.store') }}" method="POST">
+        <form action="{{ route('main.posts.store') }}" method="POST">
             @csrf
             <table class="w-full">
                 <tr>
                     <th class="key-content-item">Company</th>
                     <td class="value-content-item">
-                        <select name="company_id" class="input-field" required>
+                        <select name="company_id" class="input-field" required disabled>
                             @foreach($companies as $company)
                                 <option value="{{ $company->id }}" @selected(old('company_id') == $company->id)>{{ $company->name }}</option>
                             @endforeach
@@ -39,7 +39,7 @@
                     <th class="key-content-item">Status</th>
                     <td class="value-content-item">
                         <select name="status" class="input-field">
-                            @foreach(['draft','future','pending','publish','trash'] as $status)
+                            @foreach(['draft','future','pending'] as $status)
                                 <option value="{{ $status }}" @selected(old('status', 'pending') === $status)>{{ ucfirst($status) }}</option>
                             @endforeach
                         </select>

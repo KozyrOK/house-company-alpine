@@ -5,11 +5,13 @@ use App\Http\Middleware\SuperAdminOnly;
 use App\Http\Middleware\AdminAccess;
 use App\Http\Middleware\MainAccess;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
 use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\ApplyUserPreferences;
 use App\Http\Middleware\EnsureCurrentCompanyIsSet;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -27,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             SetLocale::class,
+            ApplyUserPreferences::class,
             EnsureCurrentCompanyIsSet::class,
         ]);
 
@@ -36,6 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'main.access' => MainAccess::class,
             'superadmin.only' => SuperAdminOnly::class,
             'company.context' => EnsureCurrentCompanyIsSet::class,
+            'verified' => EnsureEmailIsVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

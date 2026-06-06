@@ -13,7 +13,7 @@
             <div class="top-crud-wrapper">
 
                 <div class="button-wrapper">
-                    <x-link text="← Back to list" href="{{ isset($company) ? route('main.users.index', $company) : route('dashboard') }}" class="button-list"/>
+                    <x-link text="← Back to list" href="{{ isset($company) ? route('main.users.index') : route('dashboard') }}" class="button-list"/>
                 </div>
 
                 <div>

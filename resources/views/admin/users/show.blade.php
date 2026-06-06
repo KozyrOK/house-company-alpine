@@ -52,10 +52,8 @@
                 </div>
 
                 <div class="button-wrapper">
-                    @if($user->companies->count() > 1)
-                        <x-link text="User`s companies" href="{{ route('admin.users.index') }}" class="button-list"/>
-                    @endif
-                    </div>
+                    <x-link text="User`s companies" href="{{ route('admin.users.companies', $user) }}" class="button-list"/>
+                </div>
 
                     <div class="button-wrapper">
                     @can('delete', $user)

@@ -9,7 +9,7 @@
                 $hasMultipleCompanies = !$user->isSuperAdmin()
                     && $user->companies()
                         ->where('companies.status_company', 'active')
-                        ->wherePivot('status_membership', 'active')
+                        ->wherePivotIn('status_membership', ['active', 'pending_admin'])
                         ->count() > 1;
             @endphp
 

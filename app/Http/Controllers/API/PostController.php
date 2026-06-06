@@ -60,7 +60,7 @@ class PostController extends Controller
             'user_id' => $request->user()->id,
             'title' => $validated['title'],
             'content' => $validated['content'],
-            'status' => $roleIsPrivileged ? ($validated['status'] ?? 'publish') : ($validated['status'] ?? 'pending'),
+            'status' => $roleIsPrivileged ? ($validated['status'] ?? 'publish') : 'pending',
             'created_by' => $request->user()->id,
             'updated_by' => $request->user()->id,
         ]);
@@ -99,6 +99,10 @@ class PostController extends Controller
             'content' => 'sometimes|required|string',
             'status' => 'sometimes|in:draft,future,pending,publish,trash',
         ]);
+
+        if (!$request->user()->isSuperAdmin() && !$request->user()->hasRole(['admin', 'company_head'], $post->company_id)) {
+            $validated['status'] = 'pending';
+        }
 
         $validated['updated_by'] = $request->user()->id;
         $post->update($validated);

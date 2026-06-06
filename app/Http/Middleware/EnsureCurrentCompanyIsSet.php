@@ -19,7 +19,7 @@ class EnsureCurrentCompanyIsSet
         $currentCompanyId = (int) $request->session()->get('current_company_id');
         $companyIds = $user->companies()
             ->where('companies.status_company', 'active')
-            ->wherePivot('status_membership', 'active')
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
             ->pluck('companies.id');
 
         if ($currentCompanyId > 0 && $companyIds->contains($currentCompanyId)) {
@@ -31,7 +31,22 @@ class EnsureCurrentCompanyIsSet
             return $next($request);
         }
 
-        if ($request->routeIs('company.select') || $request->routeIs('companies.switch')) {
+        if ($request->routeIs(
+            'company.select',
+            'companies.switch',
+            'company.request-membership',
+            'dashboard',
+            'dashboard.*',
+            'info',
+            'locale.switch',
+            'theme.switch',
+            'logout',
+            'verification.*'
+        )) {
+            return $next($request);
+        }
+
+        if ($companyIds->isEmpty()) {
             return $next($request);
         }
 

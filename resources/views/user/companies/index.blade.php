@@ -29,7 +29,7 @@
                     <td class="key-content-item">{{ $companies->firstItem() + $index }}</td>
                     <td class="value-content-item">{{ $c->name }}</td>
                     <td class="value-content-item">{{ $c->city ?: '-' }}</td>
-                    <td><x-link text="Detail" class="button-list" href="{{ route('main.companies.show', $c) }}"/></td>
+                    <td><x-link text="Detail" class="button-list" href="{{ route('main.companies.show') }}"/></td>
                 </tr>
             @empty
                 <tr><td colspan="4" class="value-content-item">No companies found.</td></tr>

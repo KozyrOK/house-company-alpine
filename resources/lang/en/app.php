@@ -70,4 +70,11 @@ return [
         'action_aprrove_panel' => 'Approve Panel',
     ],
 
+    'pagination' => [
+        'showing' => 'Showing :first–:last із :total results',
+        'empty' => 'No results found',
+        'previous' => 'Previous',
+        'next' => 'Next',
+    ],
+
 ];

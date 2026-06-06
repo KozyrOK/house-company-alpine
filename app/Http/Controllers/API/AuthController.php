@@ -36,6 +36,7 @@ class AuthController extends Controller
             'second_name'      => 'required|string|max:255',
             'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'company_id' => 'nullable|exists:companies,id',
         ]);
 
         $user = User::create([
@@ -45,6 +46,13 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
             'status_account' => 'pending',
         ]);
+
+        if (!empty($validated['company_id'])) {
+            $user->companies()->attach((int) $validated['company_id'], [
+                'role' => 'user',
+                'status_membership' => 'pending',
+            ]);
+        }
 
         $token = $user->createToken('api_token')->plainTextToken;
 

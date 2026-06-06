@@ -27,13 +27,19 @@ class UserController extends Controller
         if (!$actor->isSuperAdmin()) {
             $companyIds = $isAdminRoute
                 ? $actor->adminCompanyIds()
-                : $actor->companies()->pluck('companies.id');
-            $query->whereHas('companies', fn ($q) => $q->whereIn('companies.id', $companyIds));
+                : $actor->companies()
+                    ->wherePivotIn('status_membership', ['active', 'pending_admin'])
+                    ->pluck('companies.id');
+            $query->whereHas('companies', fn ($q) => $q
+                ->whereIn('companies.id', $companyIds)
+                ->whereIn('company_user.status_membership', ['active', 'pending_admin']));
         }
 
         if ($request->filled('company_id')) {
             $companyId = (int) $request->integer('company_id');
-            $query->whereHas('companies', fn ($q) => $q->where('companies.id', $companyId));
+            $query->whereHas('companies', fn ($q) => $q
+                ->where('companies.id', $companyId)
+                ->whereIn('company_user.status_membership', ['active', 'pending_admin']));
         }
 
         if ($request->filled('status_account')) {
@@ -123,7 +129,20 @@ class UserController extends Controller
                 'role' => ['required', Rule::in(['user', 'company_head', 'admin', 'superadmin'])],
             ]);
 
-            $user->companies()->updateExistingPivot($company->id, ['role' => $request->string('role')->toString()]);
+            $role = $request->string('role')->toString();
+
+            if ($role === 'superadmin' && !$request->user()->isSuperAdmin()) {
+                abort(403);
+            }
+
+            if ($role === 'admin' && !$request->user()->isSuperAdmin()) {
+                $user->companies()->updateExistingPivot($company->id, ['status_membership' => 'pending_admin']);
+            } else {
+                $user->companies()->updateExistingPivot($company->id, [
+                    'role' => $role,
+                    'status_membership' => 'active',
+                ]);
+            }
         }
 
         return response()->json($user->fresh()->load('companies:id,name'));
@@ -134,7 +153,7 @@ class UserController extends Controller
         $company = $request->route('company');
 
         if ($company) {
-            $user->companies()->detach($company->id);
+            $user->companies()->updateExistingPivot($company->id, ['status_membership' => 'deleted']);
 
             return response()->json([], 204);
         }
@@ -152,7 +171,7 @@ class UserController extends Controller
             $user->update(['status_account' => 'deleted']);
             DB::table('company_user')
                 ->where('user_id', $user->id)
-                ->where('status_membership', 'active')
+                ->whereIn('status_membership', ['active', 'pending_admin'])
                 ->update(['status_membership' => 'deleted']);
         });
 
@@ -176,7 +195,25 @@ class UserController extends Controller
             }
         }
 
-        $user->update(['status_account' => 'active']);
+        if ($company) {
+            $membership = DB::table('company_user')
+                ->where('user_id', $user->id)
+                ->where('company_id', $company->id)
+                ->first();
+
+            if ($membership?->status_membership === 'pending_admin') {
+                abort_unless($request->user()->isSuperAdmin(), 403);
+                $user->companies()->updateExistingPivot($company->id, [
+                    'status_membership' => 'active',
+                    'role' => 'admin',
+                ]);
+            } else {
+                $user->companies()->updateExistingPivot($company->id, ['status_membership' => 'active']);
+                $user->update(['status_account' => 'active']);
+            }
+        } else {
+            $user->update(['status_account' => 'active']);
+        }
 
         return response()->json([
             'message' => 'User approved',

@@ -2,8 +2,11 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <script>
-        const darkMode = localStorage.getItem('darkMode') === 'true';
+        const backendTheme = @json(session('theme', auth()->user()->theme ?? 'system'));
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const darkMode = backendTheme === 'dark' || (backendTheme === 'system' && prefersDark);
         if (darkMode) document.documentElement.classList.add('dark');
+        window.__theme = backendTheme;
         window.__darkMode = darkMode;
     </script>
     <meta charset="utf-8">

@@ -1,14 +1,35 @@
 export default () => ({
-    darkMode: window.__darkMode ?? (typeof localStorage !== 'undefined' && localStorage.getItem('darkMode') === 'true') ?? false,
+    theme: window.__theme ?? 'system',
+    darkMode: window.__darkMode ?? false,
 
     init() {
         this.applyTheme();
     },
 
-    toggleDark() {
-        this.darkMode = !this.darkMode;
-        localStorage.setItem('darkMode', this.darkMode);
+    async toggleDark() {
+        this.theme = this.darkMode ? 'light' : 'dark';
+        this.darkMode = this.theme === 'dark';
+        localStorage.setItem('theme', this.theme);
         this.applyTheme();
+
+        try {
+            const xsrf = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('XSRF-TOKEN='))
+                ?.split('=')[1];
+
+            await fetch(`/theme/${this.theme}`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-XSRF-TOKEN': decodeURIComponent(xsrf ?? ''),
+                },
+            });
+        } catch (err) {
+            console.error('❌ Theme switch error:', err);
+        }
     },
 
     applyTheme() {

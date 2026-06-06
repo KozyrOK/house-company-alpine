@@ -20,7 +20,10 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        $companies = Company::orderBy('name')->get(['id', 'name']);
+        $companies = Company::query()
+            ->where('status_company', 'active')
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         return view('auth.register', compact('companies'));
     }
@@ -38,6 +41,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'company_id' => ['nullable', 'exists:companies,id'],
+            'phone' => ['nullable', 'string', 'max:30'],
         ]);
 
         $user = User::create([
@@ -45,6 +49,8 @@ class RegisteredUserController extends Controller
             'second_name' => $request->second_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'status_account' => 'pending',
         ]);
 
         if ($request->filled('company_id')) {

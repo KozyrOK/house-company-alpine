@@ -18,7 +18,14 @@ class ProfileController extends Controller
     public function edit(Request $request)
     {
         $user = $request->user()->load('companies:id,name');
-        $companies = Company::orderBy('name')->get(['id','name']);
+        $companies = Company::query()
+            ->where('status_company', 'active')
+            ->whereDoesntHave('users', function ($query) use ($user) {
+                $query->where('users.id', $user->id)
+                    ->whereIn('company_user.status_membership', ['active', 'pending', 'pending_admin']);
+            })
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         return view('pages.dashboard', compact('user', 'companies'));
     }
@@ -63,7 +70,7 @@ class ProfileController extends Controller
             $user->update(['status_account' => 'deleted']);
             DB::table('company_user')
                 ->where('user_id', $user->id)
-                ->where('status_membership', 'active')
+                ->whereIn('status_membership', ['active', 'pending_admin'])
                 ->update(['status_membership' => 'deleted']);
         });
 

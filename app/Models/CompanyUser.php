@@ -27,6 +27,7 @@ class CompanyUser extends Pivot
         return self::where('user_id', $userId)
             ->where('company_id', $companyId)
             ->whereIn('role', $roles)
+            ->whereIn('status_membership', ['active', 'pending_admin'])
             ->exists();
     }
 

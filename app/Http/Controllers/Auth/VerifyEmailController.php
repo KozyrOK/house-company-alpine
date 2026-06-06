@@ -20,6 +20,14 @@ class VerifyEmailController extends Controller
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
+
+            $hasPendingMembershipRequest = $request->user()->companies()
+                ->wherePivot('status_membership', 'pending')
+                ->exists();
+
+            if (!$hasPendingMembershipRequest) {
+                $request->user()->update(['status_account' => 'active']);
+            }
         }
 
         return redirect()->intended('/?verified=1');

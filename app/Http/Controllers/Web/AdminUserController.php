@@ -25,7 +25,9 @@ class AdminUserController extends Controller
             ->where('status_account', '!=', 'deleted')
             ->with('companies:id,name')
             ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
-                $query->whereHas('companies', fn($companyQuery) => $companyQuery->where('companies.id', currentCompany()?->id));
+                $query->whereHas('companies', fn($companyQuery) => $companyQuery
+                    ->where('companies.id', currentCompany()?->id)
+                    ->whereIn('company_user.status_membership', ['active', 'pending_admin']));
             })
             ->latest('id')
             ->paginate(5);
@@ -43,7 +45,9 @@ class AdminUserController extends Controller
             ->where('status_account', 'deleted')
             ->with('companies:id,name')
             ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
-                $query->whereHas('companies', fn ($companyQuery) => $companyQuery->where('companies.id', currentCompany()?->id));
+                $query->whereHas('companies', fn ($companyQuery) => $companyQuery
+                    ->where('companies.id', currentCompany()?->id)
+                    ->whereIn('company_user.status_membership', ['active', 'pending_admin']));
             })
             ->latest('updated_at')
             ->paginate(5);
@@ -62,7 +66,9 @@ class AdminUserController extends Controller
             ->with('companies:id,name')
             ->where('status_account', 'pending')
             ->when(!$actor->isSuperAdmin(), function ($query) {
-                $query->whereHas('companies', fn($companyQuery) => $companyQuery->where('companies.id', currentCompany()?->id));
+                $query->whereHas('companies', fn($companyQuery) => $companyQuery
+                    ->where('companies.id', currentCompany()?->id)
+                    ->whereIn('company_user.status_membership', ['active', 'pending_admin']));
             })
             ->latest('id')
             ->paginate(5);
@@ -79,6 +85,18 @@ class AdminUserController extends Controller
         return view('admin.users.show', compact('user'));
     }
 
+    public function companies(User $user): View
+    {
+        $this->authorize('view', $user);
+
+        $companies = $user->companies()
+            ->where('companies.status_company', 'active')
+            ->withPivot('role', 'status_membership')
+            ->orderBy('name')
+            ->paginate(5);
+
+        return view('admin.users.companies', compact('user', 'companies'));
+    }
     public function destroy(User $user): RedirectResponse
     {
         $this->authorize('delete', $user);
@@ -87,7 +105,7 @@ class AdminUserController extends Controller
             $user->update(['status_account' => 'deleted']);
             DB::table('company_user')
                 ->where('user_id', $user->id)
-                ->where('status_membership', 'active')
+                ->whereIn('status_membership', ['active', 'pending_admin'])
                 ->update(['status_membership' => 'deleted']);
         });
 
@@ -116,6 +134,8 @@ class AdminUserController extends Controller
 
     public function create(): View
     {
+        $this->authorize('create', User::class);
+
         $companies = auth()->user()->isSuperAdmin()
             ? Company::query()->orderBy('name')->get()
             : collect([currentCompany()])->filter();
@@ -174,7 +194,7 @@ class AdminUserController extends Controller
             'second_name' => 'sometimes|required|string|max:50',
             'email' => ['sometimes', 'required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => 'sometimes|nullable|string|max:30',
-            'status_account' => ['sometimes', Rule::in(['pending', 'active', 'deleted'])],
+            'status_account' => ['sometimes', Rule::in(['pending', 'active', 'rejected', 'deleted'])],
         ]);
 
         $user->update($validated);

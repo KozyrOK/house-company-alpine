@@ -23,32 +23,33 @@ class UserPolicy
 
     public function view(User $user, User $model): bool
     {
+        if ($user->id === $model->id) {
+            return true;
+        }
+
         $current = currentCompany();
         if (!$current) {
             return false;
         }
 
-        return $model->belongsToCompany($current->id);
+        return $model->belongsToCompany($current->id)
+            && $user->hasRole(['admin', 'company_head'], $current->id);
     }
 
-    public function create(User $user, Company $company): bool
+    public function create(User $user, ?Company $company = null): bool
     {
-        $current = currentCompany();
-
-        return $current !== null
-            && $company->id === $current->id
-            && $user->hasRole(['admin', 'company_head'], $company->id);
+        return false;
     }
 
     public function update(User $user, User $model): bool
     {
+        if ($user->id === $model->id) {
+            return true;
+        }
+
         $current = currentCompany();
         if (!$current || !$model->belongsToCompany($current->id)) {
             return false;
-        }
-
-        if ($user->id === $model->id) {
-            return true;
         }
 
         $actorRole = $user->roleIn($current);
@@ -60,7 +61,7 @@ class UserPolicy
 
     public function delete(User $user, User $model): bool
     {
-        return false;
+        return $user->id === $model->id;
     }
 
     public function restore(User $user, User $model): bool

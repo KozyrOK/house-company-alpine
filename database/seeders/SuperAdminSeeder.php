@@ -24,6 +24,7 @@ class SuperAdminSeeder extends Seeder
                 'second_name' => 'Admin',
                 'password' => Hash::make($password),
                 'status_account' => 'active',
+                'email_verified_at' => now(),
                 'remember_token' => Str::random(10),
                 'avatar_path' => $avatarPath,
             ]

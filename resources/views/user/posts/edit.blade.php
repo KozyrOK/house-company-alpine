@@ -11,7 +11,7 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to detail" href="{{ route('admin.posts.show', $post) }}" class="button-list"/>
+                <x-link text="← Back to detail" href="{{ route('main.posts.show', $post) }}" class="button-list"/>
             </div>
 
             <div></div>
@@ -22,7 +22,7 @@
 
         </div>
 
-        <form method="POST" action="{{ route('admin.posts.update', $post) }}">
+        <form method="POST" action="{{ route('main.posts.update', $post) }}">
             @csrf
             @method('PATCH')
 
@@ -30,7 +30,7 @@
                 <tr>
                     <th class="key-content-item">Company</th>
                     <td class="value-content-item">
-                        <select name="company_id" class="input-field">
+                        <select name="company_id" class="input-field" disabled>
                             @foreach($companies as $company)
                                 <option value="{{ $company->id }}" @selected(old('company_id', $post->company_id) == $company->id)>{{ $company->name }}</option>
                             @endforeach
@@ -43,7 +43,7 @@
                     <th class="key-content-item">Status</th>
                     <td class="value-content-item">
                         <select name="status" class="input-field">
-                            @foreach(['draft','future','pending','publish','trash'] as $status)
+                            @foreach(['draft','future','pending'] as $status)
                                 <option value="{{ $status }}" @selected(old('status', $post->status) === $status)>{{ ucfirst($status) }}</option>
                             @endforeach
                         </select>
@@ -60,7 +60,7 @@
                 <div></div>
 
                 <div class="button-wrapper">
-                    <x-link text="Cancel" href="{{ route('admin.posts.show', $post) }}" class="button-delete"/>
+                    <x-link text="Cancel" href="{{ route('main.posts.show', $post) }}" class="button-delete"/>
                 </div>
 
             </div>

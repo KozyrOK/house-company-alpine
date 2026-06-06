@@ -62,7 +62,7 @@ class PostPolicy
 
     public function delete(User $user, Post $post): bool
     {
-        return $this->update($user, $post);
+        return false;
     }
 
     public function restore(User $user, Post $post): bool

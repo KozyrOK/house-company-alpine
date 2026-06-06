@@ -35,7 +35,7 @@ class CompanyController extends Controller
                 ? Company::query()->where('status_company', 'active')->orderBy('name')->paginate(5)
                 : ($isAdminRoute
         ? Company::query()->where('status_company', 'active')->whereIn('id', $user->adminCompanyIds())->orderBy('name')->paginate(5)
-                : $user->companies()->where('companies.status_company', 'active')->wherePivot('status_membership', 'active')->orderBy('name')->paginate(15));
+                : $user->companies()->where('companies.status_company', 'active')->wherePivotIn('status_membership', ['active', 'pending_admin'])->orderBy('name')->paginate(5));
         return response()->json($companies);
     }
 
@@ -93,7 +93,7 @@ class CompanyController extends Controller
             $company->posts()->where('status', '!=', 'trash')->update(['deleted_by' => auth()->id(), 'status' => 'trash']);
             DB::table('company_user')
                 ->where('company_id', $company->id)
-                ->where('status_membership', 'active')
+                ->whereIn('status_membership', ['active', 'pending_admin'])
                 ->update(['status_membership' => 'deleted']);
             $company->update(['deleted_by' => auth()->id(), 'status_company' => 'deleted']);
         });

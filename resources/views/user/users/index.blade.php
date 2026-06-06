@@ -45,7 +45,7 @@
                     <td class="value-content-item">{{ $u->email }}</td>
                     <td class="value-content-item">{{ $u->status_account ?? '-' }}</td>
                     <td class="value-content-item">
-                        <x-link text="Detail" class="button-list" href="{{ route('main.users.show', [$company, $u]) }}"/>
+                        <x-link text="Detail" class="button-list" href="{{ route('main.users.show', $u) }}"/>
                     </td>
                 </tr>
             @empty

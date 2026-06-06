@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('company_id')->constrained();
             $table->enum('role', ['superadmin', 'admin', 'company_head', 'user'])->default('user');
-            $table->enum('status_membership', ['pending', 'active', 'invited', 'deleted', 'rejected'])->default('pending');
+            $table->enum('status_membership', ['pending', 'active', 'invited', 'pending_admin', 'deleted', 'rejected'])->default('pending');
             $table->unique(['user_id', 'company_id']);
             $table->timestamps();
         });

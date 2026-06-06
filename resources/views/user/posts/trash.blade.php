@@ -1,27 +1,18 @@
 @extends('_layouts.app')
 
-@section('title','Main - Posts')
+@section('title','Deleted Posts')
 
 @section('content')
-
     <section>
+        <h1>Deleted Posts</h1>
 
-        <h1>Posts</h1>
-
-        @php $role = auth()->user()->roleIn($company); @endphp
-        <div class="top-crud-wrapper-four">
-
+        <div class="top-crud-wrapper">
             <div class="button-wrapper">
-                <x-link text="← Back to Main Panel" href="{{ route('main.index') }}" class="button-list"/>
+                <x-link text="← Back to posts" href="{{ route('main.posts.index') }}" class="button-list"/>
             </div>
-
-            <div class="button-wrapper"><x-link text="Trash" href="{{ route('main.posts.trash') }}" class="button-trash"/></div>
-
-            <div class="button-wrapper"><x-link text="Create Post" href="{{ route('main.posts.create') }}" class="button-edit"/></div>
-
+            <div></div>
+            <div></div>
         </div>
-
-        <x-filter.filterPost/>
 
         <table class="content-item-wrapper">
             <thead>
@@ -29,7 +20,6 @@
                 <th class="key-content-item-center">#</th>
                 <th class="key-content-item-center">Title</th>
                 <th class="key-content-item-center">Company</th>
-                <th class="key-content-item-center">Author</th>
                 <th class="key-content-item-center">Status</th>
                 <th class="key-content-item-center">Actions</th>
             </tr>
@@ -40,18 +30,21 @@
                     <td class="key-content-item">{{ $posts->firstItem() + $index }}</td>
                     <td class="value-content-item">{{ $p->title }}</td>
                     <td class="value-content-item">{{ $p->company?->name ?? '-' }}</td>
-                    <td class="value-content-item">{{ trim(($p->user?->first_name ?? '').' '.($p->user?->second_name ?? '')) ?: '-' }}</td>
                     <td class="value-content-item">{{ $p->status }}</td>
-                    <td class="value-content-item"><x-link text="Detail" class="button-list" href="{{ route('main.posts.show', $p) }}"/></td>
+                    <td class="value-content-item">
+                        @can('restore', $p)
+                            <form method="POST" action="{{ route('main.posts.restore', $p->id) }}">
+                                @csrf
+                                @method('PATCH')
+                                <x-button text="Restore" type="submit" class="button-edit"/>
+                            </form>
+                        @endcan
+                    </td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="value-content-item">No posts found.</td></tr>
+                <tr><td colspan="5" class="value-content-item">No deleted posts found.</td></tr>
             @endforelse
             </tbody>
         </table>
-
-        <div class="mt-4">{{ $posts->links() }}</div>
-
     </section>
-
 @endsection

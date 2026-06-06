@@ -13,7 +13,7 @@
             <div class="top-crud-wrapper">
 
                 <div class="button-wrapper">
-                    <x-link text="← Back to list" href="{{ route('main.posts.index', $company) }}" class="button-list"/>
+                    <x-link text="← Back to list" href="{{ route('main.posts.index') }}" class="button-list"/>
                 </div>
 
                 <div></div>
@@ -34,7 +34,12 @@
 
             <div class="bottom-crud-wrapper">
 
-            <div></div>
+            <div class="button-wrapper">
+                @can('update', $post)
+                    <x-link text="Edit Post" href="{{ route('main.posts.edit', $post) }}" class="button-edit"/>
+                @endcan
+            </div>
+
             <div></div>
 
             </div>

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -16,7 +17,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static where(string $string, mixed $email)
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -31,6 +32,8 @@ class User extends Authenticatable
         'avatar_path',
         'phone',
         'status_account',
+        'locale',
+        'theme',
     ];
 
     protected $hidden = [
@@ -91,7 +94,7 @@ class User extends Authenticatable
 
         return $this->companies()
             ->where('company_id', $companyId)
-            ->wherePivot('status_membership', 'active')
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
             ->wherePivotIn('role', $roles)
             ->exists();
     }
@@ -104,7 +107,7 @@ class User extends Authenticatable
 
         return $this->companies()
             ->where('company_id', $companyId)
-            ->wherePivot('status_membership', 'active')
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
             ->exists();
     }
 
@@ -134,7 +137,7 @@ class User extends Authenticatable
     public function isAdminInAnyCompany(): bool
     {
         return $this->companies()
-            ->wherePivot('status_membership', 'active')
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
             ->wherePivotIn('role', ['admin', 'superadmin'])
             ->exists();
     }
@@ -159,7 +162,7 @@ class User extends Authenticatable
         }
 
         return $this->companies()
-            ->wherePivot('status_membership', 'active')
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
             ->wherePivotIn('role', ['admin', 'company_head'])
             ->pluck('companies.id')
             ->all();
@@ -177,7 +180,7 @@ class User extends Authenticatable
         }
 
         return $this->companies()
-            ->wherePivot('status_membership', 'active')
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
             ->wherePivotIn('role', ['user', 'company_head'])
             ->exists();
     }
@@ -186,7 +189,7 @@ class User extends Authenticatable
     {
         return $this->companies()
             ->where('company_id', $company->id)
-            ->wherePivot('status_membership', 'active')
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
             ->first()?->pivot->role ?? 'user';
     }
 
