@@ -6,18 +6,18 @@
 
     <section class="content-item-wrapper">
 
-        <h1>Edit Post</h1>
+        <h1>{{__('app.posts.edit_post')}}</h1>
 
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to detail" href="{{ route('main.posts.show', $post) }}" class="button-list"/>
+                <x-link text="app.buttons.back_to_detail" href="{{ route('main.posts.show', $post) }}" class="button-list"/>
             </div>
 
             <div></div>
 
             <div class="button-wrapper">
-                <x-link text="Main Menu" href="{{ route('main.index') }}" class="button-list"/>
+                <x-link text="app.buttons.main_menu" href="{{ route('main.index') }}" class="button-list"/>
             </div>
 
         </div>
@@ -28,7 +28,7 @@
 
             <table class="w-full">
                 <tr>
-                    <th class="key-content-item">Company</th>
+                    <th class="key-content-item">{{__('app.companies.company')}}</th>
                     <td class="value-content-item">
                         <select name="company_id" class="input-field" disabled>
                             @foreach($companies as $company)
@@ -37,10 +37,10 @@
                         </select>
                     </td>
                 </tr>
-                <tr><th class="key-content-item">Title</th><td class="value-content-item"><input type="text" name="title" value="{{ old('title', $post->title) }}" class="input-field"></td></tr>
-                <tr><th class="key-content-item">Content</th><td class="value-content-item"><textarea name="content" class="input-field" rows="6">{{ old('content', $post->content) }}</textarea></td></tr>
+                <tr><th class="key-content-item">{{__('app.tables.title')}}</th><td class="value-content-item"><input type="text" name="title" value="{{ old('title', $post->title) }}" class="input-field"></td></tr>
+                <tr><th class="key-content-item">{{__('app.tables.content')}}</th><td class="value-content-item"><textarea name="content" class="input-field" rows="6">{{ old('content', $post->content) }}</textarea></td></tr>
                 <tr>
-                    <th class="key-content-item">Status</th>
+                    <th class="key-content-item">{{__('app.tables.status')}}</th>
                     <td class="value-content-item">
                         <select name="status" class="input-field">
                             @foreach(['draft','future','pending'] as $status)
@@ -54,13 +54,13 @@
             <div class="bottom-crud-wrapper">
 
                 <div class="button-wrapper">
-                    <x-button text="Save" type="submit" class="button-edit"/>
+                    <x-button text="app.buttons.save" type="submit" class="button-edit"/>
                 </div>
 
                 <div></div>
 
                 <div class="button-wrapper">
-                    <x-link text="Cancel" href="{{ route('main.posts.show', $post) }}" class="button-delete"/>
+                    <x-link text="app.buttons.cancel" href="{{ route('main.posts.show', $post) }}" class="button-delete"/>
                 </div>
 
             </div>

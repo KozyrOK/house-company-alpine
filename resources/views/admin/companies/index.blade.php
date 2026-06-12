@@ -6,23 +6,23 @@
 
     <section>
 
-        <h1>Companies</h1>
+        <h1>{{__('app.tables.companies')}}</h1>
 
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to Admin Panel" href="{{ route('admin.index') }}" class="button-list"/>
+                <x-link text="app.buttons.back_to_admin_panel" href="{{ route('admin.index') }}" class="button-list"/>
             </div>
 
             <div class="button-wrapper">
                 @if(auth()->user()->isSuperAdmin())
-                    <x-link text="Trash" href="{{ route('admin.companies.trash') }}" class="button-trash"/>
+                    <x-link text="app.buttons.trash" href="{{ route('admin.companies.trash') }}" class="button-trash"/>
                 @endif
             </div>
 
             <div class="button-wrapper action-row-end">
                 @can('create', \App\Models\Company::class)
-                    <x-link text="Create New Company" href="{{ route('admin.companies.create') }}" class="button-edit"/>
+                    <x-link text="app.buttons.create_company" href="{{ route('admin.companies.create') }}" class="button-edit"/>
                 @endcan
             </div>
 
@@ -34,9 +34,10 @@
             <thead>
             <tr>
                 <th class="key-content-item-center">#</th>
-                <th class="key-content-item-center">Name</th>
-                <th class="key-content-item-center">City</th>
-                <th class="key-content-item-center">Actions</th>
+                <th class="key-content-item-center">{{__('app.tables.name')}}</th>
+                <th class="key-content-item-center">{{__('app.tables.city')}}</th>
+                <th class="key-content-item-center">{{__('app.tables.status')}}</th>
+                <th class="key-content-item-center">{{__('app.tables.actions')}}</th>
             </tr>
             </thead>
             <tbody>
@@ -45,15 +46,16 @@
                     <td class="key-content-item">{{ $companies->firstItem() + $index }}</td>
                     <td class="value-content-item">{{ $c->name }}</td>
                     <td class="value-content-item">{{ $c->city ?: '-' }}</td>
-                    <td><x-link text="Detail" class="button-list" href="{{ route('admin.companies.show', $c) }}"/></td>
+                    <td class="value-content-item">{{ $c->status_company }}</td>
+                    <td><x-link text="app.buttons.detail" class="button-list" href="{{ route('admin.companies.show', $c) }}"/></td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="value-content-item">No companies found.</td></tr>
+                <tr><td colspan="6" class="value-content-item">{{__('app.companies.no_companies_found')}}</td></tr>
             @endforelse
             </tbody>
         </table>
 
-        <div class="mt-4">{{ $companies->links() }}</div>
+        <div class="pagination-list">{{ $companies->links() }}</div>
 
     </section>
 

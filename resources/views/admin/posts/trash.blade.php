@@ -4,11 +4,11 @@
 
 @section('content')
     <section>
-        <h1>Deleted Posts</h1>
+        <h1>{{__('app.posts.deleted_posts')}}</h1>
 
         <div class="top-crud-wrapper">
             <div class="button-wrapper">
-                <x-link text="← Back to posts" href="{{ route('admin.posts.index') }}" class="button-list"/>
+                <x-link text="app.buttons.back_to_posts" href="{{ route('admin.posts.index') }}" class="button-list"/>
             </div>
             <div></div>
             <div></div>
@@ -18,10 +18,10 @@
             <thead>
             <tr>
                 <th class="key-content-item-center">#</th>
-                <th class="key-content-item-center">Title</th>
-                <th class="key-content-item-center">Company</th>
-                <th class="key-content-item-center">Status</th>
-                <th class="key-content-item-center">Actions</th>
+                <th class="key-content-item-center">{{__('app.tables.title')}}</th>
+                <th class="key-content-item-center">{{__('app.tables.company')}}</th>
+                <th class="key-content-item-center">{{__('app.tables.status')}}</th>
+                <th class="key-content-item-center">{{__('app.tables.actions')}}</th>
             </tr>
             </thead>
             <tbody>
@@ -36,13 +36,13 @@
                             <form method="POST" action="{{ route('admin.posts.restore', $p->id) }}">
                                 @csrf
                                 @method('PATCH')
-                                <x-button text="Restore" type="submit" class="button-edit"/>
+                                <x-button text="app.buttons.restore" type="submit" class="button-edit"/>
                             </form>
                         @endcan
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="value-content-item">No deleted posts found.</td></tr>
+                <tr><td colspan="5" class="value-content-item">{{__('app.posts.no_deleted_posts_found')}}</td></tr>
             @endforelse
             </tbody>
         </table>

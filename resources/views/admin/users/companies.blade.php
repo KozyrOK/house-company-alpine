@@ -5,11 +5,11 @@
 @section('content')
 
     <section>
-        <h1>User`s companies</h1>
+        <h1>{{__('app.users.users_companies')}}</h1>
 
         <div class="top-crud-wrapper">
             <div class="button-wrapper">
-                <x-link text="← Back to user" href="{{ route('admin.users.show', $user) }}" class="button-list"/>
+                <x-link text="app.buttons.back_to_user" href="{{ route('admin.users.show', $user) }}" class="button-list"/>
             </div>
             <div></div>
             <div></div>
@@ -21,10 +21,10 @@
             <thead>
             <tr>
                 <th class="key-content-item-center">№</th>
-                <th class="key-content-item-center">Company name</th>
-                <th class="key-content-item-center">City</th>
-                <th class="key-content-item-center">User's role</th>
-                <th class="key-content-item-center">Actions</th>
+                <th class="key-content-item-center">{{__('app.tables.company')}}</th>
+                <th class="key-content-item-center">{{__('app.tables.city')}}</th>
+                <th class="key-content-item-center">{{__('app.tables.users_role')}}</th>
+                <th class="key-content-item-center">{{__('app.tables.actions')}}</th>
             </tr>
             </thead>
             <tbody>
@@ -37,7 +37,7 @@
                     <td class="value-content-item"><x-link text="Detail" class="button-list" href="{{ route('admin.companies.show', $company) }}"/></td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="value-content-item">No companies found.</td></tr>
+                <tr><td colspan="5" class="value-content-item">{{__('app.companies.no_companies_found')}}</td></tr>
             @endforelse
             </tbody>
         </table>

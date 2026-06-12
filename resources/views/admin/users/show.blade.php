@@ -6,14 +6,14 @@
 
     <section>
 
-        <h1>User</h1>
+        <h1>{{__('app.users.user')}}</h1>
 
         <div class="content-item-wrapper">
 
             <div class="top-crud-wrapper">
 
                 <div class="button-wrapper">
-                    <x-link text="← Back to list" href="{{ route('admin.users.index') }}" class="button-list"/>
+                    <x-link text="app.buttons.back_to_list" href="{{ route('admin.users.index') }}" class="button-list"/>
                 </div>
 
                 <div>
@@ -21,16 +21,16 @@
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+                    <x-link text="app.buttons.admin_menu" href="{{ route('admin.index') }}" class="button-list"/>
                 </div>
 
             </div>
             <table class="w-full">
                 <tr><th class="key-content-item">ID</th><td class="value-content-item">{{ $user->id }}</td></tr>
-                <tr><th class="key-content-item">Name</th><td class="value-content-item">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
-                <tr><th class="key-content-item">Email</th><td class="value-content-item">{{ $user->email }}</td></tr>
-                <tr><th class="key-content-item">Phone</th><td class="value-content-item">{{ $user->phone ?: '-' }}</td></tr>
-                <tr><th class="key-content-item">Status</th><td class="value-content-item">{{ $user->status_account ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">{{__('app.tables.name')}}</th><td class="value-content-item">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
+                <tr><th class="key-content-item">{{__('app.tables.e_mail')}}</th><td class="value-content-item">{{ $user->email }}</td></tr>
+                <tr><th class="key-content-item">{{__('app.tables.phone')}}</th><td class="value-content-item">{{ $user->phone ?: '-' }}</td></tr>
+                <tr><th class="key-content-item">{{__('app.tables.status')}}</th><td class="value-content-item">{{ $user->status_account ?: '-' }}</td></tr>
             </table>
 
             <div class="bottom-crud-wrapper">
@@ -41,26 +41,26 @@
                             <form method="POST" action="{{ route('admin.users.approve', $user) }}">
                                 @csrf
                                 @method('PATCH')
-                                <x-button text="Approve User" type="submit" class="button-edit"/>
+                                <x-button text="app.buttons.approve_user" type="submit" class="button-edit"/>
                             </form>
                         @endcan
                     @endif
 
                     @can('update', $user)
-                        <x-link text="Edit User" href="{{ route('admin.users.edit', $user) }}" class="button-edit"/>
+                        <x-link text="app.buttons.edit_user" href="{{ route('admin.users.edit', $user) }}" class="button-edit"/>
                     @endcan
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="User`s companies" href="{{ route('admin.users.companies', $user) }}" class="button-list"/>
+                    <x-link text="app.buttons.users_companies" href="{{ route('admin.users.companies', $user) }}" class="button-list"/>
                 </div>
 
                     <div class="button-wrapper">
                     @can('delete', $user)
-                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="confirmable-form" data-confirm-message="Are you sure you want to delete this user?">
+                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="confirmable-form" data-confirm-message="{{ __('app.confirm.delete_user') }}">
                             @csrf
                             @method('DELETE')
-                            <x-button text="Delete User" type="submit" class="button-delete"/>
+                            <x-button text="app.buttons.delete_user" type="submit" class="button-delete"/>
                         </form>
                     @endcan
                 </div>

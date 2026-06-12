@@ -21,9 +21,10 @@ class PostController extends Controller
 
             $posts = $company->posts()
                 ->where('status', '!=', 'trash')
-                ->with(['company:id,name', 'user:id,first_name,second_name'])
+                ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')), fn ($query) => $query->where('status', '!=', 'trash'))
                 ->latest()
-                ->paginate(5);
+                ->paginate(5)
+                ->withQueryString();
 
             return view('user.posts.index', compact('company', 'posts'));
         }
@@ -45,7 +46,11 @@ class PostController extends Controller
             $query->where('status', '!=', 'trash');
         }
 
-        $posts = $query->paginate(5);
+        if ($user->isSuperAdmin() && $request->filled('company_id')) {
+            $query->where('company_id', $request->integer('company_id'));
+        }
+
+        $posts = $query->paginate(5)->withQueryString();
 
         return view('admin.posts.index', compact('posts'));
     }

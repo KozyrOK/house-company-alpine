@@ -15,13 +15,14 @@
 
             <x-auth.input-field-auth
                 name="password"
-                text="Password"
+                label="app.inputs.password"
                 type="password"
                 required
+                autocomplete="current-password"
             />
 
             <x-button
-                text="Confirm"
+                text="app.buttons.confirm"
                 type="submit"
                 class="button-submit-auth"
             />

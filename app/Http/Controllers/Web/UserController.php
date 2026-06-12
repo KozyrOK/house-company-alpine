@@ -21,32 +21,45 @@ class UserController extends Controller
             abort_unless($company, 403);
 
             $users = $company->users()
-                ->wherePivotIn('status_membership', ['active', 'pending_admin'])
-                ->wherePivotIn('role', ['user', 'company_head'])
+                ->when($request->filled('status_membership'), fn ($query) => $query->wherePivot('status_membership', $request->string('status_membership')))
+                ->when(!$request->filled('status_membership'), fn ($query) => $query->whereIn('company_user.status_membership', ['active','pending_admin',]))
+
+                ->when($request->filled('role'), fn ($query) => $query->wherePivot('role', $request->string('role')))
+                ->when(!$request->filled('role'), fn ($query) => $query->whereIn('company_user.role', ['user', 'company_head', ]))
                 ->with('companies:id,name')
                 ->latest('users.id')
-                ->paginate(5);
+                ->paginate(5)
+                ->withQueryString();
 
             return view('user.users.index', compact('users', 'company'));
         }
 
         $this->authorize('viewAny', User::class);
 
-        $query = User::query()
-            ->where('status_account', '!=', 'deleted')
-            ->with('companies:id,name')
-            ->latest('id');
         $actor = $request->user();
+        $company = currentCompany();
 
         if (!$actor->isSuperAdmin()) {
-            $company = currentCompany();
             abort_unless($company, 403);
-            $query->whereHas('companies', fn ($q) => $q
-                ->where('companies.id', $company->id)
-                ->whereIn('company_user.status_membership', ['active', 'pending_admin']));
         }
 
-        $users = $query->paginate(5);
+        $users = User::query()
+            ->select([
+                'users.*',
+                'company_user.company_id as membership_company_id',
+                'company_user.role as membership_role',
+                'company_user.status_membership as membership_status',
+                'companies.name as membership_company_name',
+            ])
+            ->join('company_user', 'company_user.user_id', '=', 'users.id')
+            ->join('companies', 'companies.id', '=', 'company_user.company_id')
+            ->where('users.status_account', '!=', 'deleted')
+            ->when(!$actor->isSuperAdmin(), fn ($query) => $query->where('company_user.company_id', $company?->id))
+            ->when($request->filled('status_membership'), fn ($query) => $query->where('company_user.status_membership', $request->string('status_membership')))
+            ->when($request->filled('role'), fn ($query) => $query->where('company_user.role', $request->string('role')))
+            ->orderByDesc('users.id')
+            ->paginate(5)
+            ->withQueryString();
 
         return view('admin.users.index', compact('users'));
     }

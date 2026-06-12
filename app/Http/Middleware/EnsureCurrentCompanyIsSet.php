@@ -35,6 +35,8 @@ class EnsureCurrentCompanyIsSet
             'company.select',
             'companies.switch',
             'company.request-membership',
+            'company.request-list',
+            'company.request-list.delete',
             'dashboard',
             'dashboard.*',
             'info',

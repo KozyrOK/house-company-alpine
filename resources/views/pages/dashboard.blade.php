@@ -21,13 +21,13 @@
                     @csrf
                     @method('PATCH')
                     <table class="w-full">
-                        <tr><th class="key-content-item">First name</th><td class="value-content-item"><input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="input-field"></td></tr>
-                        <tr><th class="key-content-item">Second name</th><td class="value-content-item"><input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field"></td></tr>
-                        <tr><th class="key-content-item">Email</th><td class="value-content-item"><input type="email" name="email" value="{{ old('email', $user->email) }}" class="input-field"></td></tr>
-                        <tr><th class="key-content-item">Phone</th><td class="value-content-item"><input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="input-field"></td></tr>
-                        <tr><th class="key-content-item">Avatar</th><td class="value-content-item"><input type="file" name="avatar" accept="image/*" class="input-field"></td></tr>
+                        <tr><th class="key-content-item">{{__('app.tables.first_name')}}</th><td class="value-content-item"><input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="input-field"></td></tr>
+                        <tr><th class="key-content-item">{{__('app.tables.second_name')}}</th><td class="value-content-item"><input type="text" name="second_name" value="{{ old('second_name', $user->second_name) }}" class="input-field"></td></tr>
+                        <tr><th class="key-content-item">{{__('app.tables.e_mail')}}</th><td class="value-content-item"><input type="email" name="email" value="{{ old('email', $user->email) }}" class="input-field"></td></tr>
+                        <tr><th class="key-content-item">{{__('app.tables.phone')}}</th><td class="value-content-item"><input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="input-field"></td></tr>
+                        <tr><th class="key-content-item">{{__('app.tables.avatar')}}</th><td class="value-content-item"><input type="file" name="avatar" accept="image/*" class="input-field"></td></tr>
                         <tr>
-                            <th class="key-content-item">Account status</th>
+                            <th class="key-content-item">{{__('app.tables.account_status')}}</th>
                             <td class="value-content-item">
                                 <select name="status_account" class="input-field">
                                     @foreach(['pending' => 'Pending', 'active' => 'Active', 'rejected' => 'Rejected', 'deleted' => 'Deleted'] as $value => $label)
@@ -40,23 +40,23 @@
 
                     <div class="bottom-crud-wrapper">
                         <div class="button-wrapper">
-                            <x-button text="Save" type="submit" class="button-edit"/>
+                            <x-button text="app.buttons.save" type="submit" class="button-edit"/>
                         </div>
 
                         <div></div>
 
                         <div class="button-wrapper">
-                            <x-link text="Cancel" href="{{ route('dashboard') }}" class="button-delete"/>
+                            <x-link text="app.buttons.cancel" href="{{ route('dashboard') }}" class="button-delete"/>
                         </div>
                     </div>
                 </form>
             @else
                 <table class="w-full">
                     <tr><th class="key-content-item">ID</th><td class="value-content-item">{{ $user->id }}</td></tr>
-                    <tr><th class="key-content-item">Name</th><td class="value-content-item">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
-                    <tr><th class="key-content-item">Email</th><td class="value-content-item">{{ $user->email }}</td></tr>
-                    <tr><th class="key-content-item">Phone</th><td class="value-content-item">{{ $user->phone ?: '-' }}</td></tr>
-                    <tr><th class="key-content-item">Status account</th><td class="value-content-item">{{ $user->status_account ?: '-' }}</td></tr>
+                    <tr><th class="key-content-item">{{__('app.tables.name')}}</th><td class="value-content-item">{{ $user->first_name }} {{ $user->second_name }}</td></tr>
+                    <tr><th class="key-content-item">{{__('app.tables.e_mail')}}</th><td class="value-content-item">{{ $user->email }}</td></tr>
+                    <tr><th class="key-content-item">{{__('app.tables.phone')}}</th><td class="value-content-item">{{ $user->phone ?: '-' }}</td></tr>
+                    <tr><th class="key-content-item">{{__('app.tables.account_status')}}</th><td class="value-content-item">{{ $user->status_account ?: '-' }}</td></tr>
                 </table>
             @endif
 
@@ -64,7 +64,7 @@
                 <div class="bottom-crud-wrapper">
 
                     <div class="button-wrapper">
-                        <x-link text="Edit User" href="{{ route('dashboard', ['edit' => 1]) }}" class="button-edit"/>
+                        <x-link text="app.buttons.edit_user" href="{{ route('dashboard', ['edit' => 1]) }}" class="button-edit"/>
                     </div>
 
 
@@ -72,12 +72,12 @@
                         <form method="POST" action="{{ route('dashboard.destroy') }}" class="confirmable-form" data-confirm-message="Are you sure you want to delete your profile?">
                             @csrf
                             @method('DELETE')
-                            <x-button text="Delete User" type="submit" class="button-delete"/>
+                            <x-button text="app.buttons.delete_user" type="submit" class="button-delete"/>
                         </form>
                     </div>
 
                     <div class="button-wrapper">
-                        <x-link text="Users Companies" href="{{ route('company.select') }}" class="button-list"/>
+                        <x-link text="app.buttons.users_companies" href="{{ route('company.select') }}" class="button-list"/>
                     </div>
 
                 </div>
@@ -88,7 +88,7 @@
                 {{-- Header row --}}
                 <div class="flex items-center justify-evenly mb-3">
 
-                    <h3>Request company membership</h3>
+                    <h3>{{__('app.pages.request_company_membership')}}</h3>
 
                     <button
                         type="button"
@@ -108,7 +108,7 @@
                         @csrf
 
                         <select name="company_id" class="input-field" required>
-                            <option value="">Select company</option>
+                            <option value="">{{__('app.buttons.select_company')}}</option>
 
                             @foreach(($companies ?? collect()) as $company)
                                 <option value="{{ $company->id }}">
@@ -121,23 +121,23 @@
 
                             <div class="button-wrapper">
                                 <x-button
-                                    text="Send Request"
+                                    text="app.buttons.send_request"
                                     type="submit"
                                     class="button-edit"
                                 />
                             </div>
 
                             <div class="button-wrapper">
-                                <x-button
-                                    text="Request list"
-                                    type="submit"
+                                <x-link
+                                    text="app.buttons.request_list"
+                                    href="{{ route('company.request-list') }}"
                                     class="button-approve"
                                 />
                             </div>
 
                             <div class="button-wrapper">
                                 <button type="button" @click="open = false" class="button-delete">
-                                    Cancel
+                                    {{__('app.buttons.cancel')}}
                                 </button>
                             </div>
 
@@ -150,43 +150,6 @@
             </div>
 
             @endif
-
-{{--            <div x-data="{ open: false }" class="button-wrapper">--}}
-
-{{--                <div>--}}
-{{--                    <h3>--}}
-{{--                        Request company membership--}}
-{{--                    </h3>--}}
-
-{{--                    <button type="button" @click="open = !open" class="button-extend">--}}
-{{--                        <span x-show="!open">+</span>--}}
-{{--                        <span x-show="open">×</span>--}}
-{{--                    </button>--}}
-{{--                </div>--}}
-
-{{--                <div x-show="open" x-transition>--}}
-{{--                    <form method="POST" action="{{ route('company.request-membership') }}">--}}
-{{--                        @csrf--}}
-
-{{--                        <select name="company_id" class="input-field" required>--}}
-{{--                            <option value="">Select company</option>--}}
-
-{{--                            @foreach(($companies ?? collect()) as $company)--}}
-{{--                                <option value="{{ $company->id }}">--}}
-{{--                                    {{ $company->name }}--}}
-{{--                                </option>--}}
-{{--                            @endforeach--}}
-{{--                        </select>--}}
-
-{{--                        <x-button--}}
-{{--                            text="Add Company"--}}
-{{--                            type="submit"--}}
-{{--                            class="button-edit"--}}
-{{--                        />--}}
-{{--                    </form>--}}
-{{--                </div>--}}
-
-{{--            </div>--}}
 
         </div>
 

@@ -1,23 +1,28 @@
-@php
-    use Illuminate\Support\Str;
-@endphp
-
 @props([
     'name',
-    'text',
+    'label' => null,
+    'text' => null,
     'type' => 'text',
     'value' => null,
 ])
 
 @php
-    $key = "app.inputs." . Str::slug($text, '_');
-    $translated = __($key);
-    if ($translated === $key) {
-        $translated = $text;
-    }
+    $caption = $label ? __($label) : $text;
 @endphp
 
 <div class="field-auth">
-    <label class="label-field-auth" for="{{ $name }}">{{ $text }}</label>
-    <input id="{{ $name }}" type="{{ $type }}" name="{{ $name }}" value="{{ old($name, $value) }}" class="input-field-auth">
+    <label
+        class="label-field-auth"
+        for="{{ $name }}"
+    >
+        {{ $caption }}
+    </label>
+
+    <input
+        {{ $attributes->merge(['class' => 'input-field-auth']) }}
+        id="{{ $name }}"
+        type="{{ $type }}"
+        name="{{ $name }}"
+        value="{{ old($name, $value) }}"
+    >
 </div>

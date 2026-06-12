@@ -11,18 +11,20 @@ use Illuminate\View\View;
 
 class AdminPostController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->authorize('viewAny', Post::class);
 
         $user = request()->user();
         $posts = Post::with(['company:id,name', 'user:id,first_name,second_name'])
-            ->where('status', '!=', 'trash')
-            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
+            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')), fn ($query) => $query->where('status', '!=', 'trash'))
+            ->when($user->isSuperAdmin() && $request->filled('company_id'), fn ($query) => $query->where('company_id', $request->integer('company_id')))
+            ->when(!$user->isSuperAdmin(), function ($query) {
                 $query->where('company_id', currentCompany()?->id);
             })
             ->latest()
-            ->paginate(5);
+            ->paginate(5)
+            ->withQueryString();
 
         return view('admin.posts.index', compact('posts'));
     }

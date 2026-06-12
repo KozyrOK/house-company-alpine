@@ -17,20 +17,20 @@
 
                 <x-auth.input-field-auth
                     name="email"
-                    text="Email"
+                    label="app.inputs.email"
                     type="email"
                     required autofocus
                 />
 
                 <x-auth.input-field-auth
                     name="password"
-                    text="Password"
+                    label="app.auth.password"
                     type="password"
                     required
                 />
 
                 <x-button
-                    text="Login"
+                    text="app.buttons.login"
                     type="submit"
                     class="button-submit-auth"
                 />

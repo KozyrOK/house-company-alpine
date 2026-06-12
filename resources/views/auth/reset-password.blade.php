@@ -18,7 +18,7 @@
 
             <x-auth.input-field-auth
                 name="email"
-                label="Email"
+                label="app.auth.email"
                 type="email"
                 :value="$request->email"
                 required
@@ -26,20 +26,20 @@
 
             <x-auth.input-field-auth
                 name="new_password"
-                text="New Password"
+                label="app.auth.new_password"
                 type="password"
                 required
             />
 
             <x-auth.input-field-auth
                 name="confirm_new_password"
-                text="Confirm New Password"
+                label="app.auth.confirm_new_password"
                 type="password"
                 required
             />
 
             <x-button
-                text="Reset Password"
+                text="app.buttons.reset_password"
                 type="submit"
                 class="button-submit-auth"
             />

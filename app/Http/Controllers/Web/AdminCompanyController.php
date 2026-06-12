@@ -13,18 +13,22 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AdminCompanyController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->authorize('viewAny', Company::class);
 
         $user = auth()->user();
+        $status = $request->input('status_company', 'active');
+
         $companies = Company::query()
-            ->where('status_company', 'active')
-            ->when(!$user->isSuperAdmin(), function ($query) use ($user) {
+            ->when(in_array($status, ['active', 'deleted'], true), fn ($query) => $query->where('status_company', $status))
+            ->when(!$user->isSuperAdmin(), function ($query) {
                 $query->where('id', currentCompany()?->id);
             })
+            ->when($request->filled('city'), fn ($query) => $query->where('city', $request->string('city')))
             ->orderBy('name')
-            ->paginate(5);
+            ->paginate(5)
+            ->withQueryString();
 
         return view('admin.companies.index', compact('companies'));
     }

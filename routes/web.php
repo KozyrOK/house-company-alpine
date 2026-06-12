@@ -107,6 +107,14 @@ Route::middleware('auth')->group(function () {
         ->middleware('verified')
         ->name('company.request-membership');
 
+    Route::get('/company/request-list', [CompanyController::class, 'requestList'])
+        ->middleware('verified')
+        ->name('company.request-list');
+
+    Route::patch('/company/request-list/{company}/delete', [CompanyController::class, 'deleteMembershipRequest'])
+        ->middleware('verified')
+        ->name('company.request-list.delete');
+
     Route::post('/company/request-admin', [CompanyController::class, 'requestAdmin'])
         ->middleware('admin.access')
         ->name('company.request-admin');

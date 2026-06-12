@@ -17,43 +17,43 @@
 
                 <x-auth.input-field-auth
                     name="first_name"
-                    text="First name"
+                    label="app.inputs.first_name"
                     type="text"
                     required autofocus
                 />
 
                 <x-auth.input-field-auth
                     name="second_name"
-                    text="Second name"
+                    label="app.inputs.second_name"
                     type="text"
                     required autofocus
                 />
 
                 <x-auth.input-field-auth
                     name="email"
-                    text="Email"
+                    label="app.inputs.email"
                     type="email"
                     required autofocus
                 />
 
                 <x-auth.input-field-auth
                     name="password"
-                    text="Password"
+                    label="app.inputs.password"
                     type="password"
                     required
                 />
 
                 <x-auth.input-field-auth
                     name="password_confirmation"
-                    text="Confirm Password"
+                    label="app.inputs.confirm_password"
                     type="password"
                     required
                 />
 
                 <div class="wrapper-input-auth">
-                    <label for="company_id" class="label-text-auth">Company (optional)</label>
+                    <label for="company_id" class="label-text-auth">{{__('app.inputs.company_optional')}}</label>
                     <select name="company_id" id="company_id" class="input-field">
-                        <option value="">Without company</option>
+                        <option value="">{{__('app.inputs.without_company')}}</option>
                         @foreach(($companies ?? collect()) as $company)
                             <option value="{{ $company->id }}" @selected(old('company_id') == $company->id)>{{ $company->name }}</option>
                         @endforeach
@@ -62,13 +62,13 @@
 
                 <x-auth.input-field-auth
                     name="phone"
-                    text="Phone"
+                    label="app.inputs.phone"
                     type="text"
                     required
                 />
 
                 <x-button
-                    text="Register"
+                    text="app.buttons.register"
                     type="submit"
                     class="button-submit-auth"
                 />

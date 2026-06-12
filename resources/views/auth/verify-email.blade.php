@@ -22,7 +22,7 @@
             @csrf
 
             <x-button
-                text="Resend Verification Email"
+                text="app.auth.resend_verification_email"
                 type="submit"
                 class="button-submit-auth"
             />

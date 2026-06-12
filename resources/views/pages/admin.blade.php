@@ -14,8 +14,8 @@
                class="content-items-box">
                 <div class="content-item-box-wrapper">
                     <x-icons.user/>
-                    <h2>Users</h2>
-                    <p>Manage registered users and roles</p>
+                    <h2>{{__('app.users.user')}}</h2>
+                    <p>{{__('app.users.user_box_description')}}</p>
                 </div>
             </a>
 
@@ -24,8 +24,8 @@
                    class="content-items-box">
                     <div class="content-item-box-wrapper">
                         <x-icons.company/>
-                        <h2>Companies</h2>
-                        <p>View and edit company data</p>
+                        <h2>{{__('app.companies.companies')}}</h2>
+                        <p>{{__('app.companies.company_box_description')}}</p>
                     </div>
                 </a>
             @endif
@@ -34,8 +34,8 @@
                class="content-items-box">
                 <div class="content-item-box-wrapper">
                     <x-icons.post/>
-                    <h2>Posts</h2>
-                    <p>Moderate and approve company posts</p>
+                    <h2>{{__('app.posts.posts')}}</h2>
+                    <p>{{__('app.posts.posts_box_description')}}</p>
                 </div>
             </a>
 

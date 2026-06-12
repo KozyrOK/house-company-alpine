@@ -1,9 +1,9 @@
 <div id="confirm-modal" class="confirm-modal-overlay hidden">
     <div class="confirm-modal-card">
-        <p id="confirm-modal-message" class="confirm-modal-message">Are you sure?</p>
+        <p id="confirm-modal-message" class="confirm-modal-message">{{__('app.tables.are_you_sure')}}</p>
         <div class="confirm-modal-actions">
-            <button type="button" id="confirm-modal-cancel" class="button-list">Cancel</button>
-            <button type="button" id="confirm-modal-ok" class="button-delete">OK</button>
+            <button type="button" id="confirm-modal-cancel" class="button-list">{{__('app.buttons.cancel')}}</button>
+            <button type="button" id="confirm-modal-ok" class="button-delete">{{__('app.buttons.ok')}}</button>
         </div>
     </div>
 </div>

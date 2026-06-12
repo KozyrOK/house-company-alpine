@@ -24,14 +24,14 @@
 
                 <x-auth.input-field-auth
                 name="email"
-                text="Email"
+                label="app.inputs.email"
                 type="email"
                 required autofocus
                 />
 
                 <x-button
-                text="Send Reset Link"
-                type="submit"
+                text="app.auth.send_reset_link"
+                type="buttons.submit"
                 class="button-submit-auth"
                 />
 

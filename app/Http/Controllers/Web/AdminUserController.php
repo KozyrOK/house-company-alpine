@@ -15,22 +15,29 @@ use Illuminate\View\View;
 
 class AdminUserController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->authorize('viewAny', User::class);
 
         $actor = auth()->user();
 
         $users = User::query()
-            ->where('status_account', '!=', 'deleted')
-            ->with('companies:id,name')
-            ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
-                $query->whereHas('companies', fn($companyQuery) => $companyQuery
-                    ->where('companies.id', currentCompany()?->id)
-                    ->whereIn('company_user.status_membership', ['active', 'pending_admin']));
-            })
-            ->latest('id')
-            ->paginate(5);
+            ->select([
+                'users.*',
+                'company_user.company_id as membership_company_id',
+                'company_user.role as membership_role',
+                'company_user.status_membership as membership_status',
+                'companies.name as membership_company_name',
+            ])
+            ->join('company_user', 'company_user.user_id', '=', 'users.id')
+            ->join('companies', 'companies.id', '=', 'company_user.company_id')
+            ->where('users.status_account', '!=', 'deleted')
+            ->when(!$actor->isSuperAdmin(), fn ($query) => $query->where('company_user.company_id', currentCompany()?->id))
+            ->when($request->filled('status_membership'), fn ($query) => $query->where('company_user.status_membership', $request->string('status_membership')))
+            ->when($request->filled('role'), fn ($query) => $query->where('company_user.role', $request->string('role')))
+            ->orderByDesc('users.id')
+            ->paginate(5)
+            ->withQueryString();
 
         return view('admin.users.index', compact('users'));
     }

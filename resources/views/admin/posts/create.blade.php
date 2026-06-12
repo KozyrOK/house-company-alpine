@@ -9,13 +9,13 @@
         <div class="top-crud-wrapper">
 
             <div class="button-wrapper">
-                <x-link text="← Back to list" href="{{ route('admin.posts.index') }}" class="button-list"/>
+                <x-link text="app.buttons.back_to_list" href="{{ route('admin.posts.index') }}" class="button-list"/>
             </div>
 
             <div></div>
 
             <div class="button-wrapper">
-                <x-link text="Admin Menu" href="{{ route('admin.index') }}" class="button-list"/>
+                <x-link text="app.buttons.admin_menu" href="{{ route('admin.index') }}" class="button-list"/>
             </div>
 
         </div>
@@ -24,7 +24,7 @@
             @csrf
             <table class="w-full">
                 <tr>
-                    <th class="key-content-item">Company</th>
+                    <th class="key-content-item">{{__('app.tables.company')}}</th>
                     <td class="value-content-item">
                         <select name="company_id" class="input-field" required>
                             @foreach($companies as $company)
@@ -33,10 +33,10 @@
                         </select>
                     </td>
                 </tr>
-                <tr><th class="key-content-item">Title</th><td class="value-content-item"><input type="text" name="title" class="input-field" value="{{ old('title') }}" required></td></tr>
-                <tr><th class="key-content-item">Content</th><td class="value-content-item"><textarea name="content" rows="6" class="input-field" required>{{ old('content') }}</textarea></td></tr>
+                <tr><th class="key-content-item">{{__('app.tables.title')}}</th><td class="value-content-item"><input type="text" name="title" class="input-field" value="{{ old('title') }}" required></td></tr>
+                <tr><th class="key-content-item">{{__('app.tables.content')}}</th><td class="value-content-item"><textarea name="content" rows="6" class="input-field" required>{{ old('content') }}</textarea></td></tr>
                 <tr>
-                    <th class="key-content-item">Status</th>
+                    <th class="key-content-item">{{__('app.tables.status')}}</th>
                     <td colspan="2" class="value-content-item">
                         <select name="status" class="input-field">
                             @foreach(['draft','future','pending','publish','trash'] as $status)
@@ -50,7 +50,7 @@
             <div class="bottom-crud-wrapper">
 
                 <div class="button-wrapper">
-                    <x-button text="Create Post" type="submit" class="button-edit"/>
+                    <x-button text="app.buttons.create_post" type="submit" class="button-edit"/>
                 </div>
 
             </div>

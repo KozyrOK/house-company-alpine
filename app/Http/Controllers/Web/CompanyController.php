@@ -109,6 +109,38 @@ class CompanyController extends Controller
         return redirect()->route('dashboard')->with('status', 'Company request sent for approval.');
     }
 
+    public function requestList(Request $request): View
+    {
+        $companies = $request->user()->companies()
+            ->wherePivotIn('status_membership', ['pending', 'rejected'])
+            ->orderBy('name')
+            ->paginate(10);
+
+        return view('pages.request-list', compact('companies'));
+    }
+
+    public function deleteMembershipRequest(Request $request, Company $company): RedirectResponse
+    {
+        $membership = DB::table('company_user')
+            ->where('user_id', $request->user()->id)
+            ->where('company_id', $company->id)
+            ->whereIn('status_membership', ['pending', 'rejected'])
+            ->first();
+
+        abort_unless($membership, 404);
+
+        DB::table('company_user')
+            ->where('user_id', $request->user()->id)
+            ->where('company_id', $company->id)
+            ->update([
+                'status_membership' => 'deleted',
+                'updated_at' => now(),
+            ]);
+
+        return redirect()->route('company.request-list')
+            ->with('status', 'Membership request deleted.');
+    }
+
     public function requestAdmin(Request $request): RedirectResponse
     {
         $company = currentCompany();
@@ -139,17 +171,21 @@ class CompanyController extends Controller
     {
         $this->authorize('viewAny', Company::class);
 
-        $query = Company::query()->where('status_company', 'active')->orderBy('name');
+        $status = $request->input('status_company', 'active');
+
+        $query = Company::query()
+            ->when(in_array($status, ['active', 'deleted'], true), fn ($companyQuery) => $companyQuery->where('status_company', $status))
+            ->orderBy('name');
 
         if (!$request->user()->isSuperAdmin()) {
             $query->whereIn('id', [$request->session()->get('current_company_id')]);
         }
 
         if ($request->filled('city')) {
-            $query->where('city', 'like', '%' . $request->string('city') . '%');
+            $query->where('city', $request->string('city'));
         }
 
-        $companies = $query->paginate(5);
+        $companies = $query->paginate(5)->withQueryString();
 
         if ($request->routeIs('main.companies.index')) {
             return view('user.companies.index', compact('companies'));
