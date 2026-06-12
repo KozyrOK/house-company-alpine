@@ -73,6 +73,8 @@ return [
         'edit_user' => 'Edit User',
         'users_companies' => 'Users companies',
         'delete_user' => 'Delete User',
+        'exclusion' => 'Exclusion',
+        'exclusion_user' => 'Exclusion User',
         'use' => 'Use',
         'select_company' => 'Select company',
         'send_request' => 'Send Request',
@@ -111,7 +113,7 @@ return [
         'confirm_password' => 'Confirm password',
         'phone' => 'Phone',
         'user_image' => 'User Image',
-        'account_status' => 'Account status',
+        'account_status' => 'Status account',
         'membership_status' => 'Membership status',
         'request_list' => 'Request list',
         'request_status' => 'Request status',
@@ -200,7 +202,6 @@ return [
         'chat' => 'Chat',
         'chat_text1' => "Chat module is under development",
         'user_dashboard' => 'User Dashboard',
-        'forum_text1' => "This section will host community discussions and Q&A between users\n(the page is under development)",
         'info_text1' => 'About the Housing Company Project',
         'info_text2' => "This is a PET project for managing condominium associations.\n The project allows residents and administrators to manage posts,\n users, and company information in one place.",
         'admin_panel' => 'Admin Panel',
@@ -219,6 +220,7 @@ return [
         'delete_company' => 'Are you sure you want to delete this company?',
         'delete_user' => 'Are you sure you want to delete this user?',
         'delete_post' => 'Are you sure you want to delete this post?',
+        'exclusion_user' => 'Are you sure you want to exclude this user from the company?',
     ],
 
     'action_approve' => [

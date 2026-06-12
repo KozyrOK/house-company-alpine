@@ -67,6 +67,28 @@ class CompanyController extends Controller
         return view('user.companies.show', compact('company', 'adminCandidates'));
     }
 
+    public function excludeCurrentUser(Request $request): RedirectResponse
+    {
+        $company = currentCompany();
+        abort_unless($company, 404);
+
+        $this->authorize('excludeFromCompany', [$request->user(), $company]);
+
+        DB::table('company_user')
+            ->where('user_id', $request->user()->id)
+            ->where('company_id', $company->id)
+            ->whereIn('status_membership', ['active', 'pending_admin'])
+            ->update([
+                'status_membership' => 'deleted',
+                'updated_at' => now(),
+            ]);
+
+        $request->session()->forget('current_company_id');
+
+        return redirect()->route('dashboard')
+            ->with('success', 'You have been excluded from the company.');
+    }
+
     public function requestMembership(Request $request): RedirectResponse
     {
         $validated = $request->validate([

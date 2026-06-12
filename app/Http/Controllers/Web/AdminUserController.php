@@ -88,8 +88,9 @@ class AdminUserController extends Controller
         $this->authorize('view', $user);
 
         $user->load('companies:id,name');
+        $currentMembership = $this->currentMembership($user);
 
-        return view('admin.users.show', compact('user'));
+        return view('admin.users.show', compact('user', 'currentMembership'));
     }
 
     public function companies(User $user): View
@@ -189,12 +190,34 @@ class AdminUserController extends Controller
     {
         $this->authorize('update', $user);
 
-        return view('admin.users.edit', compact('user'));
+        $currentMembership = $this->currentMembership($user);
+
+        return view('admin.users.edit', compact('user', 'currentMembership'));
     }
 
     public function update(Request $request, User $user): RedirectResponse
     {
         $this->authorize('update', $user);
+
+        if (!$request->user()->isSuperAdmin()) {
+            $company = currentCompany();
+            abort_unless($company && $this->currentMembership($user), 404);
+
+            $validated = $request->validate([
+                'status_membership' => ['required', Rule::in(['active', 'pending_admin', 'deleted', 'rejected'])],
+            ]);
+
+            DB::table('company_user')
+                ->where('user_id', $user->id)
+                ->where('company_id', $company->id)
+                ->update([
+                    'status_membership' => $validated['status_membership'],
+                    'updated_at' => now(),
+                ]);
+
+            return redirect()->route('admin.users.show', $user)
+                ->with('success', 'Membership status updated successfully.');
+        }
 
         $validated = $request->validate([
             'first_name' => 'sometimes|required|string|max:50',
@@ -208,6 +231,50 @@ class AdminUserController extends Controller
 
         return redirect()->route('admin.users.show', $user)
             ->with('success', 'User updated successfully.');
+    }
+
+    public function excludeFromCompany(Request $request, User $user, Company $company): RedirectResponse
+    {
+        $this->authorize('excludeFromCompany', [$user, $company]);
+
+        DB::table('company_user')
+            ->where('user_id', $user->id)
+            ->where('company_id', $company->id)
+            ->whereIn('status_membership', ['active', 'pending_admin'])
+            ->update([
+                'status_membership' => 'deleted',
+                'updated_at' => now(),
+            ]);
+
+        if ($request->user()->id === $user->id) {
+            if ((int) $request->session()->get('current_company_id') === $company->id) {
+                $request->session()->forget('current_company_id');
+            }
+
+            return redirect()->route('dashboard')
+                ->with('success', 'You have been excluded from the company.');
+        }
+
+        if (!$request->user()->isSuperAdmin()) {
+            return redirect()->route('admin.users.index')
+                ->with('success', 'User excluded from the company successfully.');
+        }
+
+        return back()->with('success', 'User excluded from the company successfully.');
+    }
+
+    private function currentMembership(User $user): ?object
+    {
+        $company = currentCompany();
+
+        if (!$company) {
+            return null;
+        }
+
+        return DB::table('company_user')
+            ->where('user_id', $user->id)
+            ->where('company_id', $company->id)
+            ->first();
     }
 
     public function approve(User $user): RedirectResponse

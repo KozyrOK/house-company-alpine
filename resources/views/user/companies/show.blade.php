@@ -43,7 +43,15 @@
                     @endif
                 </div>
 
-                <div></div>
+                <div class="button-wrapper">
+                    @can('excludeFromCompany', [auth()->user(), $company])
+                        <form method="POST" action="{{ route('company.exclusion') }}" class="confirmable-form" data-confirm-message="{{ __('app.confirm.exclusion_user') }}">
+                            @csrf
+                            @method('DELETE')
+                            <x-button text="app.buttons.exclusion" type="submit" class="button-delete"/>
+                        </form>
+                    @endcan
+                </div>
 
                 <div class="button-wrapper">
                     @if(auth()->user()->hasRole('admin', $company->id))

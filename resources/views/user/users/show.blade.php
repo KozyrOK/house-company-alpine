@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="button-wrapper">
-                    <x-link text="{{ isset($company) ? 'buttons.main_menu' : 'buttons.dashboard' }}"
+                    <x-link text="{{ isset($company) ? 'app.buttons.main_menu' : 'app.buttons.dashboard' }}"
                             href="{{ isset($company) ? route('main.index') : route('dashboard') }}"
                             class="button-list"/>
                 </div>

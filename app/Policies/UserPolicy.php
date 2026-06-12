@@ -43,9 +43,6 @@ class UserPolicy
 
     public function update(User $user, User $model): bool
     {
-        if ($user->id === $model->id) {
-            return true;
-        }
 
         $current = currentCompany();
         if (!$current || !$model->belongsToCompany($current->id)) {
@@ -62,6 +59,29 @@ class UserPolicy
     public function delete(User $user, User $model): bool
     {
         return $user->id === $model->id;
+    }
+
+    public function excludeFromCompany(User $user, User $model, Company $company): bool
+    {
+        if ($user->id === $model->id) {
+            return !$user->isSuperAdmin()
+                && $model->companies()
+                    ->where('companies.id', $company->id)
+                    ->wherePivotIn('status_membership', ['active', 'pending_admin'])
+                    ->exists();
+        }
+
+        if (!$model->companies()
+            ->where('companies.id', $company->id)
+            ->wherePivotIn('status_membership', ['active', 'pending_admin'])
+            ->exists()) {
+            return false;
+        }
+
+        $targetRole = $model->roleIn($company);
+
+        return $user->hasRole('admin', $company->id)
+            && in_array($targetRole, ['user', 'company_head'], true);
     }
 
     public function restore(User $user, User $model): bool

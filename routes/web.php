@@ -103,6 +103,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/company', [CompanyController::class, 'current'])
         ->name('company.current');
 
+    Route::delete('/company/exclusion', [CompanyController::class, 'excludeCurrentUser'])
+        ->name('company.exclusion');
+
     Route::post('/company/request-membership', [CompanyController::class, 'requestMembership'])
         ->middleware('verified')
         ->name('company.request-membership');
@@ -283,6 +286,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/{user}/companies', [AdminUserController::class, 'companies'])
             ->middleware('superadmin.only')
             ->name('users.companies');
+
+        Route::delete('/users/{user}/companies/{company}/exclusion', [AdminUserController::class, 'excludeFromCompany'])
+            ->name('users.companies.exclusion');
 
         Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])
             ->name('users.edit');
