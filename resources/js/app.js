@@ -42,3 +42,23 @@ Alpine.data('showCompany', showCompany);
 Alpine.data('companyLogoUploader', companyLogoUploader);
 
 Alpine.start();
+
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+
+    if (!link) return;
+    if (link.target === '_blank') return;
+    if (link.href.startsWith('#')) return;
+
+    const main = document.querySelector('.main-container');
+
+    if (!main) return;
+
+    e.preventDefault();
+
+    main.classList.add('fade-out');
+
+    setTimeout(() => {
+        window.location = link.href;
+    }, 150);
+});
