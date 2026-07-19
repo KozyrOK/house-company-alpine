@@ -1,0 +1,31 @@
+# 5. Approximate file structure of the Chat module:
+app/
+Ai/
+Agents/
+SupportChatAgent.php
+AdminAssistantAgent.php
+Tools/
+GetUserCompaniesTool.php
+GetCompanyDetailsTool.php
+SearchPostsTool.php
+GetPostDetailsTool.php
+SearchUsersTool.php
+Middleware/
+AttachTenantContextMiddleware.php
+TokenUsageMiddleware.php
+StructuredOutputs/
+ListCompaniesOutput.php
+SearchPostsOutput.php
+SearchUsersOutput.php
+Services/
+Chat/
+ChatService.php
+ChatHistoryService.php
+Http/
+Controllers/
+ChatController.php
+ChatSettingsController.php
+Models/
+Conversation.php
+ConversationMessage.php
+Frontend files (blade templates and Alpine.js)
