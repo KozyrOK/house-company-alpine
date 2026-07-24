@@ -232,4 +232,19 @@ return [
         'user_approval_detail' => 'Деталі підтвердження користувача',
     ],
 
+    'chat' => [
+        'start' => 'Start chat',
+        'settings' => 'Chat settings',
+        'history' => 'Chat History',
+        'window' => 'AI Chat',
+        'placeholder' => 'Ask about companies, posts, users, roles, or navigation...',
+        'send' => 'Send',
+        'provider' => 'AI Provider',
+        'provider_configured' => 'Selected provider appears configured.',
+        'provider_not_configured' => 'Selected provider is not configured yet.',
+        'daily_limit' => 'Daily Request Limit',
+        'limit_exceeded' => 'Daily AI chat request limit exceeded.',
+        'default_answer' => 'I can help with companies, posts, company members, permissions, roles, and application navigation. Please ask a more specific question.',
+    ],
+
 ];

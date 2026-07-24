@@ -18,6 +18,7 @@ import companyImageComponent from './components/companyImageComponent.js';
 import defaultContentBackground from './components/defaultContentBackground.js';
 import showCompany from './components/showCompany.js';
 import companyLogoUploader from './components/companyLogoUploader.js';
+import chatComponent from './components/chatComponent.js';
 
 Alpine.store('assets', {
     headerPattern,
@@ -40,6 +41,7 @@ Alpine.data('companyImageComponent', companyImageComponent);
 Alpine.data('defaultContentBackground', defaultContentBackground);
 Alpine.data('showCompany', showCompany);
 Alpine.data('companyLogoUploader', companyLogoUploader);
+Alpine.data('chatComponent', chatComponent);
 
 Alpine.start();
 

@@ -16,6 +16,8 @@ use App\Http\Controllers\Web\AdminUserController;
 use App\Http\Controllers\Web\AdminPostController;
 use App\Http\Controllers\Web\MainController;
 use App\Http\Controllers\Web\ActionApproveController;
+use App\Http\Controllers\Web\ChatController;
+use App\Http\Controllers\Web\ChatSettingsController;
 
 // LOCALE SWITCHER
 
@@ -204,8 +206,18 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard.destroy');
 
     // OTHER PAGES
+    
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat');
 
-    Route::view('/chat', 'pages.chat')->name('chat');
+    Route::prefix('chat')->name('chat.')->group(function () {
+        Route::post('/conversations', [ChatController::class, 'store'])->name('conversations.store');
+        Route::get('/conversations', [ChatController::class, 'conversations'])->name('conversations.index');
+        Route::get('/conversations/{conversation}', [ChatController::class, 'show'])->name('conversations.show');
+        Route::post('/conversations/{conversation}/messages', [ChatController::class, 'message'])->name('messages.store');
+        Route::post('/conversations/{conversation}/messages/stream', [ChatController::class, 'stream'])->name('messages.stream');
+        Route::get('/settings', [ChatSettingsController::class, 'show'])->name('settings.show');
+        Route::patch('/settings', [ChatSettingsController::class, 'update'])->name('settings.update');
+    });
 
     Route::prefix('action-approve')->middleware('admin.access')->name('action-approve.')->group(function () {
         Route::get('/', [ActionApproveController::class, 'index'])->name('index');
