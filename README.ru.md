@@ -143,7 +143,86 @@ docker compose exec laravel.test php artisan db:seed
 docker compose exec laravel.test php artisan db:seed --class=DatabaseSeederTest
 ```
 
-### 7. Запуск frontend
+### 7. Установка AI Provider 
+
+### По умолчанию проект использует Ollama.
+
+#### **!!!Важно:** AI-модели не входят в состав репозитория и не копируются в каталог проекта. Они устанавливаются и управляются приложением Ollama на компьютере разработчика. Laravel взаимодействует с Ollama через HTTP API (OLLAMA_URL) и не имеет прямого доступа к файлам моделей.
+
+**Установить Ollama**
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+**Проверка установки**
+```bash
+ollama --version
+```
+
+**Скачать AI модель**
+```bash
+ollama pull qwen3:8b
+```
+
+**Проверка установки модели**
+```bash
+ollama list
+```
+
+**Ожидаемый вывод:**
+
+```text
+NAME
+qwen3:8b
+```
+
+**Настроить .env**
+```bash
+AI_PROVIDER=ollama
+
+AI_MODEL=qwen3:8b
+
+OLLAMA_URL=http://host.docker.internal:11434
+```
+
+**Конфигурация Docker**
+
+Поскольку Laravel работает внутри Docker, а Ollama — на хост-машине, Docker должен иметь доступ к сети хоста.
+
+В `docker-compose.yml`, добавить нижеприведенный код в`laravel.test` сервис:
+
+```yaml
+extra_hosts:
+    - "host.docker.internal:host-gateway"
+```
+
+Example:
+
+```yaml
+services:
+
+  laravel.test:
+
+    ...
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+```
+
+**Перезапустить контейнер**
+```bash
+./vendor/bin/sail down
+
+./vendor/bin/sail up -d
+```
+
+**Запустить Ollama сервер:**
+
+```bash
+ollama serve
+```
+
+### 8. Запуск frontend
 
 **Для режима разработки (Vite dev server):**
 ```bash
