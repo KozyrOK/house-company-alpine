@@ -9,7 +9,7 @@ export default function chatComponent(isSuperAdmin = false) {
         conversations: [],
         messages: [],
         draft: '',
-        settings: { provider: 'openai', daily_request_limit: 5 },
+        settings: { provider: 'ollama', daily_request_limit: 5, warnings: [] },
         async startChat(agent = 'support') {
             this.loading = true;
             const response = await this.request('/chat/conversations', { method: 'POST', body: JSON.stringify({ agent }) });

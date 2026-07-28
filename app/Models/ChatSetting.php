@@ -13,7 +13,7 @@ class ChatSetting extends Model
     public static function current(): self
     {
         return static::query()->firstOrCreate([], [
-            'provider' => 'openai',
+            'provider' => 'ollama',
             'daily_request_limit' => 5,
         ]);
     }

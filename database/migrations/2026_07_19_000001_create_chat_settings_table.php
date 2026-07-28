@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('chat_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('provider')->default('openai');
+            $table->string('provider')->default('ollama');
             $table->unsignedInteger('daily_request_limit')->default(5);
             $table->timestamps();
         });

@@ -48,13 +48,13 @@
             <h2 class="mb-3 font-semibold">{{ __('app.chat.settings') }}</h2>
             <label class="block">{{ __('app.chat.provider') }}
                 <select class="mt-1 block rounded border p-2 dark:bg-gray-800" x-model="settings.provider">
-                    <option value="openai">OpenAI</option><option value="anthropic">Anthropic</option><option value="gemini">Gemini</option><option value="ollama">Ollama</option>
+                     <option value="ollama">Ollama</option><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option><option value="gemini">Gemini</option>
                 </select>
             </label>
             <label class="mt-3 block">{{ __('app.chat.daily_limit') }}
                 <input type="number" min="1" class="mt-1 block rounded border p-2 dark:bg-gray-800" x-model.number="settings.daily_request_limit">
             </label>
-            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300" x-text="settings.is_configured ? '{{ __('app.chat.provider_configured') }}' : '{{ __('app.chat.provider_not_configured') }}'"></p>
+            <p class="mt-2 text-sm" :class="settings.is_configured ? 'text-green-700 dark:text-green-300' : 'text-amber-700 dark:text-amber-300'" x-text="settings.is_configured ? '{{ __('app.chat.provider_configured') }}' : (settings.warnings?.join(' ') || '{{ __('app.chat.provider_not_configured') }}')"></p>
             <button type="button" class="mt-4 rounded bg-green-600 px-4 py-2 text-white" x-on:click="saveSettings()">{{ __('app.buttons.save') }}</button>
         </div>
     </section>

@@ -216,8 +216,17 @@ services:
 ./vendor/bin/sail up -d
 ```
 
-**Запустить Ollama сервер:**
+**Проверьте, что сервис Ollama запущен**
+```bash
+systemctl status ollama
+```
 
+**Если сервис Ollama остановлен**
+```bash
+sudo systemctl start ollama
+```
+
+**Если по какой-либо причине сервис не используется, можно выполнить**
 ```bash
 ollama serve
 ```

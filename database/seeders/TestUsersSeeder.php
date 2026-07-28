@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\ChatSetting;
 use App\Models\Company;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +15,11 @@ class TestUsersSeeder extends Seeder
     public function run(): void
     {
         $password = Hash::make('password');
+
+        ChatSetting::query()->updateOrCreate(
+            ['id' => 1],
+            ['provider' => 'ollama', 'daily_request_limit' => 5]
+        );
 
         $logoFiles = [
             base_path('resources/images/company-logo/Company-logo1.webp'),
@@ -93,6 +100,25 @@ class TestUsersSeeder extends Seeder
             );
 
             $user->companies()->sync($data['memberships']);
+        }
+
+        foreach ($companies as $index => $company) {
+            $author = User::query()->where('email', 'company'.($index + 1).'.admin1@housing.local')->first();
+
+            if (!$author) {
+                continue;
+            }
+
+            Post::query()->updateOrCreate(
+                ['company_id' => $company->id, 'title' => 'Welcome to '.$company->name],
+                [
+                    'user_id' => $author->id,
+                    'content' => 'Initial test post for AI chat and application navigation checks.',
+                    'status' => 'publish',
+                    'created_by' => $author->id,
+                    'updated_by' => $author->id,
+                ]
+            );
         }
     }
 }
