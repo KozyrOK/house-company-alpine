@@ -13,7 +13,7 @@ class AdminAssistantAgent
 {
     public function __construct(private SupportChatAgent $support, private ChatProviderConfigurationService $providers) {}
 
-    public function respond(User $user, string $message): array
+    public function respond(User $user, string $message, ?Conversation $conversation = null): array
     {
         if (!$user->isSuperAdmin()) throw new AuthorizationException();
 
@@ -32,7 +32,7 @@ class AdminAssistantAgent
             ];
             return ['content' => 'AI chat diagnostics: '.json_encode($data), 'structured_data' => ['intent' => 'diagnostics', 'diagnostics' => $data]];
         }
-
-        return $this->support->respond($user, $message);
+        
+        return $this->support->respond($user, $message, $conversation);
     }
 }

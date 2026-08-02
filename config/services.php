@@ -35,6 +35,10 @@ return [
         ],
     ],
 
+    'ai' => [
+        'model' => env('AI_MODEL', 'qwen3:8b'),
+    ],
+
     'openai' => [
         'key' => env('OPENAI_API_KEY'),
     ],
