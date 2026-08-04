@@ -23,5 +23,5 @@ class GetCurrentUserTool
     {
         return $this->domain->currentUser($user);
     }
+
 }
-app/Services/Chat/AgentResponseComposer.php

@@ -574,3 +574,38 @@ p {
  .pagination {
      @apply my-4;
  }
+
+ /* AI CHAT */
+
+.chat-wrapper {
+    @apply space-y-6;
+}
+
+ .chat-button-wrapper {
+     @apply flex flex-wrap gap-3;
+ }
+
+ .chat-button-start-chat {
+     @apply rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700;
+ }
+
+ .chat-button-open-settings {
+     @apply rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700;
+ }
+
+.chat-button-load-history {
+    @apply rounded bg-gray-700 px-4 py-2 text-white hover:bg-gray-800;
+}
+
+.modal-open {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4;
+}
+
+.history-open {
+    @apply rounded border bg-white p-4 dark:border-gray-700 dark:bg-gray-900;
+}
+
+.settings-open {
+    @apply rounded border bg-white p-4 dark:border-gray-700 dark:bg-gray-900;
+}
+

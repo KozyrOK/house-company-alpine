@@ -3,21 +3,20 @@
 @section('title', __('app.pages.chat'))
 
 @section('content')
-    <section x-data="chatComponent(@json(auth()->user()->isSuperAdmin()))" class="space-y-6">
+    <section x-data="chatComponent(@json(auth()->user()->isSuperAdmin()))" class="chat-wrapper">
         <div>
-            <h1>{{ __('app.pages.chat') }}</h1>
-            <p>{!! nl2br(__('app.pages.chat_text1')) !!}</p>
+            <h1>{{ __('app.pages.chat') }}</h1>            
         </div>
 
-        <div class="flex flex-wrap gap-3">
-            <button type="button" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" x-on:click="startChat(isSuperAdmin ? 'admin' : 'support')">{{ __('app.chat.start') }}</button>
+        <div class="chat-button-wrapper">
+            <button type="button" class="chat-button-start-chat" x-on:click="startChat(isSuperAdmin ? 'admin' : 'support')">{{ __('app.chat.start') }}</button>
             @if(auth()->user()->isSuperAdmin())
-                <button type="button" class="rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700" x-on:click="openSettings()">{{ __('app.chat.settings') }}</button>
+                <button type="button" class="chat-button-open-settings" x-on:click="openSettings()">{{ __('app.chat.settings') }}</button>
             @endif
-            <button type="button" class="rounded bg-gray-700 px-4 py-2 text-white hover:bg-gray-800" x-on:click="loadHistory()">{{ __('app.chat.history') }}</button>
+            <button type="button" class="chat-button-load-history" x-on:click="loadHistory()">{{ __('app.chat.history') }}</button>
         </div>
 
-        <div x-cloak x-show="modalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div x-cloak x-show="modalOpen" class="modal-open">
             <div class="flex h-[75vh] w-full max-w-3xl flex-col rounded-lg bg-white shadow-xl dark:bg-gray-900">
                 <div class="flex items-center justify-between border-b p-4 dark:border-gray-700">
                     <h2 class="font-semibold">{{ __('app.chat.window') }}</h2>
@@ -37,14 +36,14 @@
             </div>
         </div>
 
-        <div x-cloak x-show="historyOpen" class="rounded border bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+        <div x-cloak x-show="historyOpen" class="history-open">
             <h2 class="mb-3 font-semibold">{{ __('app.chat.history') }}</h2>
             <template x-for="item in conversations" :key="item.id">
                 <button type="button" class="block w-full border-b py-2 text-left dark:border-gray-700" x-on:click="openConversation(item.id)" x-text="item.title || ('Conversation #' + item.id)"></button>
             </template>
         </div>
 
-        <div x-cloak x-show="settingsOpen" class="rounded border bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+        <div x-cloak x-show="settingsOpen" class="settings-open">
             <h2 class="mb-3 font-semibold">{{ __('app.chat.settings') }}</h2>
             <label class="block">{{ __('app.chat.provider') }}
                 <select class="mt-1 block rounded border p-2 dark:bg-gray-800" x-model="settings.provider">
