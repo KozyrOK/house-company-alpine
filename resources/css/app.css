@@ -370,6 +370,10 @@ progress {
      @apply relative z-10 justify-start transition-opacity duration-500 ease-in-out overflow-hidden;
  }
 
+ main-container:has(.chat-wrapper) {
+     @apply z-[120];
+ }
+
  .main-container.fade-out {
      @apply opacity-0;
  }
@@ -577,35 +581,118 @@ p {
 
  /* AI CHAT */
 
-.chat-wrapper {
-    @apply space-y-6;
+.chat-wrapper {    
+    @apply relative z-50 w-full max-w-5xl space-y-6 px-4 text-black dark:text-white;
 }
 
- .chat-button-wrapper {
-     @apply flex flex-wrap gap-3;
- }
-
- .chat-button-start-chat {
-     @apply rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700;
- }
-
- .chat-button-open-settings {
-     @apply rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700;
- }
-
-.chat-button-load-history {
-    @apply rounded bg-gray-700 px-4 py-2 text-white hover:bg-gray-800;
+.chat-button-wrapper {
+    @apply flex flex-wrap items-center justify-center gap-3;
 }
 
-.modal-open {
-    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4;
+.chat-button-start-chat {
+    @apply button-base bg-green-600 text-white hover:bg-green-700 hover:dark:bg-green-500;
 }
 
-.history-open {
-    @apply rounded border bg-white p-4 dark:border-gray-700 dark:bg-gray-900;
+.chat-button-open-settings {
+    @apply button-base bg-blue-600 text-white hover:bg-blue-700 hover:dark:bg-blue-500;
 }
 
-.settings-open {
-    @apply rounded border bg-white p-4 dark:border-gray-700 dark:bg-gray-900;
+.chat-button-load-history {    
+    @apply button-base bg-gray-700 text-white hover:bg-gray-800 hover:dark:bg-gray-600;
 }
 
+.chat-modal-overlay {
+    @apply fixed inset-0 z-[130] flex items-start justify-center overflow-y-auto bg-black/60 p-4 pt-10 sm:items-center sm:pt-4;
+}
+
+.chat-modal-window {
+    @apply flex h-[75vh] w-full max-w-3xl flex-col rounded-2xl border-4 border-[#0f616d] bg-[#b5d8ce] text-black shadow-2xl dark:border-[#198666] dark:bg-[#1e293b] dark:text-white;
+}
+
+.chat-modal-header {
+    @apply flex items-center justify-between border-b border-[#0f616d] px-4 py-3 dark:border-[#198666];
+}
+
+.chat-panel-title {
+    @apply mt-0 mb-0 text-lg font-semibold;
+}
+
+.chat-modal-close-button {
+    @apply text-3xl leading-none text-black transition-colors hover:text-gray-600 dark:text-white dark:hover:text-gray-300;
+}
+
+.chat-messages-list {
+    @apply flex-1 space-y-3 overflow-y-auto p-4;
+}
+
+.chat-message-row {
+    @apply flex;
+}
+
+.chat-message-row-user {
+    @apply justify-end;
+}
+
+.chat-message-row-assistant {
+    @apply justify-start;
+}
+
+.chat-message-bubble {
+    @apply max-w-[75%] whitespace-pre-line rounded-xl px-4 py-2 shadow;
+}
+
+.chat-message-bubble-user {
+    @apply bg-[#0f616d] text-white dark:bg-[#198666];
+}
+
+.chat-message-bubble-assistant {
+    @apply bg-[#cffaee] text-black dark:bg-[#506fa1] dark:text-white;
+}
+
+.chat-message-form {
+    @apply flex gap-2 border-t border-[#0f616d] p-4 dark:border-[#198666];
+}
+
+.chat-message-input {
+    @apply input-field flex-1 px-3 py-2 placeholder:text-slate-600 placeholder:opacity-100 dark:placeholder:text-slate-400;
+}
+
+.chat-message-send-button {
+    @apply rounded bg-[#0f616d] px-4 py-2 text-white transition-colors hover:bg-[#198666] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#198666] dark:hover:bg-[#0f616d];
+}
+
+.chat-panel {
+    @apply rounded-2xl border-4 border-[#0f616d] bg-[#b5d8ce] p-4 text-black shadow-lg dark:border-[#198666] dark:bg-gray-800 dark:text-white;
+}
+
+.chat-history-item {
+    @apply block w-full border-b border-[#0f616d] py-2 text-left transition-colors hover:bg-white/40 dark:border-[#198666] dark:hover:bg-white/10;
+}
+
+.chat-field-label {
+    @apply block text-black dark:text-white;
+}
+
+.chat-field-label-spaced {
+    @apply mt-3;
+}
+
+.chat-field-control {
+    @apply input-field mt-1 block p-2;
+}
+
+.chat-settings-status {
+    @apply mt-2 text-sm;
+}
+
+.chat-settings-status-success {
+    @apply text-green-800 dark:text-green-300;
+}
+
+.chat-settings-status-warning {
+    @apply text-amber-800 dark:text-amber-300;
+}
+
+.chat-settings-save-button {
+    @apply mt-4 rounded bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700 hover:dark:bg-green-500;
+}
